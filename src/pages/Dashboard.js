@@ -15,6 +15,7 @@ export default function Dashboard({ session }) {
       .from('trip_combos')
       .select('*')
       .eq('user_id', session.user.id)
+      .order('score', { ascending: false })
       .order('start_date', { ascending: true })
 
     if (!error) setCombos(data || [])
@@ -23,6 +24,16 @@ export default function Dashboard({ session }) {
 
   async function handleSignOut() {
     await supabase.auth.signOut()
+  }
+
+  function formatDate(dateStr) {
+    return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+  }
+
+  function formatScore(score) {
+    if (score >= 7) return '🔥 Hot combo'
+    if (score >= 5) return '⭐ Great combo'
+    return '✈️ Good combo'
   }
 
   return (
@@ -47,21 +58,21 @@ export default function Dashboard({ session }) {
           <div className={styles.empty}>
             <div className={styles.emptyIcon}>✈️</div>
             <h2>No combos yet</h2>
-            <p>We're building your profile. Add your teams and artists to start finding trips.</p>
-            <button className={styles.btn}>Set up your interests</button>
+            <p>We're scanning schedules for your teams. Check back soon!</p>
           </div>
         ) : (
           <div className={styles.grid}>
             {combos.map(combo => (
               <div key={combo.id} className={styles.card}>
-                <div className={styles.cardCity}>{combo.city}</div>
+                <div className={styles.cardHeader}>
+                  <div className={styles.cardCity}>{combo.city}</div>
+                  <div className={styles.cardBadge}>{formatScore(combo.score)}</div>
+                </div>
                 <div className={styles.cardDates}>
-                  {new Date(combo.start_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                  {' – '}
-                  {new Date(combo.end_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                  {formatDate(combo.start_date)} – {formatDate(combo.end_date)}
                 </div>
                 <div className={styles.cardEvents}>
-                  {combo.event_ids.length} events
+                  {combo.score} events that weekend
                 </div>
               </div>
             ))}
