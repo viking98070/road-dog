@@ -1,0 +1,208 @@
+.page {
+  min-height: 100vh;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  background: var(--bg);
+  z-index: 10;
+}
+
+.back {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 7px 14px;
+  color: var(--text2);
+  font-size: 13px;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.back:hover { border-color: var(--text2); color: var(--text); }
+
+.logo {
+  font-family: var(--head);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.logo span { color: var(--orange); }
+
+.hero {
+  background: linear-gradient(160deg, #1f0800 0%, #0F0F0F 60%);
+  padding: 32px 24px 28px;
+  border-bottom: 1px solid var(--border);
+}
+
+.heroCity {
+  font-family: var(--head);
+  font-size: 40px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.heroDates {
+  font-size: 16px;
+  color: var(--orange);
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.heroBadge {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.body {
+  flex: 1;
+  max-width: 800px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 28px 24px;
+}
+
+.sectionTitle {
+  font-family: var(--head);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 12px;
+}
+
+.eventList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.eventCard {
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.eventLeague {
+  font-family: var(--head);
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.5px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  flex-shrink: 0;
+  min-width: 44px;
+  text-align: center;
+}
+
+.eventInfo { flex: 1; }
+
+.eventName {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 3px;
+}
+
+.eventName span { color: var(--text3); margin: 0 4px; }
+
+.eventMeta {
+  font-size: 12px;
+  color: var(--text3);
+}
+
+.eventDate {
+  font-family: var(--head);
+  font-size: 12px;
+  color: var(--orange);
+  font-weight: 600;
+  text-align: right;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.planGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.planCard {
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  transition: border-color 0.15s;
+  cursor: pointer;
+}
+
+.planCard:hover { border-color: var(--orange); }
+
+.planIcon { font-size: 24px; }
+
+.planLabel {
+  font-family: var(--head);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-align: center;
+}
+
+.planSub {
+  font-size: 11px;
+  color: var(--text3);
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 40px;
+  color: var(--text3);
+  font-size: 13px;
+}
+
+.spinner {
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--border);
+  border-top-color: var(--orange);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.empty {
+  color: var(--text3);
+  font-size: 13px;
+  padding: 20px 0;
+}
