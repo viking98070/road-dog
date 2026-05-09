@@ -211,7 +211,21 @@ export default function StepTeams({ leagues, selected, setSelected, onBack, onNe
         {teams.map(name => {
           const sel = isSelected(activeTab, name)
           const color = TEAM_COLORS[name] || '#1a1a1a'
-          const tricode = TEAM_TRICODES[name] || name.split(' ').map(w => w[0]).join('').slice(0, 3).toUpperCase()
+          const tricodeKey = `${activeTab}:${name}`
+const tricode = ({
+  'mlb:Rangers': 'TEX',
+  'nhl:Rangers': 'NYR',
+  'mlb:Cardinals': 'STL',
+  'nfl:Cardinals': 'ARI',
+  'nfl:Giants': 'NYG',
+  'mlb:Giants': 'SF',
+  'nba:Kings': 'SAC',
+  'nhl:Kings': 'LAK',
+  'nhl:Jets': 'WPG',
+  'nfl:Jets': 'NYJ',
+  'nfl:Panthers': 'CAR',
+  'nhl:Panthers': 'FLA',
+})[tricodeKey] || TEAM_TRICODES[name] || name.split(' ').map(w => w[0]).join('').slice(0, 3).toUpperCase()
           return (
             <div
               key={name}
