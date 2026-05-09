@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styles from './Step.module.css'
 
 const CITIES = [
@@ -16,15 +16,41 @@ const CITIES = [
 ]
 
 export default function StepCity({ homeCity, setHomeCity, onBack, onFinish, saving }) {
+  const [search, setSearch] = useState('')
+
+  const filtered = CITIES.filter(c =>
+    c.toLowerCase().includes(search.toLowerCase())
+  )
+
   return (
     <div className={styles.container}>
       <div className={styles.titleArea}>
-        <h1 className={styles.title}>Your home city</h1>
-        <p className={styles.sub}>We'll filter out home games and focus on road trips.</p>
+        <h1 className={styles.title}>Where are you traveling from?</h1>
+        <p className={styles.sub}>Used to estimate drive or flight distance to each trip.</p>
+      </div>
+
+      <div style={{ marginBottom: 12 }}>
+        <input
+          type="text"
+          placeholder="Search cities…"
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          style={{
+            width: '100%',
+            background: 'var(--surface2)',
+            border: '1px solid var(--border)',
+            borderRadius: 10,
+            padding: '10px 14px',
+            color: 'var(--text)',
+            fontSize: 14,
+            outline: 'none',
+            fontFamily: 'var(--body)',
+          }}
+        />
       </div>
 
       <div style={{ flex: 1, overflowY: 'auto', paddingBottom: 16 }}>
-        {CITIES.map(city => (
+        {filtered.map(city => (
           <div
             key={city}
             onClick={() => setHomeCity(city)}
@@ -47,12 +73,19 @@ export default function StepCity({ homeCity, setHomeCity, onBack, onFinish, savi
             {homeCity === city && <span style={{ color: 'var(--orange)' }}>✓</span>}
           </div>
         ))}
+        {filtered.length === 0 && (
+          <div style={{ color: 'var(--text3)', fontSize: 13, padding: '20px 0', textAlign: 'center' }}>
+            No cities found
+          </div>
+        )}
       </div>
 
       <div className={styles.footer}>
         <button className={styles.backBtn} onClick={onBack}>← Back</button>
         <div className={styles.count}>
-          {homeCity ? <span style={{ color: 'var(--text)' }}>{homeCity}</span> : 'None selected'}
+          {homeCity
+            ? <span style={{ color: 'var(--text)' }}>{homeCity}</span>
+            : <span>None selected</span>}
         </div>
         <button
           className={styles.nextBtn}
