@@ -19,7 +19,6 @@ export default function Dashboard({ session }) {
       .eq('user_id', session.user.id)
       .order('score', { ascending: false })
       .order('start_date', { ascending: true })
-
     if (!error) setCombos(data || [])
     setLoading(false)
   }
@@ -48,5 +47,46 @@ export default function Dashboard({ session }) {
         <div className={styles.logo}>Road<span>Dog</span></div>
         <button className={styles.signOut} onClick={handleSignOut}>Sign out</button>
       </header>
-
-      <main className={sty
+      <main className={styles.main}>
+        <div className={styles.welcome}>
+          <h1>Trip Combos</h1>
+          <p>Away games and shows that line up in the same city.</p>
+        </div>
+        {loading ? (
+          <div className={styles.empty}>
+            <div className={styles.spinner} />
+            <p>Loading your combos…</p>
+          </div>
+        ) : combos.length === 0 ? (
+          <div className={styles.empty}>
+            <div className={styles.emptyIcon}>✈️</div>
+            <h2>No combos yet</h2>
+            <p>We're scanning schedules for your teams. Check back soon!</p>
+          </div>
+        ) : (
+          <div className={styles.grid}>
+            {combos.map(combo => (
+              <div
+                key={combo.id}
+                className={styles.card}
+                onClick={() => setSelected(combo)}
+                style={{ cursor: 'pointer' }}
+              >
+                <div className={styles.cardHeader}>
+                  <div className={styles.cardCity}>{combo.city}</div>
+                  <div className={styles.cardBadge}>{formatScore(combo.score)}</div>
+                </div>
+                <div className={styles.cardDates}>
+                  {formatDate(combo.start_date)} – {formatDate(combo.end_date)}
+                </div>
+                <div className={styles.cardEvents}>
+                  {combo.score} events that weekend →
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </main>
+    </div>
+  )
+}
