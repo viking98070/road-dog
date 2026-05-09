@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import StepLeagues from '../components/StepLeagues'
 import StepTeams from '../components/StepTeams'
 import StepShows from '../components/StepShows'
+import StepCity from '../components/StepCity'
 import styles from './Onboarding.module.css'
 
 export default function Onboarding({ session }) {
@@ -12,6 +13,7 @@ export default function Onboarding({ session }) {
   const [selectedTeams, setSelectedTeams] = useState([])
   const [selectedShows, setSelectedShows] = useState([])
   const [saving, setSaving] = useState(false)
+  const [homeCity, setHomeCity] = useState('')
   const navigate = useNavigate()
 
   async function handleFinish(shows) {
@@ -41,7 +43,7 @@ export default function Onboarding({ session }) {
       )
     }
 
-    await supabase.from('users').update({ home_city: 'Chicago' }).eq('id', userId)
+    await supabase.from('users').update({ home_city: homeCity }).eq('id', userId)
 
     setSaving(false)
     navigate('/dashboard')
@@ -52,13 +54,14 @@ export default function Onboarding({ session }) {
       <div className={styles.header}>
         <div className={styles.logo}>Road<span>Dog</span></div>
         <div className={styles.steps}>
-          <div className={`${styles.step} ${step >= 1 ? styles.active : ''}`}>1</div>
-          <div className={styles.stepLine} />
-          <div className={`${styles.step} ${step >= 2 ? styles.active : ''}`}>2</div>
-          <div className={styles.stepLine} />
-          <div className={`${styles.step} ${step >= 3 ? styles.active : ''}`}>3</div>
-        </div>
-      </div>
+  <div className={`${styles.step} ${step >= 1 ? styles.active : ''}`}>1</div>
+  <div className={styles.stepLine} />
+  <div className={`${styles.step} ${step >= 2 ? styles.active : ''}`}>2</div>
+  <div className={styles.stepLine} />
+  <div className={`${styles.step} ${step >= 3 ? styles.active : ''}`}>3</div>
+  <div className={styles.stepLine} />
+  <div className={`${styles.step} ${step >= 4 ? styles.active : ''}`}>4</div>
+</div>
 
       {step === 1 && (
         <StepLeagues
@@ -77,14 +80,22 @@ export default function Onboarding({ session }) {
         />
       )}
       {step === 3 && (
-        <StepShows
-          selected={selectedShows}
-          setSelected={setSelectedShows}
-          onBack={() => setStep(2)}
-          onFinish={handleFinish}
-          saving={saving}
-        />
-      )}
-    </div>
+  <StepShows
+    selected={selectedShows}
+    setSelected={setSelectedShows}
+    onBack={() => setStep(2)}
+    onFinish={() => setStep(4)}
+    saving={saving}
+  />
+)}
+{step === 4 && (
+  <StepCity
+    homeCity={homeCity}
+    setHomeCity={setHomeCity}
+    onBack={() => setStep(3)}
+    onFinish={() => handleFinish(selectedShows)}
+    saving={saving}
+  />
+)}
   )
 }
