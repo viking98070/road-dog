@@ -20,7 +20,6 @@ export default function ComboDetail({ combo, onBack }) {
       .select('*')
       .in('id', combo.event_ids)
       .order('event_date')
-
     if (!error) setEvents(data || [])
     setLoading(false)
   }
@@ -67,16 +66,13 @@ export default function ComboDetail({ combo, onBack }) {
         <button className={styles.back} onClick={onBack}>← Back</button>
         <div className={styles.logo}>Road<span>Dog</span></div>
       </div>
-
       <div className={styles.hero}>
         <div className={styles.heroCity}>{combo.city}</div>
         <div className={styles.heroDates}>{formatDateRange(combo.start_date, combo.end_date)}</div>
         <div className={styles.heroBadge} style={{ color: badge.color }}>{badge.text}</div>
       </div>
-
       <div className={styles.body}>
         <div className={styles.sectionTitle}>What's happening</div>
-
         {loading ? (
           <div className={styles.loading}>
             <div className={styles.spinner} />
@@ -104,11 +100,10 @@ export default function ComboDetail({ combo, onBack }) {
             ))}
           </div>
         )}
-
         <div className={styles.sectionTitle} style={{ marginTop: 28 }}>Plan your trip</div>
         <div className={styles.planGrid}>
           
-            href={`https://www.google.com/flights#search;f=ORD;t=${combo.city.split(',')[0].replace(/ /g,'+')}`}
+            href={`https://www.google.com/flights`}
             target="_blank"
             rel="noreferrer"
             className={styles.planCard}
@@ -118,7 +113,7 @@ export default function ComboDetail({ combo, onBack }) {
             <div className={styles.planSub}>Google Flights</div>
           </a>
           
-            href={`https://www.hotels.com/search.do?q-destination=${combo.city.replace(/ /g,'+')}`}
+            href={`https://www.hotels.com`}
             target="_blank"
             rel="noreferrer"
             className={styles.planCard}
@@ -128,7 +123,7 @@ export default function ComboDetail({ combo, onBack }) {
             <div className={styles.planSub}>Hotels.com</div>
           </a>
           
-            href={`https://www.stubhub.com/`}
+            href={`https://www.stubhub.com`}
             target="_blank"
             rel="noreferrer"
             className={styles.planCard}
