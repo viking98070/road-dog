@@ -31,9 +31,10 @@ export default function App() {
     setProfile(data)
   }
 
-  if (session === undefined) return null
+if (session === undefined) return null
+if (session && profile === null) return null
 
-  const hasOnboarded = profile?.home_city
+const hasOnboarded = profile?.home_city
 
   return (
     <BrowserRouter>
