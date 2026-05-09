@@ -53,8 +53,16 @@ const TEAM_COLORS = {
   'North Carolina Courage':'#CE1126','Orlando Pride':'#633492','Portland Thorns':'#A40A14',
   'Racing Louisville':'#01426A','San Diego Wave':'#F7A800','Seattle Reign':'#005695',
   'Utah Royals':'#7B2D8B','Washington Spirit':'#003865',
+  'Atlanta United':'#80000A','Austin FC':'#00B140','Charlotte FC':'#1A85C8',
+  'Chicago Fire':'#9A1B2E','Colorado Rapids':'#862633','Columbus Crew':'#FEDD00',
+  'D.C. United':'#000000','FC Dallas':'#BF1B23','Inter Miami':'#F7B5CD','LA Galaxy':'#00245D',
+  'LAFC':'#C39E6D','Minnesota United':'#8CD2F4','Nashville SC':'#ECE83A',
+  'New England Revolution':'#0A2141','NYCFC':'#6CACE4','NY Red Bulls':'#ED1E36',
+  'Orlando City':'#633492','Philadelphia Union':'#071B2C','Portland Timbers':'#004812',
+  'Real Salt Lake':'#B30838','San Diego FC':'#00245D','San Jose Earthquakes':'#0D4C92',
+  'Seattle Sounders':'#5D9741','Sporting KC':'#002F65','St. Louis City':'#DC1B34',
+  'Toronto FC':'#B81137','Vancouver Whitecaps':'#009BC8',
 }
-
 const TEAM_TRICODES = {
   '49ers':'SF',Bears:'CHI',Bengals:'CIN',Bills:'BUF',Broncos:'DEN',Browns:'CLE',
   Buccaneers:'TB',Cardinals:'ARI',Chargers:'LAC',Chiefs:'KC',Colts:'IND',
@@ -86,6 +94,14 @@ const TEAM_TRICODES = {
   'Kansas City Current':'KC','NJ/NY Gotham':'NY','North Carolina Courage':'NC',
   'Orlando Pride':'ORL','Portland Thorns':'POR','Racing Louisville':'LOU',
   'San Diego Wave':'SD','Seattle Reign':'SEA','Utah Royals':'UTA','Washington Spirit':'WAS',
+  'Atlanta United':'ATL','Austin FC':'ATX','Charlotte FC':'CLT','Chicago Fire':'CHI',
+  'Colorado Rapids':'COL','Columbus Crew':'CLB','D.C. United':'DC','FC Dallas':'DAL',
+  'Inter Miami':'MIA','LA Galaxy':'LA','LAFC':'LAFC','Minnesota United':'MIN',
+  'Nashville SC':'NSH','New England Revolution':'NE','NYCFC':'NYC','NY Red Bulls':'NY',
+  'Orlando City':'ORL','Philadelphia Union':'PHI','Portland Timbers':'POR',
+  'Real Salt Lake':'RSL','San Diego FC':'SD','San Jose Earthquakes':'SJ',
+  'Seattle Sounders':'SEA','Sporting KC':'SKC','St. Louis City':'STL',
+  'Toronto FC':'TOR','Vancouver Whitecaps':'VAN',
 }
 
 const TEAM_CITIES = {
@@ -129,7 +145,7 @@ const TEAM_CITIES = {
   'Nashville SC':'Nashville','New England Revolution':'Boston','NYCFC':'New York C',
   'NY Red Bulls':'New York R','Orlando City':'Orlando','Philadelphia Union':'Philadelphia',
   'Portland Timbers':'Portland','Real Salt Lake':'Salt Lake City',
-  'San Jose Earthquakes':'San Jose','Seattle Sounders':'Seattle',
+  'San Diego FC':'San Diego','San Jose Earthquakes':'San Jose','Seattle Sounders':'Seattle',
   'Sporting KC':'Kansas City','St. Louis City':'St. Louis',
   'Toronto FC':'Toronto','Vancouver Whitecaps':'Vancouver',
   'Angel City':'Los Angeles','Bay FC':'San Jose','Chicago Red Stars':'Chicago',
@@ -138,6 +154,48 @@ const TEAM_CITIES = {
   'Orlando Pride':'Orlando','Portland Thorns':'Portland',
   'Racing Louisville':'Louisville','San Diego Wave':'San Diego',
   'Seattle Reign':'Seattle','Utah Royals':'Salt Lake City','Washington Spirit':'Washington',
+}
+
+const COLLEGE_COLORS = {
+  Alabama:'#9E1B32',Arkansas:'#9D2235',Auburn:'#03244D',Baylor:'#154734',BYU:'#002E5D',
+  Clemson:'#F66733',Colorado:'#CFB87C',Duke:'#001A57',Florida:'#0021A5','Florida St.':'#782F40',
+  Georgia:'#BA0C2F','Georgia Tech':'#B3A369',Houston:'#C8102E',Illinois:'#E84A27',
+  Indiana:'#990000',Iowa:'#FFCD00','Iowa St.':'#C8102E',Kansas:'#0051A5','Kansas St.':'#512888',
+  Kentucky:'#0033A0',Louisville:'#AD0000',LSU:'#461D7C',Maryland:'#E03A3E',Miami:'#005030',
+  Michigan:'#00274C','Michigan St.':'#18453B',Minnesota:'#7A0019','Mississippi St.':'#5D1F1A',
+  Missouri:'#F1B82D',Nebraska:'#E41C38','North Carolina':'#7BAFD4','North Carolina St.':'#CC0000',
+  Northwestern:'#4E2A84','Notre Dame':'#0C2340','Ohio State':'#BB0000',Oklahoma:'#841617',
+  'Oklahoma St.':'#FF7300','Ole Miss':'#CE1126',Oregon:'#154733','Oregon St.':'#CC0000',
+  'Penn State':'#041E42',Pittsburgh:'#003594',Purdue:'#CEB888',Rutgers:'#CC0033',
+  SMU:'#0033A0','South Carolina':'#73000A',Stanford:'#8C1515',Syracuse:'#D44500',
+  TCU:'#4D1979',Tennessee:'#FF8200',Texas:'#BF5700','Texas A&M':'#500000',
+  'Texas Tech':'#CC0000',UCLA:'#2D68C4',USC:'#990000',Utah:'#CC0000',Vanderbilt:'#866D4B',
+  Virginia:'#232D4B','Virginia Tech':'#630031','Wake Forest':'#9E7E38',
+  Washington:'#4B2E83','Washington St.':'#981E32','West Virginia':'#002855',Wisconsin:'#C5050C',
+  Connecticut:'#000E2F',Gonzaga:'#002469',Marquette:'#003366',Villanova:'#003366',
+  Xavier:'#002883','San Diego St.':'#C41230',Memphis:'#003087','NC State':'#CC0000',
+  Arizona:'#CC0033','Arizona St.':'#8C1D40',Cincinnati:'#E00122',
+}
+
+const COLLEGE_ABBREVS = {
+  Alabama:'ALA',Arkansas:'ARK',Auburn:'AUB',Baylor:'BAY',BYU:'BYU',
+  Clemson:'CLEM',Colorado:'COL',Duke:'DUKE',Florida:'UF','Florida St.':'FSU',
+  Georgia:'UGA','Georgia Tech':'GT',Houston:'HOU',Illinois:'ILL',
+  Indiana:'IU',Iowa:'IOWA','Iowa St.':'ISU',Kansas:'KU','Kansas St.':'KSU',
+  Kentucky:'UK',Louisville:'LOU',LSU:'LSU',Maryland:'MD',Miami:'UM',
+  Michigan:'MICH','Michigan St.':'MSU',Minnesota:'MINN','Mississippi St.':'MSST',
+  Missouri:'MIZ',Nebraska:'NEB','North Carolina':'UNC','North Carolina St.':'NCSU',
+  Northwestern:'NU','Notre Dame':'ND','Ohio State':'OSU',Oklahoma:'OU',
+  'Oklahoma St.':'OKST','Ole Miss':'MISS',Oregon:'ORE','Oregon St.':'ORST',
+  'Penn State':'PSU',Pittsburgh:'PITT',Purdue:'PUR',Rutgers:'RU',
+  SMU:'SMU','South Carolina':'SC',Stanford:'STAN',Syracuse:'SYR',
+  TCU:'TCU',Tennessee:'TENN',Texas:'TEX','Texas A&M':'TAMU',
+  'Texas Tech':'TTU',UCLA:'UCLA',USC:'USC',Utah:'UTAH',Vanderbilt:'VU',
+  Virginia:'UVA','Virginia Tech':'VT','Wake Forest':'WAKE',
+  Washington:'UW','Washington St.':'WSU','West Virginia':'WVU',Wisconsin:'WIS',
+  Connecticut:'UCONN',Gonzaga:'GONZ',Marquette:'MU',Villanova:'NOVA',
+  Xavier:'XU','San Diego St.':'SDSU',Memphis:'MEM','NC State':'NCST',
+  Arizona:'ARIZ','Arizona St.':'ASU',Cincinnati:'CIN',
 }
 
 export default function StepTeams({ leagues, selected, setSelected, onBack, onNext }) {
@@ -210,22 +268,13 @@ export default function StepTeams({ leagues, selected, setSelected, onBack, onNe
       <div className={styles.teamGrid}>
         {teams.map(name => {
           const sel = isSelected(activeTab, name)
-          const color = TEAM_COLORS[name] || '#1a1a1a'
-          const tricodeKey = `${activeTab}:${name}`
-const tricode = ({
-  'mlb:Rangers': 'TEX',
-  'nhl:Rangers': 'NYR',
-  'mlb:Cardinals': 'STL',
-  'nfl:Cardinals': 'ARI',
-  'nfl:Giants': 'NYG',
-  'mlb:Giants': 'SF',
-  'nba:Kings': 'SAC',
-  'nhl:Kings': 'LAK',
-  'nhl:Jets': 'WPG',
-  'nfl:Jets': 'NYJ',
-  'nfl:Panthers': 'CAR',
-  'nhl:Panthers': 'FLA',
-})[tricodeKey] || TEAM_TRICODES[name] || name.split(' ').map(w => w[0]).join('').slice(0, 3).toUpperCase()
+          const color = isCollege ? (COLLEGE_COLORS[name] || '#1a1a1a') : (TEAM_COLORS[name] || '#1a1a1a')
+          const tricode = isCollege
+            ? (COLLEGE_ABBREVS[name] || name.split(' ').map(w=>w[0]).join('').slice(0,3).toUpperCase())
+            : (({'mlb:Rangers':'TEX','nhl:Rangers':'NYR','mlb:Cardinals':'STL','nfl:Cardinals':'ARI',
+                'nfl:Giants':'NYG','mlb:Giants':'SF','nba:Kings':'SAC','nhl:Kings':'LAK',
+                'nhl:Jets':'WPG','nfl:Jets':'NYJ','nfl:Panthers':'CAR','nhl:Panthers':'FLA',
+              })[`${activeTab}:${name}`] || TEAM_TRICODES[name] || name.split(' ').map(w=>w[0]).join('').slice(0,3).toUpperCase())
           return (
             <div
               key={name}
