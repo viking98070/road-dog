@@ -145,21 +145,21 @@
 .teamCard.sel { border-color: var(--orange); background: #1f0f00; }
 
 .teamCircle {
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: var(--head);
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 700;
   color: #fff;
   letter-spacing: 0.3px;
 }
 
 .teamName {
-  font-size: 10px;
+  font-size: 12px;
   color: var(--text2);
   line-height: 1.3;
 }
