@@ -13,13 +13,31 @@ export default function Dashboard({ session }) {
   }, [])
 
   async function loadCombos() {
-    const { data, error } = await supabase
+    const { data: comboData, error } = await supabase
       .from('trip_combos')
       .select('*')
       .eq('user_id', session.user.id)
       .order('score', { ascending: false })
       .order('start_date', { ascending: true })
-    if (!error) setCombos(data || [])
+
+    if (error || !comboData) { setLoading(false); return }
+
+    // Fetch events for all combos
+    const allIds = [...new Set(comboData.flatMap(c => c.event_ids || []))]
+    const { data: eventData } = await supabase
+      .from('events')
+      .select('id, away_team, home_team, league_key, event_date')
+      .in('id', allIds)
+
+    const eventMap = {}
+    for (const e of (eventData || [])) eventMap[e.id] = e
+
+    const combosWithEvents = comboData.map(c => ({
+      ...c,
+      events: (c.event_ids || []).map(id => eventMap[id]).filter(Boolean)
+    }))
+
+    setCombos(combosWithEvents)
     setLoading(false)
   }
 
@@ -35,6 +53,18 @@ export default function Dashboard({ session }) {
     if (score >= 7) return '🔥 Hot combo'
     if (score >= 5) return '⭐ Great combo'
     return '✈️ Good combo'
+  }
+
+  function leagueColor(key) {
+    const colors = {
+      nfl: '#013369', mlb: '#002D72', nba: '#C9082A',
+      nhl: '#0033A0', wnba: '#C9082A', mls: '#002F6C',
+    }
+    return colors[key] || '#444'
+  }
+
+  function leagueLabel(key) {
+    return { nfl:'NFL', mlb:'MLB', nba:'NBA', nhl:'NHL', wnba:'WNBA', mls:'MLS' }[key] || key.toUpperCase()
   }
 
   if (selected) {
@@ -79,8 +109,23 @@ export default function Dashboard({ session }) {
                 <div className={styles.cardDates}>
                   {formatDate(combo.start_date)} – {formatDate(combo.end_date)}
                 </div>
-                <div className={styles.cardEvents}>
-                  {combo.score} events that weekend →
+                <div className={styles.cardTeams}>
+                  {combo.events && combo.events.slice(0, 3).map((event, i) => (
+                    <div key={i} className={styles.cardTeamRow}>
+                      <span
+                        className={styles.cardLeaguePill}
+                        style={{ background: leagueColor(event.league_key) }}
+                      >
+                        {leagueLabel(event.league_key)}
+                      </span>
+                      <span className={styles.cardTeamName}>
+                        {event.away_team} @ {event.home_team}
+                      </span>
+                    </div>
+                  ))}
+                  {combo.events && combo.events.length > 3 && (
+                    <div className={styles.cardMore}>+{combo.events.length - 3} more →</div>
+                  )}
                 </div>
               </div>
             ))}
