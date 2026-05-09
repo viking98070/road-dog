@@ -140,3 +140,17 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
+.cardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  gap: 8px;
+}
+
+.cardBadge {
+  font-size: 11px;
+  color: var(--orange);
+  font-weight: 600;
+  white-space: nowrap;
+}
