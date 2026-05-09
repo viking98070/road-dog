@@ -1,156 +1,40 @@
-.page {
-  min-height: 100vh;
-  background: var(--bg);
-}
-
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 24px;
-  border-bottom: 1px solid var(--border);
-  position: sticky;
-  top: 0;
-  background: var(--bg);
-  z-index: 10;
-}
-
-.logo {
-  font-family: var(--head);
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--text);
-  letter-spacing: 2px;
-  text-transform: uppercase;
-}
-
-.logo span { color: var(--orange); }
-
-.signOut {
-  background: transparent;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 7px 14px;
-  color: var(--text2);
-  font-size: 13px;
-  transition: border-color 0.15s, color 0.15s;
-}
-
-.signOut:hover { border-color: var(--text2); color: var(--text); }
-
-.main {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 40px 24px;
-}
-
-.welcome { margin-bottom: 32px; }
-
-.welcome h1 {
-  font-family: var(--head);
-  font-size: 32px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 6px;
-}
-
-.welcome p { color: var(--text2); font-size: 15px; }
-
-.empty {
-  text-align: center;
-  padding: 80px 24px;
+.cardTeams {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 12px;
+  gap: 5px;
+  margin-top: 10px;
+  border-top: 0.5px solid var(--border);
+  padding-top: 10px;
 }
 
-.emptyIcon { font-size: 48px; }
-
-.empty h2 {
-  font-family: var(--head);
-  font-size: 22px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.empty p { color: var(--text2); font-size: 14px; max-width: 300px; line-height: 1.6; }
-
-.spinner {
-  width: 28px;
-  height: 28px;
-  border: 2px solid var(--border);
-  border-top-color: var(--orange);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin { to { transform: rotate(360deg); } }
-
-.btn {
-  background: var(--orange);
-  color: #fff;
-  border: none;
-  border-radius: 10px;
-  padding: 12px 28px;
-  font-family: var(--head);
-  font-size: 15px;
-  font-weight: 600;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  margin-top: 8px;
-  transition: opacity 0.15s;
-}
-
-.btn:hover { opacity: 0.88; }
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 16px;
-}
-
-.card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 20px;
-}
-
-.cardCity {
-  font-family: var(--head);
-  font-size: 20px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 6px;
-}
-
-.cardDates {
-  font-size: 13px;
-  color: var(--orange);
-  font-weight: 600;
-  margin-bottom: 6px;
-}
-
-.cardEvents {
-  font-size: 12px;
-  color: var(--text3);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-.cardHeader {
+.cardTeamRow {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  margin-bottom: 8px;
-  gap: 8px;
+  align-items: center;
+  gap: 7px;
 }
 
-.cardBadge {
+.cardLeaguePill {
+  font-family: var(--head);
+  font-size: 9px;
+  font-weight: 700;
+  color: #fff;
+  padding: 2px 6px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  letter-spacing: 0.5px;
+}
+
+.cardTeamName {
+  font-size: 11px;
+  color: var(--text2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cardMore {
   font-size: 11px;
   color: var(--orange);
   font-weight: 600;
-  white-space: nowrap;
+  margin-top: 2px;
 }
