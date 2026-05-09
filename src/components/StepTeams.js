@@ -95,7 +95,8 @@ export default function StepTeams({ leagues, selected, setSelected, onBack, onNe
         {teams.map(name => {
           const sel = isSelected(activeTab, name)
           const color = TEAM_COLORS[name] || '#333'
-          const initials = name.split(' ').map(w => w[0]).join('').slice(0, 3).toUpperCase()
+          const color = TEAM_COLORS[name] || '#5C0A10'
+const initials = name.split(' ').map(w => w[0]).join('').slice(0, 3).toUpperCase()
           return (
             <div
               key={name}
