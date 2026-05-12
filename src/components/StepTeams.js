@@ -3,17 +3,207 @@ import styles from './Step.module.css'
 
 const TEAM_SPORTS = ['nfl', 'mlb', 'nba', 'nhl', 'cfb', 'mcbb', 'wcbb', 'mls', 'nwsl', 'wnba']
 
+// Each team: { short: display name, full: name saved to DB }
+// For colleges, full is the same as short (matched smartly in backend)
 const TEAMS = {
-  nfl: ['49ers','Bears','Bengals','Bills','Broncos','Browns','Buccaneers','Cardinals','Chargers','Chiefs','Colts','Cowboys','Dolphins','Eagles','Falcons','Giants','Jaguars','Jets','Lions','Packers','Panthers','Patriots','Raiders','Rams','Ravens','Saints','Seahawks','Steelers','Texans','Titans','Vikings','Washington'],
-  mlb: ['Angels','Astros','Athletics','Blue Jays','Braves','Brewers','Cardinals','Cubs','Dodgers','Giants','Guardians','Mariners','Mets','Nationals','Orioles','Padres','Phillies','Pirates','Rangers','Rays','Red Sox','Reds','Rockies','Royals','Tigers','Twins','White Sox','Yankees'],
-  nba: ['76ers','Bucks','Bulls','Cavaliers','Celtics','Clippers','Grizzlies','Hawks','Heat','Hornets','Jazz','Kings','Knicks','Lakers','Magic','Mavericks','Nets','Nuggets','Pacers','Pelicans','Pistons','Raptors','Rockets','Spurs','Suns','Thunder','Timberwolves','Trail Blazers','Warriors','Wizards'],
-  nhl: ['Blackhawks','Blue Jackets','Blues','Bruins','Canucks','Capitals','Devils','Ducks','Flames','Flyers','Golden Knights','Hurricanes','Islanders','Jets','Kings','Kraken','Lightning','Maple Leafs','Oilers','Panthers','Penguins','Predators','Rangers','Red Wings','Sabres','Senators','Sharks','Stars','Wild'],
-  cfb: ['Alabama','Arkansas','Auburn','Baylor','BYU','Clemson','Colorado','Duke','Florida','Florida St.','Georgia','Georgia Tech','Houston','Illinois','Indiana','Iowa','Iowa St.','Kansas','Kansas St.','Kentucky','LSU','Louisville','Maryland','Miami','Michigan','Michigan St.','Minnesota','Mississippi St.','Missouri','Nebraska','North Carolina','North Carolina St.','Northwestern','Notre Dame','Ohio State','Oklahoma','Oklahoma St.','Ole Miss','Oregon','Oregon St.','Penn State','Pittsburgh','Purdue','Rutgers','SMU','South Carolina','Stanford','Syracuse','TCU','Tennessee','Texas','Texas A&M','Texas Tech','UCLA','USC','Utah','Vanderbilt','Virginia','Virginia Tech','Wake Forest','Washington','Washington St.','West Virginia','Wisconsin'],
-  mcbb: ['Alabama','Arizona','Arizona St.','Arkansas','Auburn','Baylor','BYU','Cincinnati','Clemson','Colorado','Connecticut','Duke','Florida','Florida St.','Gonzaga','Georgia','Georgia Tech','Houston','Illinois','Indiana','Iowa','Iowa St.','Kansas','Kansas St.','Kentucky','Louisville','LSU','Marquette','Maryland','Memphis','Michigan','Michigan St.','Minnesota','Missouri','North Carolina','North Carolina St.','Northwestern','Notre Dame','Ohio State','Oklahoma','Oklahoma St.','Oregon','Penn State','Pittsburgh','Purdue','Rutgers','San Diego St.','South Carolina','Stanford','Syracuse','TCU','Tennessee','Texas','Texas A&M','Texas Tech','UCLA','USC','Utah','Vanderbilt','Villanova','Virginia','Virginia Tech','Wake Forest','Washington','West Virginia','Wisconsin','Xavier'],
-  wcbb: ['Baylor','Connecticut','Duke','Florida St.','Georgia','Iowa','Iowa St.','LSU','Louisville','Maryland','Michigan','NC State','North Carolina','Notre Dame','Ohio State','Oklahoma','Oregon','South Carolina','Stanford','Tennessee','Texas','Texas A&M','UCLA','USC','Utah','Virginia Tech','Washington','Wisconsin'],
-  mls: ['Atlanta United','Austin FC','Charlotte FC','Chicago Fire','Colorado Rapids','Columbus Crew','D.C. United','FC Dallas','Inter Miami','LA Galaxy','LAFC','Minnesota United','Nashville SC','New England Revolution','NYCFC','NY Red Bulls','Orlando City','Philadelphia Union','Portland Timbers','Real Salt Lake','San Diego FC','San Jose Earthquakes','Seattle Sounders','Sporting KC','St. Louis City','Toronto FC','Vancouver Whitecaps'],
-  nwsl: ['Angel City','Bay FC','Chicago Red Stars','Houston Dash','Kansas City Current','NJ/NY Gotham','North Carolina Courage','Orlando Pride','Portland Thorns','Racing Louisville','San Diego Wave','Seattle Reign','Utah Royals','Washington Spirit'],
-  wnba: ['Aces','Dream','Fever','Liberty','Lynx','Mercury','Mystics','Sky','Sparks','Storm','Sun','Wings'],
+  nfl: [
+    { short: '49ers', full: 'San Francisco 49ers' },
+    { short: 'Bears', full: 'Chicago Bears' },
+    { short: 'Bengals', full: 'Cincinnati Bengals' },
+    { short: 'Bills', full: 'Buffalo Bills' },
+    { short: 'Broncos', full: 'Denver Broncos' },
+    { short: 'Browns', full: 'Cleveland Browns' },
+    { short: 'Buccaneers', full: 'Tampa Bay Buccaneers' },
+    { short: 'Cardinals', full: 'Arizona Cardinals' },
+    { short: 'Chargers', full: 'Los Angeles Chargers' },
+    { short: 'Chiefs', full: 'Kansas City Chiefs' },
+    { short: 'Colts', full: 'Indianapolis Colts' },
+    { short: 'Cowboys', full: 'Dallas Cowboys' },
+    { short: 'Dolphins', full: 'Miami Dolphins' },
+    { short: 'Eagles', full: 'Philadelphia Eagles' },
+    { short: 'Falcons', full: 'Atlanta Falcons' },
+    { short: 'Giants', full: 'New York Giants' },
+    { short: 'Jaguars', full: 'Jacksonville Jaguars' },
+    { short: 'Jets', full: 'New York Jets' },
+    { short: 'Lions', full: 'Detroit Lions' },
+    { short: 'Packers', full: 'Green Bay Packers' },
+    { short: 'Panthers', full: 'Carolina Panthers' },
+    { short: 'Patriots', full: 'New England Patriots' },
+    { short: 'Raiders', full: 'Las Vegas Raiders' },
+    { short: 'Rams', full: 'Los Angeles Rams' },
+    { short: 'Ravens', full: 'Baltimore Ravens' },
+    { short: 'Saints', full: 'New Orleans Saints' },
+    { short: 'Seahawks', full: 'Seattle Seahawks' },
+    { short: 'Steelers', full: 'Pittsburgh Steelers' },
+    { short: 'Texans', full: 'Houston Texans' },
+    { short: 'Titans', full: 'Tennessee Titans' },
+    { short: 'Vikings', full: 'Minnesota Vikings' },
+    { short: 'Washington', full: 'Washington Commanders' },
+  ],
+  mlb: [
+    { short: 'Angels', full: 'Los Angeles Angels' },
+    { short: 'Astros', full: 'Houston Astros' },
+    { short: 'Athletics', full: 'Athletics' },
+    { short: 'Blue Jays', full: 'Toronto Blue Jays' },
+    { short: 'Braves', full: 'Atlanta Braves' },
+    { short: 'Brewers', full: 'Milwaukee Brewers' },
+    { short: 'Cardinals', full: 'St. Louis Cardinals' },
+    { short: 'Cubs', full: 'Chicago Cubs' },
+    { short: 'Diamondbacks', full: 'Arizona Diamondbacks' },
+    { short: 'Dodgers', full: 'Los Angeles Dodgers' },
+    { short: 'Giants', full: 'San Francisco Giants' },
+    { short: 'Guardians', full: 'Cleveland Guardians' },
+    { short: 'Mariners', full: 'Seattle Mariners' },
+    { short: 'Marlins', full: 'Miami Marlins' },
+    { short: 'Mets', full: 'New York Mets' },
+    { short: 'Nationals', full: 'Washington Nationals' },
+    { short: 'Orioles', full: 'Baltimore Orioles' },
+    { short: 'Padres', full: 'San Diego Padres' },
+    { short: 'Phillies', full: 'Philadelphia Phillies' },
+    { short: 'Pirates', full: 'Pittsburgh Pirates' },
+    { short: 'Rangers', full: 'Texas Rangers' },
+    { short: 'Rays', full: 'Tampa Bay Rays' },
+    { short: 'Red Sox', full: 'Boston Red Sox' },
+    { short: 'Reds', full: 'Cincinnati Reds' },
+    { short: 'Rockies', full: 'Colorado Rockies' },
+    { short: 'Royals', full: 'Kansas City Royals' },
+    { short: 'Tigers', full: 'Detroit Tigers' },
+    { short: 'Twins', full: 'Minnesota Twins' },
+    { short: 'White Sox', full: 'Chicago White Sox' },
+    { short: 'Yankees', full: 'New York Yankees' },
+  ],
+  nba: [
+    { short: '76ers', full: 'Philadelphia 76ers' },
+    { short: 'Bucks', full: 'Milwaukee Bucks' },
+    { short: 'Bulls', full: 'Chicago Bulls' },
+    { short: 'Cavaliers', full: 'Cleveland Cavaliers' },
+    { short: 'Celtics', full: 'Boston Celtics' },
+    { short: 'Clippers', full: 'LA Clippers' },
+    { short: 'Grizzlies', full: 'Memphis Grizzlies' },
+    { short: 'Hawks', full: 'Atlanta Hawks' },
+    { short: 'Heat', full: 'Miami Heat' },
+    { short: 'Hornets', full: 'Charlotte Hornets' },
+    { short: 'Jazz', full: 'Utah Jazz' },
+    { short: 'Kings', full: 'Sacramento Kings' },
+    { short: 'Knicks', full: 'New York Knicks' },
+    { short: 'Lakers', full: 'Los Angeles Lakers' },
+    { short: 'Magic', full: 'Orlando Magic' },
+    { short: 'Mavericks', full: 'Dallas Mavericks' },
+    { short: 'Nets', full: 'Brooklyn Nets' },
+    { short: 'Nuggets', full: 'Denver Nuggets' },
+    { short: 'Pacers', full: 'Indiana Pacers' },
+    { short: 'Pelicans', full: 'New Orleans Pelicans' },
+    { short: 'Pistons', full: 'Detroit Pistons' },
+    { short: 'Raptors', full: 'Toronto Raptors' },
+    { short: 'Rockets', full: 'Houston Rockets' },
+    { short: 'Spurs', full: 'San Antonio Spurs' },
+    { short: 'Suns', full: 'Phoenix Suns' },
+    { short: 'Thunder', full: 'Oklahoma City Thunder' },
+    { short: 'Timberwolves', full: 'Minnesota Timberwolves' },
+    { short: 'Trail Blazers', full: 'Portland Trail Blazers' },
+    { short: 'Warriors', full: 'Golden State Warriors' },
+    { short: 'Wizards', full: 'Washington Wizards' },
+  ],
+  nhl: [
+    { short: 'Blackhawks', full: 'Chicago Blackhawks' },
+    { short: 'Blue Jackets', full: 'Columbus Blue Jackets' },
+    { short: 'Blues', full: 'St. Louis Blues' },
+    { short: 'Bruins', full: 'Boston Bruins' },
+    { short: 'Canucks', full: 'Vancouver Canucks' },
+    { short: 'Capitals', full: 'Washington Capitals' },
+    { short: 'Devils', full: 'New Jersey Devils' },
+    { short: 'Ducks', full: 'Anaheim Ducks' },
+    { short: 'Flames', full: 'Calgary Flames' },
+    { short: 'Flyers', full: 'Philadelphia Flyers' },
+    { short: 'Golden Knights', full: 'Vegas Golden Knights' },
+    { short: 'Hurricanes', full: 'Carolina Hurricanes' },
+    { short: 'Islanders', full: 'New York Islanders' },
+    { short: 'Jets', full: 'Winnipeg Jets' },
+    { short: 'Kings', full: 'Los Angeles Kings' },
+    { short: 'Kraken', full: 'Seattle Kraken' },
+    { short: 'Lightning', full: 'Tampa Bay Lightning' },
+    { short: 'Mammoth', full: 'Utah Mammoth' },
+    { short: 'Maple Leafs', full: 'Toronto Maple Leafs' },
+    { short: 'Oilers', full: 'Edmonton Oilers' },
+    { short: 'Panthers', full: 'Florida Panthers' },
+    { short: 'Penguins', full: 'Pittsburgh Penguins' },
+    { short: 'Predators', full: 'Nashville Predators' },
+    { short: 'Rangers', full: 'New York Rangers' },
+    { short: 'Red Wings', full: 'Detroit Red Wings' },
+    { short: 'Sabres', full: 'Buffalo Sabres' },
+    { short: 'Senators', full: 'Ottawa Senators' },
+    { short: 'Sharks', full: 'San Jose Sharks' },
+    { short: 'Stars', full: 'Dallas Stars' },
+    { short: 'Wild', full: 'Minnesota Wild' },
+  ],
+  cfb: ['Alabama','Arkansas','Auburn','Baylor','BYU','Clemson','Colorado','Duke','Florida','Florida St.','Georgia','Georgia Tech','Houston','Illinois','Indiana','Iowa','Iowa St.','Kansas','Kansas St.','Kentucky','LSU','Louisville','Maryland','Miami','Michigan','Michigan St.','Minnesota','Mississippi St.','Missouri','Nebraska','North Carolina','North Carolina St.','Northwestern','Notre Dame','Ohio State','Oklahoma','Oklahoma St.','Ole Miss','Oregon','Oregon St.','Penn State','Pittsburgh','Purdue','Rutgers','SMU','South Carolina','Stanford','Syracuse','TCU','Tennessee','Texas','Texas A&M','Texas Tech','UCLA','USC','Utah','Vanderbilt','Virginia','Virginia Tech','Wake Forest','Washington','Washington St.','West Virginia','Wisconsin'].map(n => ({ short: n, full: n })),
+  mcbb: ['Alabama','Arizona','Arizona St.','Arkansas','Auburn','Baylor','BYU','Cincinnati','Clemson','Colorado','Connecticut','Duke','Florida','Florida St.','Gonzaga','Georgia','Georgia Tech','Houston','Illinois','Indiana','Iowa','Iowa St.','Kansas','Kansas St.','Kentucky','Louisville','LSU','Marquette','Maryland','Memphis','Michigan','Michigan St.','Minnesota','Missouri','North Carolina','North Carolina St.','Northwestern','Notre Dame','Ohio State','Oklahoma','Oklahoma St.','Oregon','Penn State','Pittsburgh','Purdue','Rutgers','San Diego St.','South Carolina','Stanford','Syracuse','TCU','Tennessee','Texas','Texas A&M','Texas Tech','UCLA','USC','Utah','Vanderbilt','Villanova','Virginia','Virginia Tech','Wake Forest','Washington','West Virginia','Wisconsin','Xavier'].map(n => ({ short: n, full: n })),
+  wcbb: ['Baylor','Connecticut','Duke','Florida St.','Georgia','Iowa','Iowa St.','LSU','Louisville','Maryland','Michigan','NC State','North Carolina','Notre Dame','Ohio State','Oklahoma','Oregon','South Carolina','Stanford','Tennessee','Texas','Texas A&M','UCLA','USC','Utah','Virginia Tech','Washington','Wisconsin'].map(n => ({ short: n, full: n })),
+  mls: [
+    { short: 'Atlanta United', full: 'Atlanta United FC' },
+    { short: 'Austin FC', full: 'Austin FC' },
+    { short: 'CF Montréal', full: 'CF Montréal' },
+    { short: 'Charlotte FC', full: 'Charlotte FC' },
+    { short: 'Chicago Fire', full: 'Chicago Fire FC' },
+    { short: 'Colorado Rapids', full: 'Colorado Rapids' },
+    { short: 'Columbus Crew', full: 'Columbus Crew' },
+    { short: 'D.C. United', full: 'D.C. United' },
+    { short: 'FC Cincinnati', full: 'FC Cincinnati' },
+    { short: 'FC Dallas', full: 'FC Dallas' },
+    { short: 'Houston Dynamo', full: 'Houston Dynamo FC' },
+    { short: 'Inter Miami', full: 'Inter Miami CF' },
+    { short: 'LA Galaxy', full: 'LA Galaxy' },
+    { short: 'LAFC', full: 'LAFC' },
+    { short: 'Minnesota United', full: 'Minnesota United FC' },
+    { short: 'Nashville SC', full: 'Nashville SC' },
+    { short: 'New England Revolution', full: 'New England Revolution' },
+    { short: 'NYCFC', full: 'New York City FC' },
+    { short: 'NY Red Bulls', full: 'Red Bull New York' },
+    { short: 'Orlando City', full: 'Orlando City SC' },
+    { short: 'Philadelphia Union', full: 'Philadelphia Union' },
+    { short: 'Portland Timbers', full: 'Portland Timbers' },
+    { short: 'Real Salt Lake', full: 'Real Salt Lake' },
+    { short: 'San Diego FC', full: 'San Diego FC' },
+    { short: 'San Jose Earthquakes', full: 'San Jose Earthquakes' },
+    { short: 'Seattle Sounders', full: 'Seattle Sounders FC' },
+    { short: 'Sporting KC', full: 'Sporting Kansas City' },
+    { short: 'St. Louis City', full: 'St. Louis CITY SC' },
+    { short: 'Toronto FC', full: 'Toronto FC' },
+    { short: 'Vancouver Whitecaps', full: 'Vancouver Whitecaps' },
+  ],
+  nwsl: [
+    { short: 'Angel City', full: 'Angel City FC' },
+    { short: 'Bay FC', full: 'Bay FC' },
+    { short: 'Boston Legacy', full: 'Boston Legacy FC' },
+    { short: 'Chicago Stars', full: 'Chicago Stars FC' },
+    { short: 'Denver Summit', full: 'Denver Summit FC' },
+    { short: 'Houston Dash', full: 'Houston Dash' },
+    { short: 'Kansas City Current', full: 'Kansas City Current' },
+    { short: 'NJ/NY Gotham', full: 'Gotham FC' },
+    { short: 'North Carolina Courage', full: 'North Carolina Courage' },
+    { short: 'Orlando Pride', full: 'Orlando Pride' },
+    { short: 'Portland Thorns', full: 'Portland Thorns FC' },
+    { short: 'Racing Louisville', full: 'Racing Louisville FC' },
+    { short: 'San Diego Wave', full: 'San Diego Wave FC' },
+    { short: 'Seattle Reign', full: 'Seattle Reign FC' },
+    { short: 'Utah Royals', full: 'Utah Royals' },
+    { short: 'Washington Spirit', full: 'Washington Spirit' },
+  ],
+  wnba: [
+    { short: 'Aces', full: 'Las Vegas Aces' },
+    { short: 'Dream', full: 'Atlanta Dream' },
+    { short: 'Fever', full: 'Indiana Fever' },
+    { short: 'Liberty', full: 'New York Liberty' },
+    { short: 'Lynx', full: 'Minnesota Lynx' },
+    { short: 'Mercury', full: 'Phoenix Mercury' },
+    { short: 'Mystics', full: 'Washington Mystics' },
+    { short: 'Sky', full: 'Chicago Sky' },
+    { short: 'Sparks', full: 'Los Angeles Sparks' },
+    { short: 'Storm', full: 'Seattle Storm' },
+    { short: 'Sun', full: 'Connecticut Sun' },
+    { short: 'Valkyries', full: 'Golden State Valkyries' },
+    { short: 'Wings', full: 'Dallas Wings' },
+  ],
 }
 
 const LABELS = { nfl:'NFL', mlb:'MLB', nba:'NBA', nhl:'NHL', cfb:'College Football', mcbb:"Men's CBB", wcbb:"Women's CBB", mls:'MLS', nwsl:'NWSL', wnba:'WNBA' }
@@ -27,8 +217,8 @@ const TEAM_COLORS = {
   Ravens:'#241773',Saints:'#9B8A5A',Seahawks:'#002244',Steelers:'#101820',Texans:'#03202F',
   Titans:'#0C2340',Vikings:'#4F2683',Washington:'#773141',
   Angels:'#BA0021',Astros:'#EB6E1F',Athletics:'#003831','Blue Jays':'#134A8E',Braves:'#CE1141',
-  Brewers:'#FFC52F',Cardinals:'#C41E3A',Cubs:'#0E3386',Dodgers:'#005A9C',
-  Giants:'#FD5A1E',Guardians:'#E31937',Mariners:'#0C2C56',Mets:'#002D72',Nationals:'#AB0003',
+  Brewers:'#FFC52F',Cubs:'#0E3386',Diamondbacks:'#A71930',Dodgers:'#005A9C',
+  Guardians:'#E31937',Mariners:'#0C2C56',Marlins:'#00A3E0',Mets:'#002D72',Nationals:'#AB0003',
   Orioles:'#DF4601',Padres:'#2F241D',Phillies:'#E81828',Pirates:'#27251F',Rangers:'#003278',
   Rays:'#092C5C','Red Sox':'#BD3039',Reds:'#C6011F',Rockies:'#33006F',Royals:'#004687',
   Tigers:'#0C2340',Twins:'#002B5C','White Sox':'#27251F',Yankees:'#003087',
@@ -41,21 +231,22 @@ const TEAM_COLORS = {
   Blackhawks:'#CF0A2C','Blue Jackets':'#002654',Blues:'#002F87',Bruins:'#FCB514',
   Canucks:'#00843D',Capitals:'#041E42',Devils:'#CE1126',Ducks:'#F47A38',Flames:'#C8102E',
   Flyers:'#F74902','Golden Knights':'#B4975A',Hurricanes:'#CC0000',Islanders:'#00539B',
-  Kings:'#111111',Kraken:'#001628',Lightning:'#002868','Maple Leafs':'#00205B',
+  Kings:'#111111',Kraken:'#001628',Lightning:'#002868',Mammoth:'#69B3E7','Maple Leafs':'#00205B',
   Oilers:'#FF4C00',Panthers:'#C8102E',Penguins:'#CFC493',Predators:'#FFB81C',
   Rangers:'#0038A8','Red Wings':'#CE1126',Sabres:'#003087',Senators:'#C8102E',
   Sharks:'#006D75',Stars:'#006847',Wild:'#154734',
   Aces:'#000000',Dream:'#C8102E',Fever:'#FFC72C',Liberty:'#6ECEB2',Lynx:'#236192',
   Mercury:'#CB6015',Mystics:'#002B5C',Sky:'#418FDE',Sparks:'#702F8A',Storm:'#2C5234',
-  Sun:'#F05023',Wings:'#C4D600',
-  'Angel City':'#1B0C3A','Bay FC':'#1D4289','Chicago Red Stars':'#CB333B',
-  'Houston Dash':'#F4911E','Kansas City Current':'#00529B','NJ/NY Gotham':'#1A1A1A',
+  Sun:'#F05023',Valkyries:'#005FA0',Wings:'#C4D600',
+  'Angel City':'#1B0C3A','Bay FC':'#1D4289','Boston Legacy':'#0B2545','Chicago Stars':'#CB333B',
+  'Denver Summit':'#FCC10F','Houston Dash':'#F4911E','Kansas City Current':'#00529B','NJ/NY Gotham':'#1A1A1A',
   'North Carolina Courage':'#CE1126','Orlando Pride':'#633492','Portland Thorns':'#A40A14',
   'Racing Louisville':'#01426A','San Diego Wave':'#F7A800','Seattle Reign':'#005695',
   'Utah Royals':'#7B2D8B','Washington Spirit':'#003865',
-  'Atlanta United':'#80000A','Austin FC':'#00B140','Charlotte FC':'#1A85C8',
+  'Atlanta United':'#80000A','Austin FC':'#00B140','CF Montréal':'#0033A0','Charlotte FC':'#1A85C8',
   'Chicago Fire':'#9A1B2E','Colorado Rapids':'#862633','Columbus Crew':'#FEDD00',
-  'D.C. United':'#000000','FC Dallas':'#BF1B23','Inter Miami':'#F7B5CD','LA Galaxy':'#00245D',
+  'D.C. United':'#000000','FC Cincinnati':'#003594','FC Dallas':'#BF1B23','Houston Dynamo':'#F5631A',
+  'Inter Miami':'#F7B5CD','LA Galaxy':'#00245D',
   'LAFC':'#C39E6D','Minnesota United':'#8CD2F4','Nashville SC':'#ECE83A',
   'New England Revolution':'#0A2141','NYCFC':'#6CACE4','NY Red Bulls':'#ED1E36',
   'Orlando City':'#633492','Philadelphia Union':'#071B2C','Portland Timbers':'#004812',
@@ -63,6 +254,7 @@ const TEAM_COLORS = {
   'Seattle Sounders':'#5D9741','Sporting KC':'#002F65','St. Louis City':'#DC1B34',
   'Toronto FC':'#B81137','Vancouver Whitecaps':'#009BC8',
 }
+
 const TEAM_TRICODES = {
   '49ers':'SF',Bears:'CHI',Bengals:'CIN',Bills:'BUF',Broncos:'DEN',Browns:'CLE',
   Buccaneers:'TB',Cardinals:'ARI',Chargers:'LAC',Chiefs:'KC',Colts:'IND',
@@ -71,8 +263,8 @@ const TEAM_TRICODES = {
   Patriots:'NE',Raiders:'LV',Rams:'LAR',Ravens:'BAL',Saints:'NO',
   Seahawks:'SEA',Steelers:'PIT',Texans:'HOU',Titans:'TEN',Vikings:'MIN',Washington:'WAS',
   Angels:'LAA',Astros:'HOU',Athletics:'OAK','Blue Jays':'TOR',Braves:'ATL',
-  Brewers:'MIL',Cardinals:'STL',Cubs:'CHC',Dodgers:'LAD',Giants:'SF',
-  Guardians:'CLE',Mariners:'SEA',Mets:'NYM',Nationals:'WSH',Orioles:'BAL',
+  Brewers:'MIL',Cubs:'CHC',Diamondbacks:'ARI',Dodgers:'LAD',
+  Guardians:'CLE',Mariners:'SEA',Marlins:'MIA',Mets:'NYM',Nationals:'WSH',Orioles:'BAL',
   Padres:'SD',Phillies:'PHI',Pirates:'PIT',Rangers:'TEX',Rays:'TB',
   'Red Sox':'BOS',Reds:'CIN',Rockies:'COL',Royals:'KC',Tigers:'DET',
   Twins:'MIN','White Sox':'CWS',Yankees:'NYY',
@@ -84,19 +276,19 @@ const TEAM_TRICODES = {
   Thunder:'OKC',Timberwolves:'MIN','Trail Blazers':'POR',Warriors:'GS',Wizards:'WAS',
   Blackhawks:'CHI','Blue Jackets':'CBJ',Blues:'STL',Bruins:'BOS',Canucks:'VAN',
   Capitals:'WSH',Devils:'NJ',Ducks:'ANA',Flames:'CGY',Flyers:'PHI',
-  'Golden Knights':'VGK',Hurricanes:'CAR',Islanders:'NYI',Jets:'WPG',Kings:'LAK',
-  Kraken:'SEA',Lightning:'TB','Maple Leafs':'TOR',Oilers:'EDM',Panthers:'FLA',
-  Penguins:'PIT',Predators:'NSH',Rangers:'NYR','Red Wings':'DET',Sabres:'BUF',
-  Senators:'OTT',Sharks:'SJ',Stars:'DAL',Wild:'MIN',
+  'Golden Knights':'VGK',Hurricanes:'CAR',Islanders:'NYI',Kraken:'SEA',Lightning:'TB',
+  Mammoth:'UTA','Maple Leafs':'TOR',Oilers:'EDM',Penguins:'PIT',Predators:'NSH',
+  'Red Wings':'DET',Sabres:'BUF',Senators:'OTT',Sharks:'SJ',Stars:'DAL',Wild:'MIN',
   Aces:'LV',Dream:'ATL',Fever:'IND',Liberty:'NY',Lynx:'MIN',Mercury:'PHX',
-  Mystics:'WAS',Sky:'CHI',Sparks:'LA',Storm:'SEA',Sun:'CON',Wings:'DAL',
-  'Angel City':'LA','Bay FC':'SJ','Chicago Red Stars':'CHI','Houston Dash':'HOU',
+  Mystics:'WAS',Sky:'CHI',Sparks:'LA',Storm:'SEA',Sun:'CON',Valkyries:'GSV',Wings:'DAL',
+  'Angel City':'LA','Bay FC':'SJ','Boston Legacy':'BOS','Chicago Stars':'CHI',
+  'Denver Summit':'DEN','Houston Dash':'HOU',
   'Kansas City Current':'KC','NJ/NY Gotham':'NY','North Carolina Courage':'NC',
   'Orlando Pride':'ORL','Portland Thorns':'POR','Racing Louisville':'LOU',
   'San Diego Wave':'SD','Seattle Reign':'SEA','Utah Royals':'UTA','Washington Spirit':'WAS',
-  'Atlanta United':'ATL','Austin FC':'ATX','Charlotte FC':'CLT','Chicago Fire':'CHI',
-  'Colorado Rapids':'COL','Columbus Crew':'CLB','D.C. United':'DC','FC Dallas':'DAL',
-  'Inter Miami':'MIA','LA Galaxy':'LA','LAFC':'LAFC','Minnesota United':'MIN',
+  'Atlanta United':'ATL','Austin FC':'ATX','CF Montréal':'MTL','Charlotte FC':'CLT','Chicago Fire':'CHI',
+  'Colorado Rapids':'COL','Columbus Crew':'CLB','D.C. United':'DC','FC Cincinnati':'CIN','FC Dallas':'DAL',
+  'Houston Dynamo':'HOU','Inter Miami':'MIA','LA Galaxy':'LA','LAFC':'LAFC','Minnesota United':'MIN',
   'Nashville SC':'NSH','New England Revolution':'NE','NYCFC':'NYC','NY Red Bulls':'NY',
   'Orlando City':'ORL','Philadelphia Union':'PHI','Portland Timbers':'POR',
   'Real Salt Lake':'RSL','San Diego FC':'SD','San Jose Earthquakes':'SJ',
@@ -114,9 +306,9 @@ const TEAM_CITIES = {
   Ravens:'Baltimore',Saints:'New Orleans',Seahawks:'Seattle',Steelers:'Pittsburgh',
   Texans:'Houston',Titans:'Tennessee',Vikings:'Minnesota',Washington:'Washington',
   Angels:'Los Angeles A',Astros:'Houston',Athletics:'Oakland','Blue Jays':'Toronto',
-  Braves:'Atlanta',Brewers:'Milwaukee',Cardinals:'St. Louis',Cubs:'Chicago C',
+  Braves:'Atlanta',Brewers:'Milwaukee',Cubs:'Chicago C',Diamondbacks:'Phoenix',
   Dodgers:'Los Angeles D',Giants:'San Francisco',Guardians:'Cleveland',Mariners:'Seattle',
-  Mets:'New York M',Nationals:'Washington',Orioles:'Baltimore',Padres:'San Diego',
+  Marlins:'Miami',Mets:'New York M',Nationals:'Washington',Orioles:'Baltimore',Padres:'San Diego',
   Phillies:'Philadelphia',Pirates:'Pittsburgh',Rangers:'Texas',Rays:'Tampa Bay',
   'Red Sox':'Boston',Reds:'Cincinnati',Rockies:'Colorado',Royals:'Kansas City',
   Tigers:'Detroit',Twins:'Minnesota','White Sox':'Chicago W',Yankees:'New York Y',
@@ -132,24 +324,24 @@ const TEAM_CITIES = {
   Canucks:'Vancouver',Capitals:'Washington',Devils:'New Jersey',Ducks:'Anaheim',
   Flames:'Calgary',Flyers:'Philadelphia','Golden Knights':'Vegas',Hurricanes:'Carolina',
   Islanders:'New York',Jets:'Winnipeg',Kings:'Los Angeles',Kraken:'Seattle',
-  Lightning:'Tampa Bay','Maple Leafs':'Toronto',Oilers:'Edmonton',Panthers:'Florida',
+  Lightning:'Tampa Bay',Mammoth:'Utah','Maple Leafs':'Toronto',Oilers:'Edmonton',Panthers:'Florida',
   Penguins:'Pittsburgh',Predators:'Nashville',Rangers:'New York R','Red Wings':'Detroit',
   Sabres:'Buffalo',Senators:'Ottawa',Sharks:'San Jose',Stars:'Dallas',Wild:'Minnesota',
   Aces:'Las Vegas',Dream:'Atlanta',Fever:'Indiana',Liberty:'New York',Lynx:'Minnesota',
   Mercury:'Phoenix',Mystics:'Washington',Sky:'Chicago',Sparks:'Los Angeles',
-  Storm:'Seattle',Sun:'Connecticut',Wings:'Dallas',
-  'Atlanta United':'Atlanta','Austin FC':'Austin','Charlotte FC':'Charlotte',
+  Storm:'Seattle',Sun:'Connecticut',Valkyries:'Golden State',Wings:'Dallas',
+  'Atlanta United':'Atlanta','Austin FC':'Austin','CF Montréal':'Montreal','Charlotte FC':'Charlotte',
   'Chicago Fire':'Chicago','Colorado Rapids':'Denver','Columbus Crew':'Columbus',
-  'D.C. United':'Washington','FC Dallas':'Dallas','Inter Miami':'Miami',
-  'LA Galaxy':'Los Angeles G','LAFC':'Los Angeles L','Minnesota United':'Minneapolis',
-  'Nashville SC':'Nashville','New England Revolution':'Boston','NYCFC':'New York C',
-  'NY Red Bulls':'New York R','Orlando City':'Orlando','Philadelphia Union':'Philadelphia',
-  'Portland Timbers':'Portland','Real Salt Lake':'Salt Lake City',
+  'D.C. United':'Washington','FC Cincinnati':'Cincinnati','FC Dallas':'Dallas','Houston Dynamo':'Houston',
+  'Inter Miami':'Miami','LA Galaxy':'Los Angeles G','LAFC':'Los Angeles L',
+  'Minnesota United':'Minneapolis','Nashville SC':'Nashville','New England Revolution':'Boston',
+  'NYCFC':'New York C','NY Red Bulls':'New York R','Orlando City':'Orlando',
+  'Philadelphia Union':'Philadelphia','Portland Timbers':'Portland','Real Salt Lake':'Salt Lake City',
   'San Diego FC':'San Diego','San Jose Earthquakes':'San Jose','Seattle Sounders':'Seattle',
   'Sporting KC':'Kansas City','St. Louis City':'St. Louis',
   'Toronto FC':'Toronto','Vancouver Whitecaps':'Vancouver',
-  'Angel City':'Los Angeles','Bay FC':'San Jose','Chicago Red Stars':'Chicago',
-  'Houston Dash':'Houston','Kansas City Current':'Kansas City',
+  'Angel City':'Los Angeles','Bay FC':'San Jose','Boston Legacy':'Boston','Chicago Stars':'Chicago',
+  'Denver Summit':'Denver','Houston Dash':'Houston','Kansas City Current':'Kansas City',
   'NJ/NY Gotham':'New York','North Carolina Courage':'Raleigh',
   'Orlando Pride':'Orlando','Portland Thorns':'Portland',
   'Racing Louisville':'Louisville','San Diego Wave':'San Diego',
@@ -205,17 +397,17 @@ export default function StepTeams({ leagues, selected, setSelected, onBack, onNe
 
   if (teamLeagues.length === 0) { onNext(); return null }
 
-  function toggle(league, name) {
-    const id = `${league}:${name}`
+  function toggle(league, team) {
+    const id = `${league}:${team.full}`
     setSelected(prev =>
       prev.find(t => t.id === id)
         ? prev.filter(t => t.id !== id)
-        : [...prev, { id, league, name }]
+        : [...prev, { id, league, name: team.full, short: team.short }]
     )
   }
 
-  function isSelected(league, name) {
-    return selected.some(t => t.id === `${league}:${name}`)
+  function isSelected(league, team) {
+    return selected.some(t => t.id === `${league}:${team.full}`)
   }
 
   function switchTab(k) {
@@ -227,8 +419,8 @@ export default function StepTeams({ leagues, selected, setSelected, onBack, onNe
   const isCollege = ['cfb', 'mcbb', 'wcbb'].includes(activeTab)
 
   const teams = [...(TEAMS[activeTab] || [])].sort((a, b) => {
-    const ca = isCollege ? a : (TEAM_CITIES[a] || a)
-    const cb = isCollege ? b : (TEAM_CITIES[b] || b)
+    const ca = isCollege ? a.short : (TEAM_CITIES[a.short] || a.short)
+    const cb = isCollege ? b.short : (TEAM_CITIES[b.short] || b.short)
     return ca.localeCompare(cb)
   })
 
@@ -266,23 +458,23 @@ export default function StepTeams({ leagues, selected, setSelected, onBack, onNe
       )}
 
       <div className={styles.teamGrid}>
-        {teams.map(name => {
-          const sel = isSelected(activeTab, name)
-          const color = isCollege ? (COLLEGE_COLORS[name] || '#1a1a1a') : (TEAM_COLORS[name] || '#1a1a1a')
+        {teams.map(team => {
+          const sel = isSelected(activeTab, team)
+          const color = isCollege ? (COLLEGE_COLORS[team.short] || '#1a1a1a') : (TEAM_COLORS[team.short] || '#1a1a1a')
           const tricode = isCollege
-            ? (COLLEGE_ABBREVS[name] || name.split(' ').map(w=>w[0]).join('').slice(0,3).toUpperCase())
+            ? (COLLEGE_ABBREVS[team.short] || team.short.split(' ').map(w=>w[0]).join('').slice(0,3).toUpperCase())
             : (({'mlb:Rangers':'TEX','nhl:Rangers':'NYR','mlb:Cardinals':'STL','nfl:Cardinals':'ARI',
                 'nfl:Giants':'NYG','mlb:Giants':'SF','nba:Kings':'SAC','nhl:Kings':'LAK',
                 'nhl:Jets':'WPG','nfl:Jets':'NYJ','nfl:Panthers':'CAR','nhl:Panthers':'FLA',
-              })[`${activeTab}:${name}`] || TEAM_TRICODES[name] || name.split(' ').map(w=>w[0]).join('').slice(0,3).toUpperCase())
+              })[`${activeTab}:${team.short}`] || TEAM_TRICODES[team.short] || team.short.split(' ').map(w=>w[0]).join('').slice(0,3).toUpperCase())
           return (
             <div
-              key={name}
+              key={team.full}
               className={`${styles.teamCard} ${sel ? styles.sel : ''}`}
-              onClick={() => toggle(activeTab, name)}
+              onClick={() => toggle(activeTab, team)}
             >
               <div className={styles.teamCircle} style={{ background: color }}>{tricode}</div>
-              <div className={styles.teamName}>{name}</div>
+              <div className={styles.teamName}>{team.short}</div>
             </div>
           )
         })}
