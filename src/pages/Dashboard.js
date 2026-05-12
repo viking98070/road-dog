@@ -22,11 +22,10 @@ export default function Dashboard({ session }) {
 
     if (error || !comboData) { setLoading(false); return }
 
-    // Fetch events for all combos
     const allIds = [...new Set(comboData.flatMap(c => c.event_ids || []))]
     const { data: eventData } = await supabase
       .from('events')
-      .select('id, away_team, home_team, league_key, event_date')
+      .select('id, away_team, home_team, league_key, artist_name, type, event_date')
       .in('id', allIds)
 
     const eventMap = {}
@@ -55,16 +54,35 @@ export default function Dashboard({ session }) {
     return '✈️ Good combo'
   }
 
-  function leagueColor(key) {
+  function categoryColor(event) {
+    if (event.type === 'music') return '#7B2D8B'
+    if (event.type === 'comedy') return '#F4911E'
     const colors = {
       nfl: '#013369', mlb: '#002D72', nba: '#C9082A',
       nhl: '#0033A0', wnba: '#C9082A', mls: '#002F6C',
+      nwsl: '#7B2D8B', cfb: '#BF5700', mcbb: '#0033A0', wcbb: '#0033A0',
     }
-    return colors[key] || '#444'
+    return colors[event.league_key] || '#444'
   }
 
-  function leagueLabel(key) {
-    return { nfl:'NFL', mlb:'MLB', nba:'NBA', nhl:'NHL', wnba:'WNBA', mls:'MLS' }[key] || key.toUpperCase()
+  function categoryLabel(event) {
+    if (event.type === 'music') return 'MUSIC'
+    if (event.type === 'comedy') return 'COMEDY'
+    if (!event.league_key) return 'EVENT'
+    const labels = {
+      nfl:'NFL', mlb:'MLB', nba:'NBA', nhl:'NHL', wnba:'WNBA', mls:'MLS',
+      nwsl:'NWSL', cfb:'CFB', mcbb:'MCBB', wcbb:'WCBB',
+    }
+    return labels[event.league_key] || event.league_key.toUpperCase()
+  }
+
+  function eventDescription(event) {
+    if (event.type === 'sport') {
+      const away = event.away_team || 'TBD'
+      const home = event.home_team || 'TBD'
+      return `${away} @ ${home}`
+    }
+    return event.artist_name || 'Untitled event'
   }
 
   if (selected) {
@@ -114,12 +132,12 @@ export default function Dashboard({ session }) {
                     <div key={i} className={styles.cardTeamRow}>
                       <span
                         className={styles.cardLeaguePill}
-                        style={{ background: leagueColor(event.league_key) }}
+                        style={{ background: categoryColor(event) }}
                       >
-                        {leagueLabel(event.league_key)}
+                        {categoryLabel(event)}
                       </span>
                       <span className={styles.cardTeamName}>
-                        {event.away_team} @ {event.home_team}
+                        {eventDescription(event)}
                       </span>
                     </div>
                   ))}
