@@ -27,16 +27,12 @@ export default function Onboarding({ session }) {
     }
 
     if (selectedTeams.length > 0) {
-      // Delete existing teams first then insert fresh
       await supabase.from('user_teams').delete().eq('user_id', userId)
-
-      // Insert in batches of 10 to avoid timeouts
       const teams = selectedTeams.map(t => ({
         user_id: userId,
         league_key: t.league,
         team_name: t.name
       }))
-
       for (let i = 0; i < teams.length; i += 10) {
         const batch = teams.slice(i, i + 10)
         await supabase.from('user_teams').insert(batch)
