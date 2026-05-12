@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { useNavigate } from 'react-router-dom'
+import StepPreference from '../components/StepPreference'
 import StepLeagues from '../components/StepLeagues'
 import StepTeams from '../components/StepTeams'
 import StepShows from '../components/StepShows'
@@ -9,6 +10,7 @@ import styles from './Onboarding.module.css'
 
 export default function Onboarding({ session }) {
   const [step, setStep] = useState(1)
+  const [comboPreference, setComboPreference] = useState('sports_plus_shows')
   const [selectedLeagues, setSelectedLeagues] = useState([])
   const [selectedTeams, setSelectedTeams] = useState([])
   const [selectedShows, setSelectedShows] = useState([])
@@ -45,7 +47,11 @@ export default function Onboarding({ session }) {
       )
     }
 
-    await supabase.from('users').update({ home_city: homeCity }).eq('id', userId)
+    await supabase.from('users').update({
+      home_city: homeCity,
+      combo_preference: comboPreference,
+    }).eq('id', userId)
+
     setSaving(false)
     navigate('/dashboard')
   }
@@ -62,38 +68,47 @@ export default function Onboarding({ session }) {
           <div className={`${styles.step} ${step >= 3 ? styles.active : ''}`}>3</div>
           <div className={styles.stepLine} />
           <div className={`${styles.step} ${step >= 4 ? styles.active : ''}`}>4</div>
+          <div className={styles.stepLine} />
+          <div className={`${styles.step} ${step >= 5 ? styles.active : ''}`}>5</div>
         </div>
       </div>
       {step === 1 && (
-        <StepLeagues
-          selected={selectedLeagues}
-          setSelected={setSelectedLeagues}
+        <StepPreference
+          selected={comboPreference}
+          setSelected={setComboPreference}
           onNext={() => setStep(2)}
         />
       )}
       {step === 2 && (
-        <StepTeams
-          leagues={selectedLeagues}
-          selected={selectedTeams}
-          setSelected={setSelectedTeams}
-          onBack={() => setStep(1)}
+        <StepLeagues
+          selected={selectedLeagues}
+          setSelected={setSelectedLeagues}
           onNext={() => setStep(3)}
         />
       )}
       {step === 3 && (
-        <StepShows
-          selected={selectedShows}
-          setSelected={setSelectedShows}
+        <StepTeams
+          leagues={selectedLeagues}
+          selected={selectedTeams}
+          setSelected={setSelectedTeams}
           onBack={() => setStep(2)}
-          onFinish={() => setStep(4)}
-          saving={saving}
+          onNext={() => setStep(4)}
         />
       )}
       {step === 4 && (
+        <StepShows
+          selected={selectedShows}
+          setSelected={setSelectedShows}
+          onBack={() => setStep(3)}
+          onFinish={() => setStep(5)}
+          saving={saving}
+        />
+      )}
+      {step === 5 && (
         <StepCity
           homeCity={homeCity}
           setHomeCity={setHomeCity}
-          onBack={() => setStep(3)}
+          onBack={() => setStep(4)}
           onFinish={handleFinish}
           saving={saving}
         />
