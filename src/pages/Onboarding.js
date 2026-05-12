@@ -27,21 +27,21 @@ export default function Onboarding({ session }) {
     }
 
     if (selectedTeams.length > 0) {
-  // Delete existing teams first then insert fresh
-  await supabase.from('user_teams').delete().eq('user_id', userId)
-  
-  // Insert in batches of 10 to avoid timeouts
-  const teams = selectedTeams.map(t => ({
-    user_id: userId,
-    league_key: t.league,
-    team_name: t.name
-  }))
-  
-  for (let i = 0; i < teams.length; i += 10) {
-    const batch = teams.slice(i, i + 10)
-    await supabase.from('user_teams').insert(batch)
-  }
-}
+      // Delete existing teams first then insert fresh
+      await supabase.from('user_teams').delete().eq('user_id', userId)
+
+      // Insert in batches of 10 to avoid timeouts
+      const teams = selectedTeams.map(t => ({
+        user_id: userId,
+        league_key: t.league,
+        team_name: t.name
+      }))
+
+      for (let i = 0; i < teams.length; i += 10) {
+        const batch = teams.slice(i, i + 10)
+        await supabase.from('user_teams').insert(batch)
+      }
+    }
 
     if (selectedShows.length > 0) {
       await supabase.from('user_shows').upsert(
@@ -50,7 +50,6 @@ export default function Onboarding({ session }) {
     }
 
     await supabase.from('users').update({ home_city: homeCity }).eq('id', userId)
-
     setSaving(false)
     navigate('/dashboard')
   }
@@ -69,7 +68,6 @@ export default function Onboarding({ session }) {
           <div className={`${styles.step} ${step >= 4 ? styles.active : ''}`}>4</div>
         </div>
       </div>
-
       {step === 1 && (
         <StepLeagues
           selected={selectedLeagues}
