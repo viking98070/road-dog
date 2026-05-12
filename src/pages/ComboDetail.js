@@ -14,8 +14,38 @@ export default function ComboDetail({ combo, onBack }) {
 
   const fmt = d => new Date(d).toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' })
   const fmtRange = (s,e) => `${new Date(s).toLocaleDateString('en-US',{month:'short',day:'numeric'})} – ${new Date(e).toLocaleDateString('en-US',{month:'short',day:'numeric'})}`
-  const leagueColor = k => ({nfl:'#013369',mlb:'#002D72',nba:'#C9082A',nhl:'#0033A0',wnba:'#C9082A',mls:'#002F6C'})[k]||'#444'
-  const leagueLabel = k => ({nfl:'NFL',mlb:'MLB',nba:'NBA',nhl:'NHL',wnba:'WNBA',mls:'MLS'})[k]||k.toUpperCase()
+
+  function categoryColor(event) {
+    if (event.type === 'music') return '#7B2D8B'
+    if (event.type === 'comedy') return '#F4911E'
+    const colors = {
+      nfl:'#013369', mlb:'#002D72', nba:'#C9082A',
+      nhl:'#0033A0', wnba:'#C9082A', mls:'#002F6C',
+      nwsl:'#7B2D8B', cfb:'#BF5700', mcbb:'#0033A0', wcbb:'#0033A0',
+    }
+    return colors[event.league_key] || '#444'
+  }
+
+  function categoryLabel(event) {
+    if (event.type === 'music') return 'MUSIC'
+    if (event.type === 'comedy') return 'COMEDY'
+    if (!event.league_key) return 'EVENT'
+    const labels = {
+      nfl:'NFL', mlb:'MLB', nba:'NBA', nhl:'NHL', wnba:'WNBA', mls:'MLS',
+      nwsl:'NWSL', cfb:'CFB', mcbb:'MCBB', wcbb:'WCBB',
+    }
+    return labels[event.league_key] || event.league_key.toUpperCase()
+  }
+
+  function eventTitle(event) {
+    if (event.type === 'sport') {
+      const away = event.away_team || 'TBD'
+      const home = event.home_team || 'TBD'
+      return <>{away} <span>@</span> {home}</>
+    }
+    return event.artist_name || 'Untitled event'
+  }
+
   const badge = combo.score >= 7 ? '🔥 Hot combo' : combo.score >= 5 ? '⭐ Great combo' : '✈️ Good combo'
 
   return (
@@ -39,10 +69,10 @@ export default function ComboDetail({ combo, onBack }) {
           <div className={styles.eventList}>
             {events.map(event => (
               <div key={event.id} className={styles.eventCard}>
-                <div className={styles.eventLeague} style={{background:leagueColor(event.league_key)}}>{leagueLabel(event.league_key)}</div>
+                <div className={styles.eventLeague} style={{background:categoryColor(event)}}>{categoryLabel(event)}</div>
                 <div className={styles.eventInfo}>
-                  <div className={styles.eventName}>{event.away_team} <span>@</span> {event.home_team}</div>
-                  <div className={styles.eventMeta}>{event.venue}</div>
+                  <div className={styles.eventName}>{eventTitle(event)}</div>
+                  <div className={styles.eventMeta}>{event.venue}{event.city ? ` · ${event.city}` : ''}</div>
                 </div>
                 <div className={styles.eventDate}>{fmt(event.event_date)}</div>
               </div>
