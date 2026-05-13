@@ -318,7 +318,7 @@ const TEAM_CITIES = {
   Ravens:'Baltimore',Saints:'New Orleans',Seahawks:'Seattle',Steelers:'Pittsburgh',
   Texans:'Houston',Titans:'Tennessee',Vikings:'Minnesota',Washington:'Washington',
   Angels:'Los Angeles A',Astros:'Houston',Athletics:'Oakland','Blue Jays':'Toronto',
-  Braves:'Atlanta',Brewers:'Milwaukee',Cubs:'Chicago C',Diamondbacks:'Phoenix',
+  Braves:'Atlanta',Brewers:'Milwaukee',Cubs:'Chicago C',Diamondbacks:'Arizona',
   Dodgers:'Los Angeles D',Giants:'San Francisco',Guardians:'Cleveland',Mariners:'Seattle',
   Marlins:'Miami',Mets:'New York M',Nationals:'Washington',Orioles:'Baltimore',Padres:'San Diego',
   Phillies:'Philadelphia',Pirates:'Pittsburgh',Rangers:'Texas',Rays:'Tampa Bay',
