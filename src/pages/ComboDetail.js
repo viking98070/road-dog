@@ -12,8 +12,10 @@ export default function ComboDetail({ combo, onBack }) {
       .then(({ data }) => { setEvents(data || []); setLoading(false) })
   }, [combo])
 
-  const fmt = d => new Date(d).toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' })
-  const fmtRange = (s,e) => `${new Date(s).toLocaleDateString('en-US',{month:'short',day:'numeric'})} – ${new Date(e).toLocaleDateString('en-US',{month:'short',day:'numeric'})}`
+const fmt = d => new Date(d + 'T12:00:00').toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' })
+  const fmtRange = (s,e) => `${new Date(s + 'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'})} – ${new Date(e + 'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'})}`
+  
+  'numeric'})}`
 
   function categoryColor(event) {
     if (event.type === 'music') return '#7B2D8B'
