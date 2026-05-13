@@ -27,6 +27,7 @@ export default function ComboDetail({ combo, onBack }) {
   }
 
   function categoryLabel(event) {
+    if (event.parent_event) return 'FESTIVAL'
     if (event.type === 'music') return 'MUSIC'
     if (event.type === 'comedy') return 'COMEDY'
     if (!event.league_key) return 'EVENT'
@@ -44,6 +45,19 @@ export default function ComboDetail({ combo, onBack }) {
       return <>{away} <span>@</span> {home}</>
     }
     return event.artist_name || 'Untitled event'
+  }
+
+  function lineupPreview(event) {
+    if (!event.lineup || event.lineup.length === 0) return null
+    // Filter the user's own artist out of the "also playing" list
+    const others = event.lineup.filter(name =>
+      (name || '').toLowerCase() !== (event.artist_name || '').toLowerCase() &&
+      (name || '').toLowerCase() !== (event.parent_event || '').toLowerCase()
+    )
+    if (others.length === 0) return null
+    const preview = others.slice(0, 4).join(', ')
+    const more = others.length > 4 ? ` +${others.length - 4} more` : ''
+    return `Also playing: ${preview}${more}`
   }
 
   const badge = combo.score >= 7 ? '🔥 Hot combo' : combo.score >= 5 ? '⭐ Great combo' : '✈️ Good combo'
@@ -67,16 +81,29 @@ export default function ComboDetail({ combo, onBack }) {
           <p className={styles.empty}>No event details found.</p>
         ) : (
           <div className={styles.eventList}>
-            {events.map(event => (
-              <div key={event.id} className={styles.eventCard}>
-                <div className={styles.eventLeague} style={{background:categoryColor(event)}}>{categoryLabel(event)}</div>
-                <div className={styles.eventInfo}>
-                  <div className={styles.eventName}>{eventTitle(event)}</div>
-                  <div className={styles.eventMeta}>{event.venue}{event.city ? ` · ${event.city}` : ''}</div>
+            {events.map(event => {
+              const lineup = lineupPreview(event)
+              return (
+                <div key={event.id} className={styles.eventCard}>
+                  <div className={styles.eventLeague} style={{background:categoryColor(event)}}>{categoryLabel(event)}</div>
+                  <div className={styles.eventInfo}>
+                    <div className={styles.eventName}>{eventTitle(event)}</div>
+                    {event.parent_event && (
+                      <div style={{ fontSize: 12, color: 'var(--orange)', fontWeight: 600, marginTop: 2 }}>
+                        {event.parent_event}
+                      </div>
+                    )}
+                    <div className={styles.eventMeta}>{event.venue}{event.city ? ` · ${event.city}` : ''}</div>
+                    {lineup && (
+                      <div style={{ fontSize: 11, color: 'var(--text3)', marginTop: 4, fontStyle: 'italic' }}>
+                        {lineup}
+                      </div>
+                    )}
+                  </div>
+                  <div className={styles.eventDate}>{fmt(event.event_date)}</div>
                 </div>
-                <div className={styles.eventDate}>{fmt(event.event_date)}</div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         )}
         <div className={styles.sectionTitle} style={{marginTop:28}}>Plan your trip</div>
