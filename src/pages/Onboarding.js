@@ -40,9 +40,18 @@ export default function Onboarding({ session }) {
     }
 
     if (selectedShows.length > 0) {
-      await supabase.from('user_shows').upsert(
-        selectedShows.map(name => ({ user_id: userId, artist_name: name }))
-      )
+      // Selected shows are now objects {name, attractionId} but also backward-compatible with strings
+      const showRows = selectedShows.map(s => {
+        const name = typeof s === 'string' ? s : s.name
+        const attractionId = typeof s === 'string' ? null : (s.attractionId || null)
+        return {
+          user_id: userId,
+          artist_name: name,
+          attraction_id: attractionId,
+        }
+      })
+      await supabase.from('user_shows').delete().eq('user_id', userId)
+      await supabase.from('user_shows').insert(showRows)
     }
 
     await supabase.from('users').update({ home_city: homeCity }).eq('id', userId)
