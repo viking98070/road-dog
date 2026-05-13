@@ -402,7 +402,7 @@ const COLLEGE_ABBREVS = {
   Arizona:'ARIZ','Arizona St.':'ASU',Cincinnati:'CIN',
 }
 
-export default function StepTeams({ leagues, selected, setSelected, onBack, onNext }) {
+export default function StepTeams({ leagues, selected, setSelected, onBack, onNext, stepNumber, totalSteps }) {
   const teamLeagues = leagues.filter(k => TEAM_SPORTS.includes(k))
   const [activeTab, setActiveTab] = useState(teamLeagues[0] || '')
   const [visitedTabs, setVisitedTabs] = useState(new Set([teamLeagues[0] || '']))
@@ -439,6 +439,18 @@ export default function StepTeams({ leagues, selected, setSelected, onBack, onNe
   return (
     <div className={styles.container}>
       <div className={styles.titleArea}>
+        {stepNumber && totalSteps && (
+          <div style={{
+            fontSize: 11,
+            color: 'var(--text3)',
+            textTransform: 'uppercase',
+            letterSpacing: 0.5,
+            fontFamily: 'var(--head)',
+            marginBottom: 6,
+          }}>
+            Step {stepNumber} of {totalSteps}
+          </div>
+        )}
         <h1 className={styles.title}>Pick your teams</h1>
         <p className={styles.sub}>Choose teams to follow for away games. Browse all tabs before continuing.</p>
       </div>
@@ -501,7 +513,7 @@ export default function StepTeams({ leagues, selected, setSelected, onBack, onNe
           disabled={!allTabsVisited}
           title={!allTabsVisited ? 'Please browse all league tabs first' : ''}
         >
-          Next →
+          Continue
         </button>
       </div>
     </div>
