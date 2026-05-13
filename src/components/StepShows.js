@@ -2,60 +2,26 @@ import React, { useState, useEffect, useRef } from 'react'
 import { supabase } from '../lib/supabase'
 import styles from './Step.module.css'
 
-const ARTISTS = {
-  rock: [
-    'Foo Fighters', 'Green Day', 'Blink-182', 'Weezer', 'Muse',
-    'Arctic Monkeys', 'Queens of the Stone Age', 'Jack White', 'Beck', 'Interpol',
-    'My Chemical Romance', 'Rush', "Guns N'Roses", 'Metallica', 'Pearl Jam',
-    'Red Hot Chili Peppers', 'The Black Keys', 'Tame Impala', 'Radiohead', 'The Strokes',
-  ],
-  pop: [
-    'Taylor Swift', 'Ariana Grande', 'The Weeknd', 'Ed Sheeran', 'Coldplay',
-    'Billie Eilish', 'Olivia Rodrigo', 'Sabrina Carpenter', 'Chappell Roan', 'Dua Lipa',
-    'Bruno Mars', 'Post Malone', 'Lady Gaga', 'Doja Cat', 'Cardi B',
-    'SZA', 'Lizzo', 'Harry Styles', 'Noah Kahan', 'Hozier',
-  ],
-  hiphop: [
-    'Kendrick Lamar', 'Bad Bunny', 'Drake', 'Tyler the Creator', 'J. Cole',
-    'Eminem', 'Travis Scott', 'Lil Wayne', 'Future', '21 Savage',
-    'Childish Gambino', 'Lil Baby', 'Gunna', 'Vince Staples', 'Joey Bada$$',
-    'Pusha T', 'JPEGMAFIA', 'Ice Spice', 'GloRilla', 'Doechii',
-  ],
-  country: [
-    'Morgan Wallen', 'Zach Bryan', 'Luke Combs', 'Chris Stapleton', 'Kacey Musgraves',
-    'Lainey Wilson', 'Tyler Childers', 'Jason Isbell', 'Cody Johnson', 'Eric Church',
-    'Miranda Lambert', 'Megan Moroney', 'Hardy', 'Jelly Roll', 'Shaboozey',
-    'Thomas Rhett', 'Kane Brown', 'Dierks Bentley', 'Blake Shelton', 'Carrie Underwood',
-  ],
-  indie: [
-    'Bon Iver', 'Phoebe Bridgers', 'Boygenius', 'Mitski', 'Big Thief',
-    'The National', 'Vampire Weekend', 'LCD Soundsystem', 'Arcade Fire', 'Waxahatchee',
-    'Angel Olsen', 'Sharon Van Etten', 'Japanese Breakfast', 'Soccer Mommy', 'Snail Mail',
-    'Weyes Blood', 'Faye Webster', 'Gracie Abrams', 'Fleet Foxes', 'Death Cab for Cutie',
-  ],
-  comedy: [
-    'Nate Bargatze', 'John Mulaney', 'Dave Chappelle', 'Nikki Glaser', 'Bert Kreischer',
-    'Taylor Tomlinson', 'Shane Gillis', 'Bill Burr', 'Kevin Hart', 'Jerry Seinfeld',
-    'Jim Gaffigan', 'Ali Wong', 'Sebastian Maniscalco', 'Andrew Schulz', 'Tom Segura',
-    'Theo Von', 'Matt Rife', 'Neal Brennan', 'Mark Normand', 'Hannah Gadsby',
-  ],
-}
-
-const GENRE_LABELS = {
-  rock: '🎸 Rock',
-  pop: '🎤 Pop',
-  hiphop: '🎧 Hip-Hop',
-  country: '🤠 Country',
-  indie: '🌿 Indie & Folk',
-  comedy: '😂 Comedy',
-}
-
 export default function StepShows({ selected, setSelected, onBack, onFinish, saving }) {
-  const [genre, setGenre] = useState('rock')
+  const [activeTab, setActiveTab] = useState('Music')
   const [query, setQuery] = useState('')
   const [searchResults, setSearchResults] = useState([])
   const [searching, setSearching] = useState(false)
+  const [popular, setPopular] = useState([])
+  const [loadingPopular, setLoadingPopular] = useState(true)
   const debounceRef = useRef(null)
+
+  // Load popular artists on mount
+  useEffect(() => {
+    supabase
+      .from('popular_artists')
+      .select('attraction_id, name, segment, genre, image, upcoming_events_count')
+      .order('upcoming_events_count', { ascending: false })
+      .then(({ data, error }) => {
+        if (!error && data) setPopular(data)
+        setLoadingPopular(false)
+      })
+  }, [])
 
   // Helpers — selected is an array of {name, attractionId|null}
   const isSelected = (name) =>
@@ -72,9 +38,9 @@ export default function StepShows({ selected, setSelected, onBack, onFinish, sav
     ))
   }
 
-  function toggleFromGrid(name) {
-    if (isSelected(name)) removeArtist(name)
-    else addArtist(name, null)
+  function togglePopular(item) {
+    if (isSelected(item.name)) removeArtist(item.name)
+    else addArtist(item.name, item.attraction_id)
   }
 
   // Debounced search
@@ -110,6 +76,8 @@ export default function StepShows({ selected, setSelected, onBack, onFinish, sav
     }
   }, [query])
 
+  const filteredPopular = popular.filter(p => p.segment === activeTab)
+
   return (
     <div className={styles.container}>
       <div className={styles.titleArea}>
@@ -137,7 +105,6 @@ export default function StepShows({ selected, setSelected, onBack, onFinish, sav
             fontFamily: 'var(--body)',
           }}
         />
-        {/* Search results dropdown */}
         {query.trim().length >= 2 && (
           <div style={{
             position: 'absolute',
@@ -265,38 +232,60 @@ export default function StepShows({ selected, setSelected, onBack, onFinish, sav
         marginTop: 8,
         fontFamily: 'var(--head)',
       }}>
-        Popular suggestions
+        Popular right now
       </div>
 
+      {/* Music / Comedy tabs */}
       <div className={styles.tabs} style={{ overflowX: 'auto', flexWrap: 'nowrap' }}>
-        {Object.entries(GENRE_LABELS).map(([key, label]) => (
-          <div
-            key={key}
-            className={`${styles.tab} ${genre === key ? styles.tabActive : ''}`}
-            onClick={() => setGenre(key)}
-            style={{ whiteSpace: 'nowrap' }}
-          >
-            {label}
-          </div>
-        ))}
+        <div
+          className={`${styles.tab} ${activeTab === 'Music' ? styles.tabActive : ''}`}
+          onClick={() => setActiveTab('Music')}
+          style={{ whiteSpace: 'nowrap' }}
+        >
+          🎤 Music
+        </div>
+        <div
+          className={`${styles.tab} ${activeTab === 'Comedy' ? styles.tabActive : ''}`}
+          onClick={() => setActiveTab('Comedy')}
+          style={{ whiteSpace: 'nowrap' }}
+        >
+          😂 Comedy
+        </div>
       </div>
 
       <div className={styles.showList}>
-        {ARTISTS[genre].map(name => {
-          const sel = isSelected(name)
-          return (
-            <div
-              key={name}
-              className={`${styles.showRow} ${sel ? styles.sel : ''}`}
-              onClick={() => toggleFromGrid(name)}
-            >
-              <span>{name}</span>
-              <div className={`${styles.showCheck} ${sel ? styles.checked : ''}`}>
-                {sel && '✓'}
+        {loadingPopular ? (
+          <div style={{ color: 'var(--text2)', fontSize: 13, padding: 12 }}>
+            Loading…
+          </div>
+        ) : filteredPopular.length === 0 ? (
+          <div style={{ color: 'var(--text2)', fontSize: 13, padding: 12 }}>
+            No popular artists found. Try searching above.
+          </div>
+        ) : (
+          filteredPopular.map(item => {
+            const sel = isSelected(item.name)
+            return (
+              <div
+                key={item.attraction_id}
+                className={`${styles.showRow} ${sel ? styles.sel : ''}`}
+                onClick={() => togglePopular(item)}
+              >
+                <span>
+                  {item.name}
+                  {item.genre && (
+                    <span style={{ color: 'var(--text3)', fontSize: 11, marginLeft: 8 }}>
+                      {item.genre}
+                    </span>
+                  )}
+                </span>
+                <div className={`${styles.showCheck} ${sel ? styles.checked : ''}`}>
+                  {sel && '✓'}
+                </div>
               </div>
-            </div>
-          )
-        })}
+            )
+          })
+        )}
       </div>
 
       <div className={styles.footer}>
