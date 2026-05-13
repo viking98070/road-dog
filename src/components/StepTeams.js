@@ -297,6 +297,18 @@ const TEAM_TRICODES = {
 }
 
 const TEAM_CITIES = {
+  'mlb:Cardinals':'St. Louis',
+  'nfl:Cardinals':'Arizona',
+  'mlb:Giants':'San Francisco',
+  'nfl:Giants':'New York G',
+  'mlb:Rangers':'Texas',
+  'nhl:Rangers':'New York R',
+  'nba:Kings':'Sacramento',
+  'nhl:Kings':'Los Angeles',
+  'nfl:Jets':'New York J',
+  'nhl:Jets':'Winnipeg',
+  'nfl:Panthers':'Carolina',
+  'nhl:Panthers':'Florida',
   '49ers':'San Francisco',Bears:'Chicago',Bengals:'Cincinnati',Bills:'Buffalo',
   Broncos:'Denver',Browns:'Cleveland',Buccaneers:'Tampa Bay',Cardinals:'Arizona',
   Chargers:'Los Angeles C',Chiefs:'Kansas City',Colts:'Indianapolis',Cowboys:'Dallas',
@@ -419,8 +431,8 @@ export default function StepTeams({ leagues, selected, setSelected, onBack, onNe
   const isCollege = ['cfb', 'mcbb', 'wcbb'].includes(activeTab)
 
   const teams = [...(TEAMS[activeTab] || [])].sort((a, b) => {
-    const ca = isCollege ? a.short : (TEAM_CITIES[a.short] || a.short)
-    const cb = isCollege ? b.short : (TEAM_CITIES[b.short] || b.short)
+    const ca = isCollege ? a.short : (TEAM_CITIES[`${activeTab}:${a.short}`] || TEAM_CITIES[a.short] || a.short)
+    const cb = isCollege ? b.short : (TEAM_CITIES[`${activeTab}:${b.short}`] || TEAM_CITIES[b.short] || b.short)
     return ca.localeCompare(cb)
   })
 
