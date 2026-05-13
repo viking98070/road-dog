@@ -74,8 +74,10 @@ export default function Onboarding({ session }) {
           <div className={`${styles.step} ${step >= 4 ? styles.active : ''}`}>4</div>
         </div>
       </div>
-      {step === 1 && (
+     {step === 1 && (
         <StepLeagues
+          stepNumber={1}
+          totalSteps={4}
           selected={selectedLeagues}
           setSelected={setSelectedLeagues}
           onNext={() => setStep(2)}
@@ -83,6 +85,8 @@ export default function Onboarding({ session }) {
       )}
       {step === 2 && (
         <StepTeams
+          stepNumber={2}
+          totalSteps={4}
           leagues={selectedLeagues}
           selected={selectedTeams}
           setSelected={setSelectedTeams}
@@ -92,6 +96,8 @@ export default function Onboarding({ session }) {
       )}
       {step === 3 && (
         <StepShows
+          stepNumber={3}
+          totalSteps={4}
           selected={selectedShows}
           setSelected={setSelectedShows}
           onBack={() => setStep(2)}
@@ -101,13 +107,15 @@ export default function Onboarding({ session }) {
       )}
       {step === 4 && (
         <StepCity
+          stepNumber={4}
+          totalSteps={4}
           homeCity={homeCity}
           setHomeCity={setHomeCity}
           onBack={() => setStep(3)}
           onFinish={handleFinish}
           saving={saving}
         />
-      )}
+      )} 
     </div>
   )
 }
