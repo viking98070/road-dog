@@ -32,7 +32,7 @@ export default function Dashboard({ session }) {
     const allIds = [...new Set(comboData.flatMap(c => c.event_ids || []))]
     const { data: eventData } = await supabase
       .from('events')
-      .select('id, away_team, home_team, league_key, artist_name, type, event_date')
+      .select('id, away_team, home_team, league_key, artist_name, type, event_date, parent_event, lineup')
       .in('id', allIds)
 
     const eventMap = {}
@@ -73,6 +73,7 @@ export default function Dashboard({ session }) {
   }
 
   function categoryLabel(event) {
+    if (event.parent_event) return 'FESTIVAL'
     if (event.type === 'music') return 'MUSIC'
     if (event.type === 'comedy') return 'COMEDY'
     if (!event.league_key) return 'EVENT'
@@ -88,6 +89,10 @@ export default function Dashboard({ session }) {
       const away = event.away_team || 'TBD'
       const home = event.home_team || 'TBD'
       return `${away} @ ${home}`
+    }
+    // For festivals, show the festival name (more iconic than the individual artist)
+    if (event.parent_event) {
+      return event.parent_event
     }
     return event.artist_name || 'Untitled event'
   }
