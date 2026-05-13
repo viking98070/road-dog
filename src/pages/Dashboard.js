@@ -3,10 +3,17 @@ import { supabase } from '../lib/supabase'
 import ComboDetail from './ComboDetail'
 import styles from './Dashboard.module.css'
 
+const TABS = [
+  { key: 'sports_plus_shows', label: 'Sports + Shows' },
+  { key: 'sports_only', label: 'Sports Only' },
+  { key: 'shows_only', label: 'Shows Only' },
+]
+
 export default function Dashboard({ session }) {
   const [combos, setCombos] = useState([])
   const [loading, setLoading] = useState(true)
   const [selected, setSelected] = useState(null)
+  const [activeTab, setActiveTab] = useState('sports_plus_shows')
 
   useEffect(() => {
     loadCombos()
@@ -89,6 +96,12 @@ export default function Dashboard({ session }) {
     return <ComboDetail combo={selected} onBack={() => setSelected(null)} />
   }
 
+  const filteredCombos = combos.filter(c => c.combo_type === activeTab)
+  const tabCounts = {}
+  for (const tab of TABS) {
+    tabCounts[tab.key] = combos.filter(c => c.combo_type === tab.key).length
+  }
+
   return (
     <div className={styles.page}>
       <header className={styles.header}>
@@ -100,20 +113,64 @@ export default function Dashboard({ session }) {
           <h1>Trip Combos</h1>
           <p>Away games and shows that line up in the same city.</p>
         </div>
+
+        {/* Tabs */}
+        <div style={{
+          display: 'flex',
+          gap: 8,
+          marginBottom: 20,
+          borderBottom: '1px solid var(--border)',
+          paddingBottom: 0,
+        }}>
+          {TABS.map(tab => {
+            const isActive = activeTab === tab.key
+            return (
+              <button
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key)}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  color: isActive ? 'var(--orange)' : 'var(--text2)',
+                  fontWeight: isActive ? 700 : 500,
+                  fontSize: 14,
+                  padding: '10px 16px',
+                  cursor: 'pointer',
+                  borderBottom: isActive ? '2px solid var(--orange)' : '2px solid transparent',
+                  marginBottom: -1,
+                  fontFamily: 'var(--head)',
+                  textTransform: 'uppercase',
+                  letterSpacing: 0.5,
+                }}
+              >
+                {tab.label}
+                <span style={{
+                  marginLeft: 8,
+                  fontSize: 11,
+                  color: isActive ? 'var(--orange)' : 'var(--text3)',
+                  fontWeight: 600,
+                }}>
+                  {tabCounts[tab.key] || 0}
+                </span>
+              </button>
+            )
+          })}
+        </div>
+
         {loading ? (
           <div className={styles.empty}>
             <div className={styles.spinner} />
             <p>Loading your combos…</p>
           </div>
-        ) : combos.length === 0 ? (
+        ) : filteredCombos.length === 0 ? (
           <div className={styles.empty}>
             <div className={styles.emptyIcon}>✈️</div>
-            <h2>No combos yet</h2>
-            <p>We're scanning schedules for your teams. Check back soon!</p>
+            <h2>No combos in this category yet</h2>
+            <p>Try a different tab, or check back as schedules update.</p>
           </div>
         ) : (
           <div className={styles.grid}>
-            {combos.map(combo => (
+            {filteredCombos.map(combo => (
               <div
                 key={combo.id}
                 className={styles.card}
@@ -128,22 +185,43 @@ export default function Dashboard({ session }) {
                   {formatDate(combo.start_date)} – {formatDate(combo.end_date)}
                 </div>
                 <div className={styles.cardTeams}>
-                  {combo.events && combo.events.slice(0, 3).map((event, i) => (
-                    <div key={i} className={styles.cardTeamRow}>
-                      <span
-                        className={styles.cardLeaguePill}
-                        style={{ background: categoryColor(event) }}
-                      >
-                        {categoryLabel(event)}
-                      </span>
-                      <span className={styles.cardTeamName}>
-                        {eventDescription(event)}
-                      </span>
-                    </div>
-                  ))}
-                  {combo.events && combo.events.length > 3 && (
-                    <div className={styles.cardMore}>+{combo.events.length - 3} more →</div>
-                  )}
+                  {combo.events && (() => {
+                    const grouped = []
+                    for (const event of combo.events) {
+                      const key = `${categoryLabel(event)}|${eventDescription(event)}`
+                      const existing = grouped.find(g => g.key === key)
+                      if (existing) {
+                        existing.count++
+                      } else {
+                        grouped.push({ key, event, count: 1 })
+                      }
+                    }
+                    const visible = grouped.slice(0, 3)
+                    const hiddenCount = grouped.length - visible.length
+                    return (
+                      <>
+                        {visible.map((g, i) => (
+                          <div key={i} className={styles.cardTeamRow}>
+                            <span
+                              className={styles.cardLeaguePill}
+                              style={{ background: categoryColor(g.event) }}
+                            >
+                              {categoryLabel(g.event)}
+                            </span>
+                            <span className={styles.cardTeamName}>
+                              {eventDescription(g.event)}
+                              {g.count > 1 && (
+                                <span style={{ color: 'var(--text2)', fontWeight: 400 }}> · {g.count} nights</span>
+                              )}
+                            </span>
+                          </div>
+                        ))}
+                        {hiddenCount > 0 && (
+                          <div className={styles.cardMore}>+{hiddenCount} more →</div>
+                        )}
+                      </>
+                    )
+                  })()}
                 </div>
               </div>
             ))}
