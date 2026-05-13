@@ -15,20 +15,29 @@ const CITIES = [
   'Washington, DC',
 ]
 
-export default function StepCity({ homeCity, setHomeCity, onBack, onFinish, saving }) {
+export default function StepCity({ homeCity, setHomeCity, onBack, onFinish, saving, stepNumber, totalSteps }) {
   const [search, setSearch] = useState('')
-
   const filtered = CITIES.filter(c =>
     c.toLowerCase().includes(search.toLowerCase())
   )
-
   return (
     <div className={styles.container}>
       <div className={styles.titleArea}>
+        {stepNumber && totalSteps && (
+          <div style={{
+            fontSize: 11,
+            color: 'var(--text3)',
+            textTransform: 'uppercase',
+            letterSpacing: 0.5,
+            fontFamily: 'var(--head)',
+            marginBottom: 6,
+          }}>
+            Step {stepNumber} of {totalSteps}
+          </div>
+        )}
         <h1 className={styles.title}>Where are you traveling from?</h1>
         <p className={styles.sub}>Used to estimate drive or flight distance to each trip.</p>
       </div>
-
       <div style={{ marginBottom: 12 }}>
         <input
           type="text"
@@ -45,11 +54,11 @@ export default function StepCity({ homeCity, setHomeCity, onBack, onFinish, savi
             fontSize: 14,
             outline: 'none',
             fontFamily: 'var(--body)',
+            boxSizing: 'border-box',
           }}
         />
       </div>
-
-      <div style={{ flex: 1, overflowY: 'auto', paddingBottom: 16 }}>
+      <div style={{ overflowY: 'auto', maxHeight: 480, paddingBottom: 16 }}>
         {filtered.map(city => (
           <div
             key={city}
@@ -79,7 +88,6 @@ export default function StepCity({ homeCity, setHomeCity, onBack, onFinish, savi
           </div>
         )}
       </div>
-
       <div className={styles.footer}>
         <button className={styles.backBtn} onClick={onBack}>← Back</button>
         <div className={styles.count}>
@@ -92,7 +100,7 @@ export default function StepCity({ homeCity, setHomeCity, onBack, onFinish, savi
           onClick={onFinish}
           disabled={!homeCity || saving}
         >
-          {saving ? 'Saving...' : 'Done →'}
+          {saving ? 'Saving...' : 'Finish'}
         </button>
       </div>
     </div>
