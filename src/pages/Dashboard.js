@@ -52,7 +52,8 @@ export default function Dashboard({ session }) {
   }
 
   function formatDate(dateStr) {
-    return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+    // Parse as local date (noon UTC avoids timezone shifts to prior/next day)
+    return new Date(dateStr + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
   }
 
   function formatScore(score) {
