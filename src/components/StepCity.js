@@ -15,7 +15,7 @@ const CITIES = [
   'Washington, DC',
 ]
 
-export default function StepCity({ homeCity, setHomeCity, onBack, onFinish, saving, stepNumber, totalSteps }) {
+export default function StepCity({ homeCity, setHomeCity, onBack, onFinish, saving, stepNumber, totalSteps, hideFooter }) {
   const [search, setSearch] = useState('')
   const filtered = CITIES.filter(c =>
     c.toLowerCase().includes(search.toLowerCase())
@@ -88,21 +88,22 @@ export default function StepCity({ homeCity, setHomeCity, onBack, onFinish, savi
           </div>
         )}
       </div>
-      <div className={styles.footer}>
-        <button className={styles.backBtn} onClick={onBack}>← Back</button>
-        <div className={styles.count}>
-          {homeCity
-            ? <span style={{ color: 'var(--text)' }}>{homeCity}</span>
-            : <span>None selected</span>}
+      {!hideFooter && (
+        <div className={styles.footer}>
+          <button className={styles.backBtn} onClick={onBack}>← Back</button>
+          <div className={styles.count}>
+            {homeCity
+              ? <span style={{ color: 'var(--text)' }}>{homeCity}</span>
+              : <span>None selected</span>}
+          </div>
+          <button
+            className={styles.nextBtn}
+            onClick={onFinish}
+            disabled={!homeCity || saving}
+          >
+            {saving ? 'Saving...' : 'Finish'}
+          </button>
         </div>
-        <button
-          className={styles.nextBtn}
-          onClick={onFinish}
-          disabled={!homeCity || saving}
-        >
-          {saving ? 'Saving...' : 'Finish'}
-        </button>
-      </div>
-    </div>
+      )}
   )
 }
