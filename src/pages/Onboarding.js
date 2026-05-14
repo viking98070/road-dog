@@ -40,7 +40,6 @@ export default function Onboarding({ session }) {
     }
 
     if (selectedShows.length > 0) {
-      // Selected shows are now objects {name, attractionId} but also backward-compatible with strings
       const showRows = selectedShows.map(s => {
         const name = typeof s === 'string' ? s : s.name
         const attractionId = typeof s === 'string' ? null : (s.attractionId || null)
@@ -55,6 +54,15 @@ export default function Onboarding({ session }) {
     }
 
     await supabase.from('users').update({ home_city: homeCity }).eq('id', userId)
+
+    // Build combos against existing events so the dashboard isn't empty on first load
+    try {
+      await supabase.functions.invoke('rebuild-combos', {
+        body: { user_id: userId }
+      })
+    } catch (e) {
+      console.error('Initial combo build error:', e)
+    }
 
     setSaving(false)
     navigate('/dashboard')
