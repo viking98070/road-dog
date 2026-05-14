@@ -84,4 +84,3 @@ export default function StepLeagues({ selected, setSelected, onNext, stepNumber,
     </div>
   )
 }
-}
