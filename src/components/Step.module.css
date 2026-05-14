@@ -134,11 +134,12 @@
 
 .teamGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(90px, 110px));
   gap: 8px;
   flex: 1;
   overflow-y: auto;
   padding-bottom: 16px;
+  justify-content: center;
 }
 
 .teamCard {
