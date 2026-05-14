@@ -109,17 +109,32 @@ const fmt = d => new Date(d + 'T12:00:00').toLocaleDateString('en-US', { weekday
         )}
         <div className={styles.sectionTitle} style={{marginTop:28}}>Plan your trip</div>
         <div className={styles.planGrid}>
-          <a href="https://www.google.com/flights" target="_blank" rel="noreferrer" className={styles.planCard}>
+          <a 
+            href={`https://www.google.com/travel/flights?q=Flights%20to%20${encodeURIComponent(combo.city)}%20${combo.start_date}%20to%20${combo.end_date}`}
+            target="_blank" 
+            rel="noreferrer" 
+            className={styles.planCard}
+          >
             <div className={styles.planIcon}>✈️</div>
             <div className={styles.planLabel}>Flights</div>
             <div className={styles.planSub}>Google Flights</div>
           </a>
-          <a href="https://www.hotels.com" target="_blank" rel="noreferrer" className={styles.planCard}>
+          <a 
+            href={`https://www.google.com/travel/hotels/${encodeURIComponent(combo.city)}?q=Hotels%20in%20${encodeURIComponent(combo.city)}&checkin=${combo.start_date}&checkout=${combo.end_date}`}
+            target="_blank" 
+            rel="noreferrer" 
+            className={styles.planCard}
+          >
             <div className={styles.planIcon}>🏨</div>
             <div className={styles.planLabel}>Hotels</div>
-            <div className={styles.planSub}>Hotels.com</div>
+            <div className={styles.planSub}>Google Hotels</div>
           </a>
-          <a href="https://www.stubhub.com" target="_blank" rel="noreferrer" className={styles.planCard}>
+          <a 
+            href={`https://www.stubhub.com/find/s/?q=${encodeURIComponent(combo.city)}`}
+            target="_blank" 
+            rel="noreferrer" 
+            className={styles.planCard}
+          >
             <div className={styles.planIcon}>🎟️</div>
             <div className={styles.planLabel}>Tickets</div>
             <div className={styles.planSub}>StubHub</div>
