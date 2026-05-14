@@ -1,14 +1,30 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import styles from './Home.module.css'
-
 export default function Home() {
   const navigate = useNavigate()
-
   return (
     <div className={styles.page}>
+      <header style={{
+        padding: '20px 24px',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+      }}>
+        <div style={{
+          fontFamily: 'var(--head)',
+          fontSize: 22,
+          fontWeight: 700,
+          color: 'var(--text)',
+          letterSpacing: 2,
+          textTransform: 'uppercase',
+        }}>
+          Road<span style={{ color: 'var(--orange)' }}>Dog</span>
+        </div>
+      </header>
       <div className={styles.hero}>
-        <div className={styles.eyebrow}>Introducing</div>
+        <div className={styles.eyebrow}>Introducing Road Dog</div>
         <h1 className={styles.headline}>
           Your game.<br /><span>Their city.</span>
         </h1>
@@ -23,9 +39,8 @@ export default function Home() {
           <span>✈️ Trip planning</span>
         </div>
         <button className={styles.cta} onClick={() => navigate('/login')}>
-          Get started free
+          Get started
         </button>
-        <p className={styles.hint}>No credit card required</p>
       </div>
     </div>
   )
