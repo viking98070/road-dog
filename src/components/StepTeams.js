@@ -516,7 +516,7 @@ export default function StepTeams({ leagues, selected, setSelected, onBack, onNe
           >
             Continue
           </button>
-        </div>
-      )}
+   )}
+    </div>
   )
 }
