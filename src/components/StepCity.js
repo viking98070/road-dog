@@ -103,7 +103,7 @@ export default function StepCity({ homeCity, setHomeCity, onBack, onFinish, savi
           >
             {saving ? 'Saving...' : 'Finish'}
           </button>
-        </div>
-      )}
+       )}
+    </div>
   )
 }
