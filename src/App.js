@@ -5,7 +5,7 @@ import Home from './pages/Home'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import Onboarding from './pages/Onboarding'
-
+import Settings from './pages/Settings'
 export default function App() {
   const [session, setSession] = useState(undefined)
   const [profile, setProfile] = useState(null)
@@ -43,6 +43,7 @@ const hasOnboarded = profile?.home_city
         <Route path="/login" element={session ? <Navigate to={hasOnboarded ? '/dashboard' : '/onboarding'} /> : <Login />} />
         <Route path="/onboarding" element={session ? <Onboarding session={session} /> : <Navigate to="/" />} />
         <Route path="/dashboard" element={session ? <Dashboard session={session} /> : <Navigate to="/" />} />
+        <Route path="/settings" element={session ? <Settings session={session} /> : <Navigate to="/" />} />
       </Routes>
     </BrowserRouter>
   )
