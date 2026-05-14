@@ -81,5 +81,7 @@ export default function StepLeagues({ selected, setSelected, onNext, stepNumber,
           </button>
         </div>
       )}
+    </div>
   )
+}
 }
