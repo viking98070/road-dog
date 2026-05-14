@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import ComboDetail from './ComboDetail'
 import styles from './Dashboard.module.css'
@@ -14,7 +15,8 @@ export default function Dashboard({ session }) {
   const [loading, setLoading] = useState(true)
   const [selected, setSelected] = useState(null)
   const [activeTab, setActiveTab] = useState('sports_plus_shows')
-
+const navigate = useNavigate()
+  
   useEffect(() => {
     loadCombos()
   }, [])
@@ -112,7 +114,16 @@ export default function Dashboard({ session }) {
     <div className={styles.page}>
       <header className={styles.header}>
         <div className={styles.logo}>Road<span>Dog</span></div>
-        <button className={styles.signOut} onClick={handleSignOut}>Sign out</button>
+        <div style={{ display: 'flex', gap: 10 }}>
+          <button 
+            className={styles.signOut} 
+            onClick={() => navigate('/settings')}
+            style={{ background: 'transparent' }}
+          >
+            ⚙ Edit preferences
+          </button>
+          <button className={styles.signOut} onClick={handleSignOut}>Sign out</button>
+        </div>
       </header>
       <main className={styles.main}>
         <div className={styles.welcome}>
