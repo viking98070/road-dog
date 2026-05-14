@@ -299,7 +299,7 @@ export default function StepShows({ selected, setSelected, onBack, onFinish, sav
           >
             {saving ? 'Saving...' : 'Continue'}
           </button>
-        </div>
-      )}
+    )}
+    </div>
   )
 }
