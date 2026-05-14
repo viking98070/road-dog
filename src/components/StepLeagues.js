@@ -24,7 +24,7 @@ const icon = key => {
   if (key === 'nascar') return '🏁'
   return '🏆'
 }
-export default function StepLeagues({ selected, setSelected, onNext, stepNumber, totalSteps }) {
+export default function StepLeagues({ selected, setSelected, onNext, stepNumber, totalSteps, hideFooter }) {
   function toggle(key) {
     setSelected(prev =>
       prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key]
@@ -69,16 +69,17 @@ export default function StepLeagues({ selected, setSelected, onNext, stepNumber,
           💡 Pick more leagues to find more trip combos
         </div>
       )}
-      <div className={styles.footer}>
-        <div className={styles.count}><b>{selected.length}</b> selected</div>
-        <button
-          className={styles.nextBtn}
-          onClick={onNext}
-          disabled={selected.length === 0}
-        >
-          Continue
-        </button>
-      </div>
-    </div>
+      {!hideFooter && (
+        <div className={styles.footer}>
+          <div className={styles.count}><b>{selected.length}</b> selected</div>
+          <button
+            className={styles.nextBtn}
+            onClick={onNext}
+            disabled={selected.length === 0}
+          >
+            Continue
+          </button>
+        </div>
+      )}
   )
 }
