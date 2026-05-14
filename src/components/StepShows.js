@@ -288,7 +288,7 @@ export default function StepShows({ selected, setSelected, onBack, onFinish, sav
         )}
       </div>
 
-      {!hideFooter && (
+ {!hideFooter && (
         <div className={styles.footer}>
           <button className={styles.backBtn} onClick={onBack}>← Back</button>
           <div className={styles.count}><b>{selected.length}</b> selected</div>
@@ -299,7 +299,8 @@ export default function StepShows({ selected, setSelected, onBack, onFinish, sav
           >
             {saving ? 'Saving...' : 'Continue'}
           </button>
-    )}
+        </div>
+      )}
     </div>
   )
 }
