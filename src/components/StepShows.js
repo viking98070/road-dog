@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { supabase } from '../lib/supabase'
 import styles from './Step.module.css'
 
-export default function StepShows({ selected, setSelected, onBack, onFinish, saving }) {
+export default function StepShows({ selected, setSelected, onBack, onFinish, saving, hideFooter }) {
   const [activeTab, setActiveTab] = useState('Music')
   const [query, setQuery] = useState('')
   const [searchResults, setSearchResults] = useState([])
@@ -288,17 +288,18 @@ export default function StepShows({ selected, setSelected, onBack, onFinish, sav
         )}
       </div>
 
-      <div className={styles.footer}>
-        <button className={styles.backBtn} onClick={onBack}>← Back</button>
-        <div className={styles.count}><b>{selected.length}</b> selected</div>
-        <button
-          className={styles.nextBtn}
-          onClick={() => onFinish(selected)}
-          disabled={saving}
-        >
-          {saving ? 'Saving...' : 'Next →'}
-        </button>
-      </div>
-    </div>
+      {!hideFooter && (
+        <div className={styles.footer}>
+          <button className={styles.backBtn} onClick={onBack}>← Back</button>
+          <div className={styles.count}><b>{selected.length}</b> selected</div>
+          <button
+            className={styles.nextBtn}
+            onClick={() => onFinish(selected)}
+            disabled={saving}
+          >
+            {saving ? 'Saving...' : 'Continue'}
+          </button>
+        </div>
+      )}
   )
 }
