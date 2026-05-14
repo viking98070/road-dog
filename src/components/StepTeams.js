@@ -402,7 +402,7 @@ const COLLEGE_ABBREVS = {
   Arizona:'ARIZ','Arizona St.':'ASU',Cincinnati:'CIN',
 }
 
-export default function StepTeams({ leagues, selected, setSelected, onBack, onNext, stepNumber, totalSteps }) {
+export default function StepTeams({ leagues, selected, setSelected, onBack, onNext, stepNumber, totalSteps, hideFooter }) {
   const teamLeagues = leagues.filter(k => TEAM_SPORTS.includes(k))
   const [activeTab, setActiveTab] = useState(teamLeagues[0] || '')
   const [visitedTabs, setVisitedTabs] = useState(new Set([teamLeagues[0] || '']))
@@ -504,18 +504,19 @@ export default function StepTeams({ leagues, selected, setSelected, onBack, onNe
         })}
       </div>
 
-      <div className={styles.footer}>
-        <button className={styles.backBtn} onClick={onBack}>← Back</button>
-        <div className={styles.count}><b>{selected.length}</b> teams</div>
-        <button
-          className={styles.nextBtn}
-          onClick={onNext}
-          disabled={!allTabsVisited}
-          title={!allTabsVisited ? 'Please browse all league tabs first' : ''}
-        >
-          Continue
-        </button>
-      </div>
-    </div>
+      {!hideFooter && (
+        <div className={styles.footer}>
+          <button className={styles.backBtn} onClick={onBack}>← Back</button>
+          <div className={styles.count}><b>{selected.length}</b> teams</div>
+          <button
+            className={styles.nextBtn}
+            onClick={onNext}
+            disabled={!allTabsVisited}
+            title={!allTabsVisited ? 'Please browse all league tabs first' : ''}
+          >
+            Continue
+          </button>
+        </div>
+      )}
   )
 }
