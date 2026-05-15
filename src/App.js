@@ -7,6 +7,7 @@ import Dashboard from './pages/Dashboard'
 import Onboarding from './pages/Onboarding'
 import Settings from './pages/Settings'
 import Hub from './pages/Hub'
+import WhosPlaying from './pages/WhosPlaying'
 export default function App() {
   const [session, setSession] = useState(undefined)
   const [profile, setProfile] = useState(null)
@@ -45,6 +46,9 @@ const hasOnboarded = profile?.home_city
         <Route path="/onboarding" element={session ? <Onboarding session={session} /> : <Navigate to="/" />} />
         <Route path="/hub" element={session ? <Hub session={session} /> : <Navigate to="/" />} />
         <Route path="/combos" element={session ? <Dashboard session={session} /> : <Navigate to="/" />} />
+        <Route path="/hub" element={session ? <Hub session={session} /> : <Navigate to="/" />} />
+        <Route path="/combos" element={session ? <Dashboard session={session} /> : <Navigate to="/" />} />
+        <Route path="/whos-playing" element={session ? <WhosPlaying session={session} /> : <Navigate to="/" />} />
         <Route path="/dashboard" element={<Navigate to="/combos" />} />
         <Route path="/settings" element={session ? <Settings session={session} /> : <Navigate to="/" />} />
       </Routes>
