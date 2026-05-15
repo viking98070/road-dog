@@ -209,6 +209,18 @@ const TEAMS = {
 const LABELS = { nfl:'NFL', mlb:'MLB', nba:'NBA', nhl:'NHL', cfb:'College Football', mcbb:"Men's CBB", wcbb:"Women's CBB", mls:'MLS', nwsl:'NWSL', wnba:'WNBA' }
 
 const TEAM_COLORS = {
+  'nfl:Cardinals':'#97233F',
+  'mlb:Cardinals':'#C41E3A',
+  'nfl:Giants':'#0B2265',
+  'mlb:Giants':'#FD5A1E',
+  'mlb:Rangers':'#003278',
+  'nhl:Rangers':'#0038A8',
+  'nba:Kings':'#5A2D81',
+  'nhl:Kings':'#111111',
+  'nfl:Jets':'#125740',
+  'nhl:Jets':'#041E42',
+  'nfl:Panthers':'#0085CA',
+  'nhl:Panthers':'#C8102E',
   '49ers':'#AA0000',Bears:'#0B162A',Bengals:'#FB4F14',Bills:'#00338D',Broncos:'#FB4F14',
   Browns:'#311D00',Buccaneers:'#D50A0A',Cardinals:'#97233F',Chargers:'#0080C6',
   Chiefs:'#E31837',Colts:'#002C5F',Cowboys:'#003594',Dolphins:'#008E97',Eagles:'#004C54',
@@ -369,7 +381,7 @@ const COLLEGE_COLORS = {
   Michigan:'#00274C','Michigan St.':'#18453B',Minnesota:'#7A0019','Mississippi St.':'#5D1F1A',
   Missouri:'#F1B82D',Nebraska:'#E41C38','North Carolina':'#7BAFD4','North Carolina St.':'#CC0000',
   Northwestern:'#4E2A84','Notre Dame':'#0C2340','Ohio State':'#BB0000',Oklahoma:'#841617',
-  'Oklahoma St.':'#FF7300','Ole Miss':'#CE1126',Oregon:'#154733','Oregon St.':'#CC0000',
+  'Oklahoma St.':'#FF7300','Ole Miss':'#CE1126',Oregon:'#154733','Oregon St.':'#DC4405',
   'Penn State':'#041E42',Pittsburgh:'#003594',Purdue:'#CEB888',Rutgers:'#CC0033',
   SMU:'#0033A0','South Carolina':'#73000A',Stanford:'#8C1515',Syracuse:'#D44500',
   TCU:'#4D1979',Tennessee:'#FF8200',Texas:'#BF5700','Texas A&M':'#500000',
@@ -488,7 +500,9 @@ export default function StepTeams({ leagues, selected, setSelected, onBack, onNe
       <div className={styles.teamGrid}>
         {teams.map(team => {
           const sel = isSelected(activeTab, team)
-          const color = isCollege ? (COLLEGE_COLORS[team.short] || '#1a1a1a') : (TEAM_COLORS[team.short] || '#1a1a1a')
+          const color = isCollege 
+            ? (COLLEGE_COLORS[team.short] || '#1a1a1a') 
+            : (TEAM_COLORS[`${activeTab}:${team.short}`] || TEAM_COLORS[team.short] || '#1a1a1a')
           const tricode = isCollege
             ? (COLLEGE_ABBREVS[team.short] || team.short.split(' ').map(w=>w[0]).join('').slice(0,3).toUpperCase())
             : (({'mlb:Rangers':'TEX','nhl:Rangers':'NYR','mlb:Cardinals':'STL','nfl:Cardinals':'ARI',
