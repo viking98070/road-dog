@@ -82,7 +82,7 @@ export default function StepShows({ selected, setSelected, onBack, onFinish, sav
     filteredPopular = filteredPopular.filter(p => {
       if (activeGenre === 'Other') {
         // "Other" catches anything not in main genres
-        const mainGenres = ['Rock', 'Pop', 'Country', 'Hip-Hop/Rap', 'R&B']
+        const mainGenres = ['Rock', 'Pop', 'Country', 'Hip-Hop/Rap', 'R&B', 'Dance/Electronic']
         return !p.genre || !mainGenres.includes(p.genre)
       }
       return p.genre === activeGenre
@@ -271,7 +271,7 @@ export default function StepShows({ selected, setSelected, onBack, onFinish, sav
           marginBottom: 12,
           flexWrap: 'wrap',
         }}>
-          {['All', 'Rock', 'Pop', 'Country', 'Hip-Hop/Rap', 'R&B', 'Other'].map(g => (
+          {['All', 'Rock', 'Pop', 'Country', 'Hip-Hop/Rap', 'R&B', 'Dance/Electronic', 'Other'].map(g => (
             <div
               key={g}
               onClick={() => setActiveGenre(g)}
