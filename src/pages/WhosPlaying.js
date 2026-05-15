@@ -62,40 +62,41 @@ export default function WhosPlaying({ session }) {
     setResults(null)
 
     try {
-      // Build query — start with date and city filters
-      let query = supabase
-        .from('events')
-        .select('id, type, league_key, away_team, home_team, artist_name, city, venue, event_date, parent_event, lineup')
-        .ilike('city', `%${city.trim()}%`)
-        .gte('event_date', startDate)
-        .lte('event_date', endDate)
-        .order('event_date')
-        .limit(500)
+      const musicSelected = selectedGenres.length > 0
+      const { data, error } = await supabase.functions.invoke('whos-playing-search', {
+        body: {
+          city: city.trim(),
+          startDate,
+          endDate,
+          leagues: selectedLeagues,
+          musicSelected,
+          includeComedy,
+        }
+      })
 
-      const { data, error } = await query
       if (error) {
         console.error('Search error:', error)
         setResults([])
         return
       }
 
-      // Client-side filter by type / league / genre selection
-      const filtered = (data || []).filter(e => {
-        if (e.type === 'sport') {
-          return selectedLeagues.includes(e.league_key)
-        }
-        if (e.type === 'comedy') {
-          return includeComedy
-        }
-        if (e.type === 'music') {
-          // For music, we don't have genre stored on each event — so include
-          // if any genre is selected (user opted into music in some form)
-          return selectedGenres.length > 0
-        }
-        return false
-      })
+      let events = data?.results || []
 
-      setResults(filtered)
+      // Client-side genre filter: if user picked specific genres,
+      // narrow music events to only those genres
+      if (musicSelected && selectedGenres.length > 0) {
+        events = events.filter(e => {
+          if (e.type !== 'music') return true // keep sports + comedy as-is
+          if (!e.genre) return false
+          // Match user-selected genres against event genre (case-insensitive)
+          return selectedGenres.some(g => 
+            e.genre.toLowerCase().includes(g.toLowerCase()) ||
+            g.toLowerCase().includes(e.genre.toLowerCase())
+          )
+        })
+      }
+
+      setResults(events)
     } catch (e) {
       console.error('Search error:', e)
       setResults([])
@@ -103,7 +104,6 @@ export default function WhosPlaying({ session }) {
       setLoading(false)
     }
   }
-
   function fmt(d) {
     return new Date(d + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })
   }
