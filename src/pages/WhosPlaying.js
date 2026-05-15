@@ -33,30 +33,27 @@ const CITIES = [
   'Sacramento, CA', 'Salt Lake City, UT', 'San Antonio, TX', 'San Diego, CA',
   'San Francisco, CA', 'San Jose, CA', 'Seattle, WA', 'St. Louis, MO',
   'Tampa, FL', 'Washington, DC',
-  
   // SEC + ACC + Big Ten college football towns
   'Athens, GA', 'Auburn, AL', 'Tuscaloosa, AL', 'Baton Rouge, LA',
   'Oxford, MS', 'Starkville, MS', 'Fayetteville, AR', 'Knoxville, TN',
-  'Columbia, SC', 'Gainesville, FL', 'Lexington, KY', 'Nashville, TN',
+  'Columbia, SC', 'Gainesville, FL', 'Lexington, KY',
   'College Station, TX', 'Chapel Hill, NC', 'Durham, NC', 'Clemson, SC',
   'Tallahassee, FL', 'Blacksburg, VA', 'Charlottesville, VA',
   'Winston-Salem, NC', 'South Bend, IN', 'East Lansing, MI', 'Ann Arbor, MI',
   'State College, PA', 'Madison, WI', 'Iowa City, IA', 'Lincoln, NE',
   'Champaign, IL', 'West Lafayette, IN', 'Bloomington, IN', 'Evanston, IL',
-  
-  // Big 12 + Pac-12 + other major college towns  
+  // Big 12 + Pac-12 + other major college towns
   'Norman, OK', 'Stillwater, OK', 'Lubbock, TX', 'Waco, TX', 'Manhattan, KS',
   'Lawrence, KS', 'Boulder, CO', 'Provo, UT', 'Logan, UT', 'Tucson, AZ',
   'Tempe, AZ', 'Berkeley, CA', 'Palo Alto, CA', 'Eugene, OR', 'Corvallis, OR',
   'Pullman, WA', 'Boise, ID',
-  
   // Other significant cities
   'Albuquerque, NM', 'Anaheim, CA', 'Anchorage, AK', 'Arlington, TX',
-  'Birmingham, AL', 'Boise, ID', 'Bridgeport, CT', 'Burlington, VT',
+  'Birmingham, AL', 'Bridgeport, CT', 'Burlington, VT',
   'Charleston, SC', 'Charleston, WV', 'Chattanooga, TN', 'Colorado Springs, CO',
   'Des Moines, IA', 'El Paso, TX', 'Fort Lauderdale, FL', 'Fort Worth, TX',
   'Fresno, CA', 'Grand Rapids, MI', 'Hartford, CT', 'Honolulu, HI',
-  'Lansing, MI', 'Little Rock, AR', 'Long Beach, CA', 'Madison, WI',
+  'Lansing, MI', 'Little Rock, AR', 'Long Beach, CA',
   'Mesa, AZ', 'Mobile, AL', 'Newark, NJ', 'Omaha, NE',
   'Providence, RI', 'Reno, NV', 'Richmond, VA', 'Rochester, NY',
   'San Bernardino, CA', 'Santa Ana, CA', 'Savannah, GA', 'Scottsdale, AZ',
