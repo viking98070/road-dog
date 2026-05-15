@@ -113,7 +113,16 @@ const navigate = useNavigate()
   return (
     <div className={styles.page}>
       <header className={styles.header}>
-        <div className={styles.logo}>Road<span>Dog</span></div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          <button 
+            className={styles.signOut} 
+            onClick={() => navigate('/hub')}
+            style={{ background: 'transparent' }}
+          >
+            ← Hub
+          </button>
+          <div className={styles.logo}>Road<span>Dog</span></div>
+        </div>
         <div style={{ display: 'flex', gap: 10 }}>
           <button 
             className={styles.signOut} 
