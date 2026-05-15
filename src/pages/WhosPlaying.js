@@ -17,8 +17,8 @@ const LEAGUE_OPTIONS = [
 ]
 
 const GENRE_OPTIONS = [
-  'Rock', 'Pop', 'Country', 'Hip-Hop/Rap', 'R&B', 'Metal',
-  'Alternative', 'Folk', 'Dance/Electronic', 'Latin', 'World', 'Jazz',
+  'Rock', 'Pop', 'Country', 'Hip-Hop/Rap', 'R&B', 'Alternative',
+  'Metal', 'Folk', 'Jazz', 'Latin', 'World', 'Dance/Electronic',
 ]
 
 function defaultDates() {
@@ -296,19 +296,7 @@ export default function WhosPlaying({ session }) {
             </div>
           </div>
 
-          {/* Comedy */}
-          <div style={{ marginBottom: 14 }}>
-            <label style={{ display: 'block', fontSize: 11, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: 0.5, fontFamily: 'var(--head)', marginBottom: 8 }}>
-              Comedy
-            </label>
-            <div
-              onClick={() => setIncludeComedy(!includeComedy)}
-              style={chipStyle(includeComedy)}
-            >
-              Comedy shows
-            </div>
-          </div>
-
+          
           <button
             onClick={handleSearch}
             disabled={!canSearch || loading}
