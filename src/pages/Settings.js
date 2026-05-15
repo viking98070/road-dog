@@ -72,9 +72,11 @@ export default function Settings({ session }) {
       )
     }
 
+    // Only save teams whose league is still selected
+    const validTeams = selectedTeams.filter(t => selectedLeagues.includes(t.league))
     await supabase.from('user_teams').delete().eq('user_id', userId)
-    if (selectedTeams.length > 0) {
-      const teams = selectedTeams.map(t => ({
+    if (validTeams.length > 0) {
+      const teams = validTeams.map(t => ({
         user_id: userId,
         league_key: t.league,
         team_name: t.name,
