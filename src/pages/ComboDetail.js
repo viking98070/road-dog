@@ -60,7 +60,49 @@ const fmt = d => new Date(d + 'T12:00:00').toLocaleDateString('en-US', { weekday
     const more = others.length > 4 ? ` +${others.length - 4} more` : ''
     return `Also playing: ${preview}${more}`
   }
-
+// Group events by artist+venue or matchup+venue. Multi-night sequences collapse.
+  function groupEvents(events) {
+    const groups = []
+    const used = new Set()
+    
+    for (const event of events) {
+      if (used.has(event.id)) continue
+      
+      // Build a grouping key per event
+      let key
+      if (event.type === 'sport') {
+        key = `${event.away_team}|${event.home_team}|${event.venue}`
+      } else {
+        key = `${event.artist_name}|${event.venue}`
+      }
+      
+      // Find all events matching this key
+      const matches = events.filter(e => {
+        if (used.has(e.id)) return false
+        let eKey
+        if (e.type === 'sport') {
+          eKey = `${e.away_team}|${e.home_team}|${e.venue}`
+        } else {
+          eKey = `${e.artist_name}|${e.venue}`
+        }
+        return eKey === key
+      })
+      
+      // Mark them all as used
+      matches.forEach(m => used.add(m.id))
+      
+      // Sort by date
+      matches.sort((a, b) => a.event_date.localeCompare(b.event_date))
+      
+      groups.push({
+        primary: matches[0],
+        count: matches.length,
+        firstDate: matches[0].event_date,
+        lastDate: matches[matches.length - 1].event_date,
+      })
+    }
+    return groups
+  }
   const badge = combo.score >= 7 ? '🔥 Hot combo' : combo.score >= 5 ? '⭐ Great combo' : '✈️ Good combo'
 
   return (
@@ -82,13 +124,22 @@ const fmt = d => new Date(d + 'T12:00:00').toLocaleDateString('en-US', { weekday
           <p className={styles.empty}>No event details found.</p>
         ) : (
           <div className={styles.eventList}>
-            {events.map(event => {
+            {groupEvents(events).map(group => {
+              const event = group.primary
               const lineup = lineupPreview(event)
+              const isMultiNight = group.count > 1
               return (
                 <div key={event.id} className={styles.eventCard}>
                   <div className={styles.eventLeague} style={{background:categoryColor(event)}}>{categoryLabel(event)}</div>
                   <div className={styles.eventInfo}>
-                    <div className={styles.eventName}>{eventTitle(event)}</div>
+                    <div className={styles.eventName}>
+                      {eventTitle(event)}
+                      {isMultiNight && (
+                        <span style={{ marginLeft: 8, fontSize: 11, color: 'var(--orange)', fontWeight: 600 }}>
+                          × {group.count} nights
+                        </span>
+                      )}
+                    </div>
                     {event.parent_event && (
                       <div style={{ fontSize: 12, color: 'var(--orange)', fontWeight: 600, marginTop: 2 }}>
                         {event.parent_event}
@@ -101,7 +152,9 @@ const fmt = d => new Date(d + 'T12:00:00').toLocaleDateString('en-US', { weekday
                       </div>
                     )}
                   </div>
-                  <div className={styles.eventDate}>{fmt(event.event_date)}</div>
+                  <div className={styles.eventDate}>
+                    {isMultiNight ? fmtRange(group.firstDate, group.lastDate) : fmt(event.event_date)}
+                  </div>
                 </div>
               )
             })}
