@@ -109,7 +109,7 @@ export default function Settings({ session }) {
     }
 
     setRebuilding(false)
-    navigate('/dashboard')
+    navigate('/hub')
   }
 
   if (loading) {
@@ -127,8 +127,8 @@ export default function Settings({ session }) {
     <div className={styles.page}>
       <header className={styles.header}>
         <div className={styles.logo}>Road<span>Dog</span></div>
-        <button className={styles.signOut} onClick={() => navigate('/dashboard')}>
-          ← Back to dashboard
+        <button className={styles.signOut} onClick={() => navigate('/hub')}>
+          ← Back to hub
         </button>
       </header>
 
@@ -231,8 +231,8 @@ export default function Settings({ session }) {
           gap: 12,
           zIndex: 100,
         }}>
-          <button
-            onClick={() => navigate('/dashboard')}
+         <button
+            onClick={() => navigate('/hub')}
             disabled={saving || rebuilding}
             style={{
               background: 'transparent',
