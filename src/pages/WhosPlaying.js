@@ -20,7 +20,19 @@ const GENRE_OPTIONS = [
   'Rock', 'Pop', 'Country', 'Hip-Hop/Rap', 'R&B', 'Alternative',
   'Metal', 'Folk', 'Jazz', 'Latin', 'World', 'Dance/Electronic',
 ]
-
+const CITIES = [
+  'Atlanta, GA', 'Austin, TX', 'Baltimore, MD', 'Boston, MA', 'Buffalo, NY',
+  'Charlotte, NC', 'Chicago, IL', 'Cincinnati, OH', 'Cleveland, OH', 'Columbus, OH',
+  'Dallas, TX', 'Denver, CO', 'Detroit, MI', 'Green Bay, WI', 'Houston, TX',
+  'Indianapolis, IN', 'Jacksonville, FL', 'Kansas City, MO', 'Las Vegas, NV',
+  'Los Angeles, CA', 'Louisville, KY', 'Memphis, TN', 'Miami, FL', 'Milwaukee, WI',
+  'Minneapolis, MN', 'Nashville, TN', 'New Orleans, LA', 'New York, NY',
+  'Oakland, CA', 'Oklahoma City, OK', 'Orlando, FL', 'Philadelphia, PA',
+  'Phoenix, AZ', 'Pittsburgh, PA', 'Portland, OR', 'Raleigh, NC',
+  'Sacramento, CA', 'Salt Lake City, UT', 'San Antonio, TX', 'San Diego, CA',
+  'San Francisco, CA', 'San Jose, CA', 'Seattle, WA', 'St. Louis, MO',
+  'Tampa, FL', 'Washington, DC',
+]
 function defaultDates() {
   const today = new Date()
   const in30 = new Date(today)
@@ -33,6 +45,7 @@ export default function WhosPlaying({ session }) {
   const navigate = useNavigate()
   const defaults = defaultDates()
   const [city, setCity] = useState('')
+  const [showCitySuggestions, setShowCitySuggestions] = useState(false)
   const [startDate, setStartDate] = useState(defaults.start)
   const [endDate, setEndDate] = useState(defaults.end)
   const [selectedLeagues, setSelectedLeagues] = useState([])
@@ -181,14 +194,19 @@ export default function WhosPlaying({ session }) {
           padding: 20,
           marginBottom: 20,
         }}>
-          <div style={{ marginBottom: 14 }}>
+          <div style={{ marginBottom: 14, position: 'relative' }}>
             <label style={{ display: 'block', fontSize: 11, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: 0.5, fontFamily: 'var(--head)', marginBottom: 6 }}>
               City
             </label>
             <input
               type="text"
               value={city}
-              onChange={e => setCity(e.target.value)}
+              onChange={e => {
+                setCity(e.target.value)
+                setShowCitySuggestions(true)
+              }}
+              onFocus={() => setShowCitySuggestions(true)}
+              onBlur={() => setTimeout(() => setShowCitySuggestions(false), 200)}
               placeholder="e.g., Austin, Chicago, New York"
               style={{
                 width: '100%',
@@ -203,6 +221,46 @@ export default function WhosPlaying({ session }) {
                 fontFamily: 'var(--body)',
               }}
             />
+            {showCitySuggestions && city.trim().length > 0 && (() => {
+              const matches = CITIES.filter(c => c.toLowerCase().includes(city.toLowerCase())).slice(0, 8)
+              if (matches.length === 0) return null
+              return (
+                <div style={{
+                  position: 'absolute',
+                  top: 'calc(100% + 4px)',
+                  left: 0,
+                  right: 0,
+                  background: 'var(--surface2)',
+                  border: '1px solid var(--border)',
+                  borderRadius: 8,
+                  maxHeight: 280,
+                  overflowY: 'auto',
+                  zIndex: 10,
+                  boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
+                }}>
+                  {matches.map(c => (
+                    <div
+                      key={c}
+                      onMouseDown={() => {
+                        setCity(c.split(',')[0])
+                        setShowCitySuggestions(false)
+                      }}
+                      style={{
+                        padding: '10px 14px',
+                        fontSize: 14,
+                        color: 'var(--text)',
+                        cursor: 'pointer',
+                        borderBottom: '1px solid var(--border)',
+                      }}
+                      onMouseOver={e => e.currentTarget.style.background = 'var(--surface)'}
+                      onMouseOut={e => e.currentTarget.style.background = 'transparent'}
+                    >
+                      {c}
+                    </div>
+                  ))}
+                </div>
+              )
+            })()}
           </div>
 
           <div style={{ display: 'flex', gap: 12, marginBottom: 14 }}>
