@@ -1,119 +1,300 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
+import { supabase } from '../lib/supabase'
 import styles from './Step.module.css'
 
-const TEAM_SPORTS = ['nfl', 'mlb', 'nba', 'nhl', 'cfb', 'mcbb', 'wcbb', 'mls', 'wnba']
+export default function StepShows({ selected, setSelected, onBack, onFinish, saving, hideFooter }) {
+  const [activeTab, setActiveTab] = useState('Music')
+  const [query, setQuery] = useState('')
+  const [searchResults, setSearchResults] = useState([])
+  const [searching, setSearching] = useState(false)
+  const [popular, setPopular] = useState([])
+  const [loadingPopular, setLoadingPopular] = useState(true)
+  const debounceRef = useRef(null)
 
-const TEAMS = {
-  nfl: ['Bears','Bengals','Bills','Broncos','Browns','Buccaneers','Cardinals','Chargers','Chiefs','Colts','Cowboys','Dolphins','Eagles','Falcons','Giants','Jaguars','Jets','Lions','Packers','Panthers','Patriots','Raiders','Rams','Ravens','Saints','Seahawks','Steelers','Texans','Titans','Vikings','49ers','Washington'],
-  mlb: ['Angels','Astros','Athletics','Blue Jays','Braves','Brewers','Cardinals','Cubs','Dodgers','Giants','Guardians','Mariners','Mets','Nationals','Orioles','Padres','Phillies','Pirates','Rangers','Rays','Red Sox','Reds','Rockies','Royals','Tigers','Twins','White Sox','Yankees'],
-  nba: ['76ers','Bucks','Bulls','Cavaliers','Celtics','Clippers','Grizzlies','Hawks','Heat','Hornets','Jazz','Kings','Knicks','Lakers','Magic','Mavericks','Nets','Nuggets','Pacers','Pelicans','Pistons','Raptors','Rockets','Spurs','Suns','Thunder','Timberwolves','Trail Blazers','Warriors','Wizards'],
-  nhl: ['Blackhawks','Blue Jackets','Blues','Bruins','Canucks','Capitals','Devils','Ducks','Flames','Flyers','Golden Knights','Hurricanes','Islanders','Jets','Kings','Kraken','Lightning','Maple Leafs','Oilers','Panthers','Penguins','Predators','Rangers','Red Wings','Sabres','Senators','Sharks','Stars','Wild'],
-  cfb: ['Alabama','Arkansas','Auburn','Baylor','BYU','Clemson','Colorado','Duke','Florida','Florida St.','Georgia','Georgia Tech','Houston','Illinois','Indiana','Iowa','Iowa St.','Kansas','Kansas St.','Kentucky','LSU','Louisville','Maryland','Miami','Michigan','Michigan St.','Minnesota','Mississippi St.','Missouri','Nebraska','North Carolina','North Carolina St.','Northwestern','Notre Dame','Ohio State','Oklahoma','Oklahoma St.','Ole Miss','Oregon','Oregon St.','Penn State','Pittsburgh','Purdue','Rutgers','SMU','South Carolina','Stanford','Syracuse','TCU','Tennessee','Texas','Texas A&M','Texas Tech','UCLA','USC','Utah','Vanderbilt','Virginia','Virginia Tech','Wake Forest','Washington','Washington St.','West Virginia','Wisconsin'],
-  mcbb: ['Alabama','Arizona','Arizona St.','Arkansas','Auburn','Baylor','BYU','Cincinnati','Clemson','Colorado','Connecticut','Duke','Florida','Florida St.','Gonzaga','Georgia','Georgia Tech','Houston','Illinois','Indiana','Iowa','Iowa St.','Kansas','Kansas St.','Kentucky','Louisville','LSU','Marquette','Maryland','Memphis','Michigan','Michigan St.','Minnesota','Missouri','North Carolina','North Carolina St.','Northwestern','Notre Dame','Ohio State','Oklahoma','Oklahoma St.','Oregon','Penn State','Pittsburgh','Purdue','Rutgers','Saint John\'s','San Diego St.','South Carolina','Stanford','Syracuse','TCU','Tennessee','Texas','Texas A&M','Texas Tech','UCLA','USC','Utah','Vanderbilt','Villanova','Virginia','Virginia Tech','Wake Forest','Washington','West Virginia','Wisconsin','Xavier'],
-  wcbb: ['Baylor','Connecticut','Duke','Florida St.','Georgia','Iowa','Iowa St.','LSU','Louisville','Maryland','Michigan','NC State','North Carolina','Notre Dame','Ohio State','Oklahoma','Oregon','South Carolina','Stanford','Tennessee','Texas','Texas A&M','UCLA','USC','Utah','Virginia Tech','Washington','Wisconsin'],
-  mls: ['Atlanta United','Austin FC','Charlotte FC','Chicago Fire','Colorado Rapids','Columbus Crew','D.C. United','FC Dallas','Inter Miami','LA Galaxy','LAFC','Minnesota United','Nashville SC','New England Revolution','NYCFC','NY Red Bulls','Orlando City','Philadelphia Union','Portland Timbers','Real Salt Lake','San Jose Earthquakes','Seattle Sounders','Sporting KC','St. Louis City','Toronto FC','Vancouver Whitecaps'],
-  wnba: ['Aces','Dream','Fever','Liberty','Lynx','Mercury','Mystics','Sky','Sparks','Storm','Sun','Wings'],
-}
+  useEffect(() => {
+    supabase
+      .from('popular_artists')
+      .select('attraction_id, name, segment, genre, image, upcoming_events_count')
+      .order('upcoming_events_count', { ascending: false })
+      .then(({ data, error }) => {
+        if (!error && data) setPopular(data)
+        setLoadingPopular(false)
+      })
+  }, [])
 
-const LABELS = { nfl:'NFL', mlb:'MLB', nba:'NBA', nhl:'NHL', cfb:'College Football', mcbb:"Men's CBB", wcbb:"Women's CBB", mls:'MLS', wnba:'WNBA' }
+  const isSelected = (name) =>
+    selected.some(s => (typeof s === 'string' ? s : s.name).toLowerCase() === name.toLowerCase())
 
-const TEAM_COLORS = {
-  Bears:'#0B162A', Bengals:'#FB4F14', Bills:'#00338D', Broncos:'#FB4F14', Browns:'#311D00',
-  Buccaneers:'#D50A0A', Cardinals:'#97233F', Chargers:'#0080C6', Chiefs:'#E31837', Colts:'#002C5F',
-  Cowboys:'#003594', Dolphins:'#008E97', Eagles:'#004C54', Falcons:'#A71930', Giants:'#0B2265',
-  Jaguars:'#006778', Jets:'#125740', Lions:'#0076B6', Packers:'#203731', Panthers:'#0085CA',
-  Patriots:'#002244', Raiders:'#000000', Rams:'#003594', Ravens:'#241773', Saints:'#9B8A5A',
-  Seahawks:'#002244', Steelers:'#101820', Texans:'#03202F', Titans:'#0C2340', Vikings:'#4F2683',
-  '49ers':'#AA0000', Washington:'#5A1414',
-  Angels:'#BA0021', Astros:'#EB6E1F', Athletics:'#003831', 'Blue Jays':'#134A8E', Braves:'#CE1141',
-  Brewers:'#FFC52F', Cubs:'#0E3386', Dodgers:'#005A9C', Guardians:'#E31937', Mariners:'#0C2C56',
-  Mets:'#002D72', Nationals:'#AB0003', Orioles:'#DF4601', Padres:'#2F241D', Phillies:'#E81828',
-  Pirates:'#27251F', Rangers:'#003278', Rays:'#092C5C', 'Red Sox':'#BD3039', Reds:'#C6011F',
-  Rockies:'#33006F', Royals:'#004687', Tigers:'#0C2340', Twins:'#002B5C', 'White Sox':'#27251F',
-  Yankees:'#003087',
-  '76ers':'#006BB6', Bucks:'#00471B', Bulls:'#CE1141', Cavaliers:'#860038', Celtics:'#007A33',
-  Clippers:'#C8102E', Grizzlies:'#5D76A9', Hawks:'#E03A3E', Heat:'#98002E', Hornets:'#1D1160',
-  Jazz:'#002B5C', Kings:'#5A2D81', Knicks:'#006BB6', Lakers:'#552583', Magic:'#0077C0',
-  Mavericks:'#00538C', Nets:'#000000', Nuggets:'#0E2240', Pacers:'#002D62', Pelicans:'#0C2340',
-  Pistons:'#C8102E', Raptors:'#CE1141', Rockets:'#CE1141', Spurs:'#C4CED4', Suns:'#1D1160',
-  Thunder:'#007AC1', Timberwolves:'#0C2340', 'Trail Blazers':'#E03A3E', Warriors:'#1D428A', Wizards:'#002B5C',
-  Blackhawks:'#CF0A2C', 'Blue Jackets':'#002654', Blues:'#002F87', Bruins:'#FCB514', Canucks:'#00843D',
-  Capitals:'#041E42', Devils:'#CE1126', Ducks:'#F47A38', Flames:'#C8102E', Flyers:'#F74902',
-  'Golden Knights':'#B4975A', Hurricanes:'#CC0000', Islanders:'#00539B', Kings:'#111111',
-  Kraken:'#001628', Lightning:'#002868', 'Maple Leafs':'#00205B', Oilers:'#FF4C00',
-  Penguins:'#CFC493', Predators:'#FFB81C', Rangers:'#0038A8', 'Red Wings':'#CE1126',
-  Sabres:'#003087', Senators:'#C8102E', Sharks:'#006D75', Stars:'#006847', Wild:'#154734',
-  Aces:'#000000', Dream:'#C8102E', Fever:'#FFC72C', Liberty:'#6ECEB2', Lynx:'#236192',
-  Mercury:'#CB6015', Mystics:'#002B5C', Sky:'#418FDE', Sparks:'#702F8A', Storm:'#2C5234',
-  Sun:'#F05023', Wings:'#C4D600',
-}
-
-export default function StepTeams({ leagues, selected, setSelected, onBack, onNext }) {
-  const teamLeagues = leagues.filter(k => TEAM_SPORTS.includes(k))
-  const [activeTab, setActiveTab] = useState(teamLeagues[0] || '')
-
-  if (teamLeagues.length === 0) {
-    onNext()
-    return null
+  function addArtist(name, attractionId = null) {
+    if (isSelected(name)) return
+    setSelected(prev => [...prev, { name, attractionId }])
   }
 
-  function toggle(league, name) {
-    const id = `${league}:${name}`
-    setSelected(prev =>
-      prev.find(t => t.id === id)
-        ? prev.filter(t => t.id !== id)
-        : [...prev, { id, league, name }]
-    )
+  function removeArtist(name) {
+    setSelected(prev => prev.filter(s =>
+      (typeof s === 'string' ? s : s.name).toLowerCase() !== name.toLowerCase()
+    ))
   }
 
-  function isSelected(league, name) {
-    return selected.some(t => t.id === `${league}:${name}`)
+  function togglePopular(item) {
+    if (isSelected(item.name)) removeArtist(item.name)
+    else addArtist(item.name, item.attraction_id)
   }
 
-  const teams = (TEAMS[activeTab] || []).sort((a, b) => a.localeCompare(b))
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+
+    if (query.trim().length < 2) {
+      setSearchResults([])
+      setSearching(false)
+      return
+    }
+
+    setSearching(true)
+    debounceRef.current = setTimeout(async () => {
+      try {
+        const { data, error } = await supabase.functions.invoke('search-artists', {
+          body: { query: query.trim() }
+        })
+        if (error) {
+          setSearchResults([])
+        } else {
+          setSearchResults(data?.results || [])
+        }
+      } catch (e) {
+        setSearchResults([])
+      } finally {
+        setSearching(false)
+      }
+    }, 300)
+
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current)
+    }
+  }, [query])
+
+  const filteredPopular = popular.filter(p => p.segment === activeTab)
 
   return (
     <div className={styles.container}>
       <div className={styles.titleArea}>
-        <h1 className={styles.title}>Pick your teams</h1>
-        <p className={styles.sub}>Choose teams to follow for away games.</p>
+        <h1 className={styles.title}>Shows</h1>
+        <p className={styles.sub}>Search for artists or comedians, or pick from popular options below.</p>
       </div>
 
-      <div className={styles.tabs}>
-        {teamLeagues.map(k => (
-          <div
-            key={k}
-            className={`${styles.tab} ${activeTab === k ? styles.tabActive : ''}`}
-            onClick={() => setActiveTab(k)}
-          >
-            {LABELS[k]}
+      <div style={{ position: 'relative', marginBottom: 12 }}>
+        <input
+          type="text"
+          value={query}
+          onChange={e => setQuery(e.target.value)}
+          placeholder="Search for any artist or comedian..."
+          style={{
+            width: '100%',
+            padding: '12px 14px',
+            fontSize: 15,
+            background: 'var(--surface)',
+            border: '1px solid var(--border)',
+            borderRadius: 10,
+            color: 'var(--text)',
+            outline: 'none',
+            boxSizing: 'border-box',
+            fontFamily: 'var(--body)',
+          }}
+        />
+        {query.trim().length >= 2 && (
+          <div style={{
+            position: 'absolute',
+            top: 'calc(100% + 4px)',
+            left: 0,
+            right: 0,
+            background: 'var(--surface2)',
+            border: '1px solid var(--border)',
+            borderRadius: 10,
+            maxHeight: 320,
+            overflowY: 'auto',
+            zIndex: 10,
+            boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
+          }}>
+            {searching ? (
+              <div style={{ padding: 16, color: 'var(--text2)', fontSize: 13 }}>Searching…</div>
+            ) : searchResults.length === 0 ? (
+              <div style={{ padding: 16, color: 'var(--text2)', fontSize: 13 }}>
+                No matching artists with upcoming events. Try a different name?
+              </div>
+            ) : (
+              searchResults.map(result => {
+                const alreadyAdded = isSelected(result.name)
+                return (
+                  <div
+                    key={result.id}
+                    onClick={() => {
+                      if (alreadyAdded) {
+                        removeArtist(result.name)
+                      } else {
+                        addArtist(result.name, result.id)
+                        setQuery('')
+                      }
+                    }}
+                    style={{
+                      padding: '10px 14px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 10,
+                      cursor: 'pointer',
+                      borderBottom: '1px solid var(--border)',
+                      background: alreadyAdded ? '#1f0f00' : 'transparent',
+                    }}
+                  >
+                    {result.image && (
+                      <img
+                        src={result.image}
+                        alt=""
+                        style={{ width: 40, height: 28, objectFit: 'cover', borderRadius: 4, flexShrink: 0 }}
+                      />
+                    )}
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: 14, color: 'var(--text)', fontWeight: 600 }}>
+                        {result.name}
+                      </div>
+                      <div style={{ fontSize: 11, color: 'var(--text3)' }}>
+                        {result.genre || result.segment} · {result.upcomingEventsCount} upcoming events
+                      </div>
+                    </div>
+                    <div style={{ color: alreadyAdded ? 'var(--orange)' : 'var(--text3)', fontSize: 18, fontWeight: 700 }}>
+                      {alreadyAdded ? '✓' : '+'}
+                    </div>
+                  </div>
+                )
+              })
+            )}
           </div>
-        ))}
+        )}
       </div>
 
-      <div className={styles.teamGrid}>
-        {teams.map(name => {
-          const sel = isSelected(activeTab, name)
-          const color = TEAM_COLORS[name] || '#333'
-          const initials = name.split(' ').map(w => w[0]).join('').slice(0, 3).toUpperCase()
-          return (
-            <div
-              key={name}
-              className={`${styles.teamCard} ${sel ? styles.sel : ''}`}
-              onClick={() => toggle(activeTab, name)}
-            >
-              <div className={styles.teamCircle} style={{ background: color }}>{initials}</div>
-              <div className={styles.teamName}>{name}</div>
-            </div>
-          )
-        })}
+      {selected.length > 0 && (
+        <div style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: 6,
+          marginBottom: 16,
+          padding: '8px 0',
+        }}>
+          {selected.map((s, idx) => {
+            const name = typeof s === 'string' ? s : s.name
+            return (
+              <div
+                key={idx}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  padding: '4px 10px',
+                  background: '#1f0f00',
+                  border: '1px solid var(--orange)',
+                  borderRadius: 999,
+                  fontSize: 12,
+                  color: 'var(--text)',
+                }}
+              >
+                <span>{name}</span>
+                <button
+                  onClick={() => removeArtist(name)}
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    color: 'var(--orange)',
+                    cursor: 'pointer',
+                    fontSize: 14,
+                    padding: 0,
+                    lineHeight: 1,
+                  }}
+                  aria-label={`Remove ${name}`}
+                >
+                  ×
+                </button>
+              </div>
+            )
+          })}
+        </div>
+      )}
+
+      <div style={{
+        fontSize: 11,
+        color: 'var(--text3)',
+        textTransform: 'uppercase',
+        letterSpacing: 0.5,
+        marginBottom: 8,
+        marginTop: 8,
+        fontFamily: 'var(--head)',
+      }}>
+        Popular right now
       </div>
 
-      <div className={styles.footer}>
-        <button className={styles.backBtn} onClick={onBack}>← Back</button>
-        <div className={styles.count}><b>{selected.length}</b> teams</div>
-        <button className={styles.nextBtn} onClick={onNext}>Next →</button>
+      <div className={styles.tabs} style={{ overflowX: 'auto', flexWrap: 'nowrap' }}>
+        <div
+          className={`${styles.tab} ${activeTab === 'Music' ? styles.tabActive : ''}`}
+          onClick={() => setActiveTab('Music')}
+          style={{ whiteSpace: 'nowrap' }}
+        >
+          🎤 Music
+        </div>
+        <div
+          className={`${styles.tab} ${activeTab === 'Comedy' ? styles.tabActive : ''}`}
+          onClick={() => setActiveTab('Comedy')}
+          style={{ whiteSpace: 'nowrap' }}
+        >
+          😂 Comedy
+        </div>
       </div>
+
+      <div className={styles.showList}>
+        {loadingPopular ? (
+          <div style={{ color: 'var(--text2)', fontSize: 13, padding: 12 }}>
+            Loading…
+          </div>
+        ) : filteredPopular.length === 0 ? (
+          <div style={{ color: 'var(--text2)', fontSize: 13, padding: 12 }}>
+            No popular artists found. Try searching above.
+          </div>
+        ) : (
+          filteredPopular.map(item => {
+            const sel = isSelected(item.name)
+            return (
+              <div
+                key={item.attraction_id}
+                className={`${styles.showRow} ${sel ? styles.sel : ''}`}
+                onClick={() => togglePopular(item)}
+              >
+                <span>
+                  {item.name}
+                  {item.genre && (
+                    <span style={{ color: 'var(--text3)', fontSize: 11, marginLeft: 8 }}>
+                      {item.genre}
+                    </span>
+                  )}
+                </span>
+                <div className={`${styles.showCheck} ${sel ? styles.checked : ''}`}>
+                  {sel && '✓'}
+                </div>
+              </div>
+            )
+          })
+        )}
+      </div>
+
+      {!hideFooter && (
+        <div className={styles.footer}>
+          <button className={styles.backBtn} onClick={onBack}>← Back</button>
+          <div className={styles.count}><b>{selected.length}</b> selected</div>
+          <button
+            className={styles.nextBtn}
+            onClick={() => onFinish(selected)}
+            disabled={saving}
+          >
+            {saving ? 'Saving...' : 'Continue'}
+          </button>
+        </div>
+      )}
     </div>
   )
 }
