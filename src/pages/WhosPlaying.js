@@ -272,10 +272,10 @@ export default function WhosPlaying({ session }) {
             </div>
           </div>
 
-          {/* Music */}
+          {/* Shows: music genres + comedy */}
           <div style={{ marginBottom: 14 }}>
             <label style={{ display: 'block', fontSize: 11, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: 0.5, fontFamily: 'var(--head)', marginBottom: 8 }}>
-              Music
+              Shows
             </label>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
               {GENRE_OPTIONS.map(g => (
@@ -287,6 +287,12 @@ export default function WhosPlaying({ session }) {
                   {g}
                 </div>
               ))}
+              <div
+                onClick={() => setIncludeComedy(!includeComedy)}
+                style={chipStyle(includeComedy)}
+              >
+                Comedy
+              </div>
             </div>
           </div>
 
