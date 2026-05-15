@@ -502,7 +502,7 @@ export default function StepTeams({ leagues, selected, setSelected, onBack, onNe
               onClick={() => toggle(activeTab, team)}
             >
               <div className={styles.teamCircle} style={{ background: color }}>{tricode}</div>
-              <div className={styles.teamName}>{team.short}</div>
+              <div className={styles.teamName}>{isCollege ? team.short : team.full}</div>
             </div>
           )
         })}
