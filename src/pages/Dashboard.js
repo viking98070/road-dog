@@ -57,7 +57,13 @@ const navigate = useNavigate()
     // Parse as local date (noon UTC avoids timezone shifts to prior/next day)
     return new Date(dateStr + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
   }
-
+function displayCity(combo) {
+    const cities = combo.cities && combo.cities.length > 0 ? combo.cities : [combo.city]
+    if (!cities[0]) return ''
+    if (cities.length === 1) return cities[0]
+    if (cities.length === 2) return `${cities[0]} & ${cities[1]}`
+    return `${cities[0]}, ${cities[1]} +${cities.length - 2} more`
+  }
   function formatScore(score) {
     if (score >= 7) return '🔥 Hot combo'
     if (score >= 5) return '⭐ Great combo'
@@ -204,7 +210,7 @@ const navigate = useNavigate()
                 style={{ cursor: 'pointer' }}
               >
                 <div className={styles.cardHeader}>
-                  <div className={styles.cardCity}>{combo.city}</div>
+                  <div className={styles.cardCity}>{displayCity(combo)}</div>
                   <div className={styles.cardBadge}>{formatScore(combo.score)}</div>
                 </div>
                 <div className={styles.cardDates}>
