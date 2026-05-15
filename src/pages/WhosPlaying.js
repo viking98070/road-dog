@@ -225,6 +225,7 @@ export default function WhosPlaying({ session }) {
                   outline: 'none',
                   boxSizing: 'border-box',
                   fontFamily: 'var(--body)',
+                  colorScheme: 'dark',
                 }}
               />
             </div>
@@ -247,6 +248,7 @@ export default function WhosPlaying({ session }) {
                   outline: 'none',
                   boxSizing: 'border-box',
                   fontFamily: 'var(--body)',
+                  colorScheme: 'dark',
                 }}
               />
             </div>
