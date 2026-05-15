@@ -192,7 +192,7 @@ export default function WhosPlaying({ session }) {
               placeholder="e.g., Austin, Chicago, New York"
               style={{
                 width: '100%',
-                background: 'var(--surface2)',
+                background: 'var(--bg)',
                 border: '1px solid var(--border)',
                 borderRadius: 8,
                 padding: '10px 12px',
@@ -216,7 +216,7 @@ export default function WhosPlaying({ session }) {
                 onChange={e => setStartDate(e.target.value)}
                 style={{
                   width: '100%',
-                  background: 'var(--surface2)',
+                  background: 'var(--bg)',
                   border: '1px solid var(--border)',
                   borderRadius: 8,
                   padding: '10px 12px',
@@ -238,7 +238,7 @@ export default function WhosPlaying({ session }) {
                 onChange={e => setEndDate(e.target.value)}
                 style={{
                   width: '100%',
-                  background: 'var(--surface2)',
+                  background: 'var(--bg)',
                   border: '1px solid var(--border)',
                   borderRadius: 8,
                   padding: '10px 12px',
