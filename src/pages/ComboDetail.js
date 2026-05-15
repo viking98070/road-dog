@@ -14,8 +14,13 @@ export default function ComboDetail({ combo, onBack }) {
 
 const fmt = d => new Date(d + 'T12:00:00').toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' })
   const fmtRange = (s,e) => `${new Date(s + 'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'})} – ${new Date(e + 'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'})}`
-
-
+function displayCity(combo) {
+    const cities = combo.cities && combo.cities.length > 0 ? combo.cities : [combo.city]
+    if (!cities[0]) return ''
+    if (cities.length === 1) return cities[0]
+    if (cities.length === 2) return `${cities[0]} & ${cities[1]}`
+    return `${cities[0]}, ${cities[1]} +${cities.length - 2} more`
+  }
   function categoryColor(event) {
     if (event.type === 'music') return '#7B2D8B'
     if (event.type === 'comedy') return '#F4911E'
@@ -112,7 +117,7 @@ const fmt = d => new Date(d + 'T12:00:00').toLocaleDateString('en-US', { weekday
         <div className={styles.logo}>Road<span>Dog</span></div>
       </div>
       <div className={styles.hero}>
-        <div className={styles.heroCity}>{combo.city}</div>
+        <div className={styles.heroCity}>{displayCity(combo)}</div>
         <div className={styles.heroDates}>{fmtRange(combo.start_date, combo.end_date)}</div>
         <div className={styles.heroBadge}>{badge}</div>
       </div>
