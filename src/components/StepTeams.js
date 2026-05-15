@@ -428,6 +428,10 @@ export default function StepTeams({ leagues, selected, setSelected, onBack, onNe
   }
 
   const allTabsVisited = teamLeagues.every(k => visitedTabs.has(k))
+  const leaguesWithoutTeams = leagues.filter(l => 
+    !selected.some(t => t.league === l)
+  )
+  const hasAtLeastOneTeamPerLeague = leaguesWithoutTeams.length === 0
   const isCollege = ['cfb', 'mcbb', 'wcbb'].includes(activeTab)
 
   const teams = [...(TEAMS[activeTab] || [])].sort((a, b) => {
@@ -511,8 +515,8 @@ export default function StepTeams({ leagues, selected, setSelected, onBack, onNe
           <button
             className={styles.nextBtn}
             onClick={onNext}
-            disabled={!allTabsVisited}
-            title={!allTabsVisited ? 'Please browse all league tabs first' : ''}
+            disabled={!hasAtLeastOneTeamPerLeague}
+            title={!hasAtLeastOneTeamPerLeague ? `Pick at least one team from: ${leaguesWithoutTeams.join(', ').toUpperCase()}` : ''}
           >
             Continue
           </button>
