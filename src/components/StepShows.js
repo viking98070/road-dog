@@ -4,6 +4,7 @@ import styles from './Step.module.css'
 
 export default function StepShows({ selected, setSelected, onBack, onFinish, saving, hideFooter }) {
   const [activeTab, setActiveTab] = useState('Music')
+  const [activeGenre, setActiveGenre] = useState('All')
   const [query, setQuery] = useState('')
   const [searchResults, setSearchResults] = useState([])
   const [searching, setSearching] = useState(false)
@@ -76,7 +77,17 @@ export default function StepShows({ selected, setSelected, onBack, onFinish, sav
     }
   }, [query])
 
-  const filteredPopular = popular.filter(p => p.segment === activeTab)
+  let filteredPopular = popular.filter(p => p.segment === activeTab)
+  if (activeTab === 'Music' && activeGenre !== 'All') {
+    filteredPopular = filteredPopular.filter(p => {
+      if (activeGenre === 'Other') {
+        // "Other" catches anything not in main genres
+        const mainGenres = ['Rock', 'Pop', 'Country', 'Hip-Hop/Rap', 'R&B']
+        return !p.genre || !mainGenres.includes(p.genre)
+      }
+      return p.genre === activeGenre
+    })
+  }
 
   return (
     <div className={styles.container}>
@@ -252,6 +263,37 @@ export default function StepShows({ selected, setSelected, onBack, onFinish, sav
           😂 Comedy
         </div>
       </div>
+      {/* Music genre sub-tabs (only show when Music is active) */}
+      {activeTab === 'Music' && (
+        <div style={{
+          display: 'flex',
+          gap: 6,
+          marginBottom: 12,
+          flexWrap: 'wrap',
+        }}>
+          {['All', 'Rock', 'Pop', 'Country', 'Hip-Hop/Rap', 'R&B', 'Other'].map(g => (
+            <div
+              key={g}
+              onClick={() => setActiveGenre(g)}
+              style={{
+                padding: '5px 12px',
+                background: activeGenre === g ? '#1f0f00' : 'var(--surface)',
+                border: `1px solid ${activeGenre === g ? 'var(--orange)' : 'var(--border)'}`,
+                borderRadius: 999,
+                fontSize: 11,
+                color: activeGenre === g ? 'var(--orange)' : 'var(--text2)',
+                fontWeight: activeGenre === g ? 600 : 500,
+                cursor: 'pointer',
+                fontFamily: 'var(--head)',
+                letterSpacing: 0.3,
+                textTransform: 'uppercase',
+              }}
+            >
+              {g}
+            </div>
+          ))}
+        </div>
+      )}
 
       <div className={styles.showList}>
         {loadingPopular ? (
