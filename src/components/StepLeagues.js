@@ -11,8 +11,7 @@ const LEAGUES = [
   { key: 'mls',    label: 'MLS',              sub: 'Soccer',                     color: '#002F6C', solo: false },
   { key: 'nwsl',   label: 'NWSL',             sub: "Women's Soccer",             color: '#003087', solo: false },
   { key: 'wnba',   label: 'WNBA',             sub: 'Basketball',                 color: '#C9082A', solo: false },
-  { key: 'pga',    label: 'PGA Tour',         sub: 'Golf · no teams',            color: '#00563F', solo: true  },
-  { key: 'nascar', label: 'NASCAR',           sub: 'Racing · no teams',          color: '#FFB612', solo: true  },
+  
 ]
 const icon = key => {
   if (key === 'nfl' || key === 'cfb') return '🏈'
