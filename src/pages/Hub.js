@@ -119,6 +119,47 @@ export default function Hub({ session }) {
               </div>
             </div>
           </div>
+                    </div>
+          {/* My Picks card */}
+          <div
+            onClick={() => navigate('/settings')}
+            style={{
+              background: 'var(--surface)',
+              border: '1px solid var(--border)',
+              borderRadius: 14,
+              padding: '28px 24px',
+              cursor: 'pointer',
+              transition: 'border-color 0.15s',
+              position: 'relative',
+            }}
+            onMouseOver={e => e.currentTarget.style.borderColor = 'var(--orange)'}
+            onMouseOut={e => e.currentTarget.style.borderColor = 'var(--border)'}
+          >
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16 }}>
+              <div style={{ fontSize: 32, lineHeight: 1 }}>⚙️</div>
+              <div style={{ flex: 1 }}>
+                <div style={{
+                  fontFamily: 'var(--head)',
+                  fontSize: 18,
+                  fontWeight: 700,
+                  color: 'var(--text)',
+                  textTransform: 'uppercase',
+                  letterSpacing: 1,
+                  marginBottom: 6,
+                }}>
+                  My Picks
+                </div>
+                <div style={{ fontSize: 14, color: 'var(--text2)', lineHeight: 1.5, marginBottom: 8 }}>
+                  Update your leagues, teams, artists, and home city. We'll refresh your combos.
+                </div>
+                <div style={{ fontSize: 13, color: 'var(--orange)', fontWeight: 600 }}>
+                  Edit preferences →
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
         </div>
       </main>
     </div>
