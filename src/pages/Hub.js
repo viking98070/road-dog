@@ -58,3 +58,65 @@ export default function Hub({ session }) {
             onClick={() => navigate('/combos')}
             style={cardStyle}
             onMouseOver={e => e.currentTarget.style.borderColor = 'var(--orange)'}
+            onMouseOut={e => e.currentTarget.style.borderColor = 'var(--border)'}
+          >
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16 }}>
+              <div style={{ fontSize: 32, lineHeight: 1 }}>🎯</div>
+              <div style={{ flex: 1 }}>
+                <div style={titleStyle}>Trip Combos</div>
+                <div style={{ fontSize: 14, color: 'var(--text2)', lineHeight: 1.5, marginBottom: 8 }}>
+                  Curated road trips for your favorite teams and artists. Multiple events lining up in the same city.
+                </div>
+                <div style={{ fontSize: 13, color: 'var(--orange)', fontWeight: 600 }}>
+                  {comboCount === null ? 'Loading…' : `${comboCount} combos ready →`}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Who's Playing card */}
+          <div
+            onClick={() => navigate('/whos-playing')}
+            style={cardStyle}
+            onMouseOver={e => e.currentTarget.style.borderColor = 'var(--orange)'}
+            onMouseOut={e => e.currentTarget.style.borderColor = 'var(--border)'}
+          >
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16 }}>
+              <div style={{ fontSize: 32, lineHeight: 1 }}>🔍</div>
+              <div style={{ flex: 1 }}>
+                <div style={titleStyle}>Who's Playing</div>
+                <div style={{ fontSize: 14, color: 'var(--text2)', lineHeight: 1.5, marginBottom: 8 }}>
+                  Pick any city and date range. See sports, concerts, and comedy happening there.
+                </div>
+                <div style={{ fontSize: 13, color: 'var(--orange)', fontWeight: 600 }}>
+                  Start exploring →
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* My Picks card */}
+          <div
+            onClick={() => navigate('/settings')}
+            style={cardStyle}
+            onMouseOver={e => e.currentTarget.style.borderColor = 'var(--orange)'}
+            onMouseOut={e => e.currentTarget.style.borderColor = 'var(--border)'}
+          >
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16 }}>
+              <div style={{ fontSize: 32, lineHeight: 1 }}>⚙️</div>
+              <div style={{ flex: 1 }}>
+                <div style={titleStyle}>My Picks</div>
+                <div style={{ fontSize: 14, color: 'var(--text2)', lineHeight: 1.5, marginBottom: 8 }}>
+                  Update your leagues, teams, artists, and home city. We'll refresh your combos.
+                </div>
+                <div style={{ fontSize: 13, color: 'var(--orange)', fontWeight: 600 }}>
+                  Edit preferences →
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  )
+}
