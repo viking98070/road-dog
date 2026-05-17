@@ -373,7 +373,7 @@ const TEAM_CITIES = {
 }
 
 const COLLEGE_COLORS = {'Air Force':'#003594','Appalachian State':'#000000','Army':'#000000','Ball State':'#BA0C2F',
-  'Boise St.':'#0033A0','Bowling Green':'#FE5000','Charlotte':'#046A38','Coastal Carolina':'#006F71',
+  'Boise St.':'#0033A0','Boston College':'#8B0000','Bowling Green':'#FE5000','Charlotte':'#046A38','Coastal Carolina':'#006F71',
   'Colorado St.':'#1E4D2B','East Carolina':'#592A8A','Florida Atlantic':'#003366','Florida International':'#081E3F',
   'Fresno St.':'#DB0032','Georgia Southern':'#011E41','Hawaii':'#024731','James Madison':'#450084',
   'Jacksonville St.':'#D71721','Kennesaw St.':'#FFB81C','Liberty':'#0A2240','Louisiana':'#CE2842',
