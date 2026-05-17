@@ -391,7 +391,7 @@ const COLLEGE_COLORS = {'Air Force':'#003594','Appalachian State':'#000000','Arm
   Iona:'#6E0F25','Kent State':'#003366','Loyola Chicago':'#700038','Murray St.':'#003D7C',
   Princeton:'#FF8F1C',Providence:'#000000',Richmond:'#990000','Saint Joseph’s':'#7E0303',
   'Saint Louis':'#003DA5','Saint Mary’s':'#06315B','Samford':'#003C71','San Francisco':'#005C2E',
-  'Seton Hall':'#0C2340',VCU:'#000000',Vermont:'#003B5C',Wichita St.':'#000000',
+  'Seton Hall':'#0C2340',VCU:'#000000',Vermont:'#003B5C','Wichita St.':'#000000',
   Wofford:'#866D4B',Yale:'#0F4D92',
   Belmont:'#040068',Columbia:'#0050A0','East Carolina':'#592A8A','Florida Gulf Coast':'#00427A',
   Harvard:'#A41034','Illinois St.':'#CE0E2D','South Dakota St.':'#003DA5',
