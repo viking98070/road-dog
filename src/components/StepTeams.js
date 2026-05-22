@@ -3,8 +3,6 @@ import styles from './Step.module.css'
 
 const TEAM_SPORTS = ['nfl', 'mlb', 'nba', 'nhl', 'cfb', 'mcbb', 'wcbb', 'mls', 'nwsl', 'wnba']
 
-// Each team: { short: display name, full: name saved to DB }
-// For colleges, full is the same as short (matched smartly in backend)
 const TEAMS = {
   nfl: [
     { short: '49ers', full: 'San Francisco 49ers' },
@@ -209,18 +207,9 @@ const TEAMS = {
 const LABELS = { nfl:'NFL', mlb:'MLB', nba:'NBA', nhl:'NHL', cfb:'College Football', mcbb:"Men's CBB", wcbb:"Women's CBB", mls:'MLS', nwsl:'NWSL', wnba:'WNBA' }
 
 const TEAM_COLORS = {
-  'nfl:Cardinals':'#97233F',
-  'mlb:Cardinals':'#C41E3A',
-  'nfl:Giants':'#0B2265',
-  'mlb:Giants':'#FD5A1E',
-  'mlb:Rangers':'#003278',
-  'nhl:Rangers':'#0038A8',
-  'nba:Kings':'#5A2D81',
-  'nhl:Kings':'#111111',
-  'nfl:Jets':'#125740',
-  'nhl:Jets':'#041E42',
-  'nfl:Panthers':'#0085CA',
-  'nhl:Panthers':'#C8102E',
+  'nfl:Cardinals':'#97233F','mlb:Cardinals':'#C41E3A','nfl:Giants':'#0B2265','mlb:Giants':'#FD5A1E',
+  'mlb:Rangers':'#003278','nhl:Rangers':'#0038A8','nba:Kings':'#5A2D81','nhl:Kings':'#111111',
+  'nfl:Jets':'#125740','nhl:Jets':'#041E42','nfl:Panthers':'#0085CA','nhl:Panthers':'#C8102E',
   '49ers':'#AA0000',Bears:'#0B162A',Bengals:'#FB4F14',Bills:'#00338D',Broncos:'#FB4F14',
   Browns:'#311D00',Buccaneers:'#D50A0A',Cardinals:'#97233F',Chargers:'#0080C6',
   Chiefs:'#E31837',Colts:'#002C5F',Cowboys:'#003594',Dolphins:'#008E97',Eagles:'#004C54',
@@ -274,7 +263,7 @@ const TEAM_TRICODES = {
   Jaguars:'JAX',Jets:'NYJ',Lions:'DET',Packers:'GB',Panthers:'CAR',
   Patriots:'NE',Raiders:'LV',Rams:'LAR',Ravens:'BAL',Saints:'NO',
   Seahawks:'SEA',Steelers:'PIT',Texans:'HOU',Titans:'TEN',Vikings:'MIN',Washington:'WAS',
-  Angels:'LAA',Astros:'HOU',Athletics:'OAK','Blue Jays':'TOR',Braves:'ATL',
+  Angels:'LAA',Astros:'HOU',Athletics:'ATH','Blue Jays':'TOR',Braves:'ATL',
   Brewers:'MIL',Cubs:'CHC',Diamondbacks:'ARI',Dodgers:'LAD',
   Guardians:'CLE',Mariners:'SEA',Marlins:'MIA',Mets:'NYM',Nationals:'WSH',Orioles:'BAL',
   Padres:'SD',Phillies:'PHI',Pirates:'PIT',Rangers:'TEX',Rays:'TB',
@@ -308,71 +297,7 @@ const TEAM_TRICODES = {
   'Toronto FC':'TOR','Vancouver Whitecaps':'VAN',
 }
 
-const TEAM_CITIES = {
-  'mlb:Cardinals':'St. Louis',
-  'nfl:Cardinals':'Arizona',
-  'mlb:Giants':'San Francisco',
-  'nfl:Giants':'New York G',
-  'mlb:Rangers':'Texas',
-  'nhl:Rangers':'New York R',
-  'nba:Kings':'Sacramento',
-  'nhl:Kings':'Los Angeles',
-  'nfl:Jets':'New York J',
-  'nhl:Jets':'Winnipeg',
-  'nfl:Panthers':'Carolina',
-  'nhl:Panthers':'Florida',
-  '49ers':'San Francisco',Bears:'Chicago',Bengals:'Cincinnati',Bills:'Buffalo',
-  Broncos:'Denver',Browns:'Cleveland',Buccaneers:'Tampa Bay',Cardinals:'Arizona',
-  Chargers:'Los Angeles C',Chiefs:'Kansas City',Colts:'Indianapolis',Cowboys:'Dallas',
-  Dolphins:'Miami',Eagles:'Philadelphia',Falcons:'Atlanta',Giants:'New York G',
-  Jaguars:'Jacksonville',Jets:'New York J',Lions:'Detroit',Packers:'Green Bay',
-  Panthers:'Carolina',Patriots:'New England',Raiders:'Las Vegas',Rams:'Los Angeles R',
-  Ravens:'Baltimore',Saints:'New Orleans',Seahawks:'Seattle',Steelers:'Pittsburgh',
-  Texans:'Houston',Titans:'Tennessee',Vikings:'Minnesota',Washington:'Washington',
-  Angels:'Los Angeles A',Astros:'Houston',Athletics:'Oakland','Blue Jays':'Toronto',
-  Braves:'Atlanta',Brewers:'Milwaukee',Cubs:'Chicago C',Diamondbacks:'Arizona',
-  Dodgers:'Los Angeles D',Giants:'San Francisco',Guardians:'Cleveland',Mariners:'Seattle',
-  Marlins:'Miami',Mets:'New York M',Nationals:'Washington',Orioles:'Baltimore',Padres:'San Diego',
-  Phillies:'Philadelphia',Pirates:'Pittsburgh',Rangers:'Texas',Rays:'Tampa Bay',
-  'Red Sox':'Boston',Reds:'Cincinnati',Rockies:'Colorado',Royals:'Kansas City',
-  Tigers:'Detroit',Twins:'Minnesota','White Sox':'Chicago W',Yankees:'New York Y',
-  '76ers':'Philadelphia',Bucks:'Milwaukee',Bulls:'Chicago',Cavaliers:'Cleveland',
-  Celtics:'Boston',Clippers:'Los Angeles C',Grizzlies:'Memphis',Hawks:'Atlanta',
-  Heat:'Miami',Hornets:'Charlotte',Jazz:'Utah',Kings:'Sacramento',Knicks:'New York',
-  Lakers:'Los Angeles L',Magic:'Orlando',Mavericks:'Dallas',Nets:'Brooklyn',
-  Nuggets:'Denver',Pacers:'Indiana',Pelicans:'New Orleans',Pistons:'Detroit',
-  Raptors:'Toronto',Rockets:'Houston',Spurs:'San Antonio',Suns:'Phoenix',
-  Thunder:'Oklahoma City',Timberwolves:'Minnesota','Trail Blazers':'Portland',
-  Warriors:'Golden State',Wizards:'Washington',
-  Blackhawks:'Chicago','Blue Jackets':'Columbus',Blues:'St. Louis',Bruins:'Boston',
-  Canucks:'Vancouver',Capitals:'Washington',Devils:'New Jersey',Ducks:'Anaheim',
-  Flames:'Calgary',Flyers:'Philadelphia','Golden Knights':'Vegas',Hurricanes:'Carolina',
-  Islanders:'New York',Jets:'Winnipeg',Kings:'Los Angeles',Kraken:'Seattle',
-  Lightning:'Tampa Bay',Mammoth:'Utah','Maple Leafs':'Toronto',Oilers:'Edmonton',Panthers:'Florida',
-  Penguins:'Pittsburgh',Predators:'Nashville',Rangers:'New York R','Red Wings':'Detroit',
-  Sabres:'Buffalo',Senators:'Ottawa',Sharks:'San Jose',Stars:'Dallas',Wild:'Minnesota',
-  Aces:'Las Vegas',Dream:'Atlanta',Fever:'Indiana',Liberty:'New York',Lynx:'Minnesota',
-  Mercury:'Phoenix',Mystics:'Washington',Sky:'Chicago',Sparks:'Los Angeles',
-  Storm:'Seattle',Sun:'Connecticut',Valkyries:'Golden State',Wings:'Dallas',
-  'Atlanta United':'Atlanta','Austin FC':'Austin','CF Montréal':'Montreal','Charlotte FC':'Charlotte',
-  'Chicago Fire':'Chicago','Colorado Rapids':'Denver','Columbus Crew':'Columbus',
-  'D.C. United':'Washington','FC Cincinnati':'Cincinnati','FC Dallas':'Dallas','Houston Dynamo':'Houston',
-  'Inter Miami':'Miami','LA Galaxy':'Los Angeles G','LAFC':'Los Angeles L',
-  'Minnesota United':'Minneapolis','Nashville SC':'Nashville','New England Revolution':'Boston',
-  'NYCFC':'New York C','NY Red Bulls':'New York R','Orlando City':'Orlando',
-  'Philadelphia Union':'Philadelphia','Portland Timbers':'Portland','Real Salt Lake':'Salt Lake City',
-  'San Diego FC':'San Diego','San Jose Earthquakes':'San Jose','Seattle Sounders':'Seattle',
-  'Sporting KC':'Kansas City','St. Louis City':'St. Louis',
-  'Toronto FC':'Toronto','Vancouver Whitecaps':'Vancouver',
-  'Angel City':'Los Angeles','Bay FC':'San Jose','Boston Legacy':'Boston','Chicago Stars':'Chicago',
-  'Denver Summit':'Denver','Houston Dash':'Houston','Kansas City Current':'Kansas City',
-  'NJ/NY Gotham':'New York','North Carolina Courage':'Raleigh',
-  'Orlando Pride':'Orlando','Portland Thorns':'Portland',
-  'Racing Louisville':'Louisville','San Diego Wave':'San Diego',
-  'Seattle Reign':'Seattle','Utah Royals':'Salt Lake City','Washington Spirit':'Washington',
-}
-
-const COLLEGE_COLORS = {'Air Force':'#003594','Appalachian State':'#000000','Army':'#000000','Ball State':'#BA0C2F',
+const COLLEGE_COLORS = {'Air Force':'#003594','Appalachian State':'#000000','Army':'#D4BF91','Ball State':'#BA0C2F',
   'Boise St.':'#0033A0','Boston College':'#8B0000','Bowling Green':'#FE5000','Charlotte':'#046A38','Coastal Carolina':'#006F71',
   'Colorado St.':'#1E4D2B','East Carolina':'#592A8A','Florida Atlantic':'#003366','Florida International':'#081E3F',
   'Fresno St.':'#DB0032','Georgia Southern':'#011E41','Hawaii':'#024731','James Madison':'#450084',
@@ -393,8 +318,8 @@ const COLLEGE_COLORS = {'Air Force':'#003594','Appalachian State':'#000000','Arm
   'Saint Louis':'#003DA5','Saint Mary’s':'#06315B','Samford':'#003C71','San Francisco':'#005C2E',
   'Seton Hall':'#0C2340',VCU:'#000000',Vermont:'#003B5C','Wichita St.':'#000000',
   Wofford:'#866D4B',Yale:'#0F4D92',Akron:'#00285E','Buffalo':'#0042A6','California':'#003262','Central Michigan':'#6A0032',
-  Delaware:'#00539F','Eastern Michigan':'#006633',Nevada:'#003366','Army':'#D4BF91',
-  Belmont:'#040068',Columbia:'#0050A0','East Carolina':'#592A8A','Florida Gulf Coast':'#00427A',
+  Delaware:'#00539F','Eastern Michigan':'#006633',Nevada:'#003366',
+  Belmont:'#040068',Columbia:'#0050A0','Florida Gulf Coast':'#00427A',
   Harvard:'#A41034','Illinois St.':'#CE0E2D','South Dakota St.':'#003DA5',
   Alabama:'#9E1B32',Arkansas:'#9D2235',Auburn:'#03244D',Baylor:'#154734',BYU:'#002E5D',
   Clemson:'#F66733',Colorado:'#CFB87C',Duke:'#001A57',Florida:'#0021A5','Florida St.':'#782F40',
@@ -406,13 +331,13 @@ const COLLEGE_COLORS = {'Air Force':'#003594','Appalachian State':'#000000','Arm
   Northwestern:'#4E2A84','Notre Dame':'#0C2340','Ohio State':'#BB0000',Oklahoma:'#841617',
   'Oklahoma St.':'#FF7300','Ole Miss':'#CE1126',Oregon:'#154733','Oregon St.':'#DC4405',
   'Penn State':'#041E42',Pittsburgh:'#003594',Purdue:'#CEB888',Rutgers:'#CC0033',
-  SMU:'#0033A0','South Carolina':'#73000A',Stanford:'#8C1515',Syracuse:'#D44500',
+  SMU:'#0033A0','South Carolina':'#73000A',Syracuse:'#D44500',
   TCU:'#4D1979',Tennessee:'#FF8200',Texas:'#BF5700','Texas A&M':'#500000',
   'Texas Tech':'#CC0000',UCLA:'#2D68C4',USC:'#990000',Utah:'#CC0000',Vanderbilt:'#866D4B',
   Virginia:'#232D4B','Virginia Tech':'#630031','Wake Forest':'#9E7E38',
   Washington:'#4B2E83','Washington St.':'#981E32','West Virginia':'#002855',Wisconsin:'#C5050C',
   Connecticut:'#000E2F',Gonzaga:'#002469',Marquette:'#003366',Villanova:'#003366',
-  Xavier:'#002883','San Diego St.':'#C41230',Memphis:'#003087','NC State':'#CC0000',
+  Xavier:'#002883',
   Arizona:'#CC0033','Arizona St.':'#8C1D40',Cincinnati:'#E00122',
 }
 
@@ -437,12 +362,34 @@ const COLLEGE_ABBREVS = {
   Arizona:'ARIZ','Arizona St.':'ASU',Cincinnati:'CIN',
 }
 
-export default function StepTeams({ leagues, selected, setSelected, onBack, onNext, stepNumber, totalSteps, hideFooter }) {
-  const teamLeagues = leagues.filter(k => TEAM_SPORTS.includes(k))
-  const [activeTab, setActiveTab] = useState(teamLeagues[0] || '')
-  const [visitedTabs, setVisitedTabs] = useState(new Set([teamLeagues[0] || '']))
+// Build a flat list of all teams across leagues for search
+const ALL_TEAMS = []
+for (const leagueKey of TEAM_SPORTS) {
+  for (const team of TEAMS[leagueKey] || []) {
+    ALL_TEAMS.push({ ...team, league: leagueKey })
+  }
+}
 
-  if (teamLeagues.length === 0) { onNext(); return null }
+function getColor(league, team, isCollege) {
+  if (isCollege) return COLLEGE_COLORS[team.short] || '#1a1a1a'
+  return TEAM_COLORS[`${league}:${team.short}`] || TEAM_COLORS[team.short] || '#1a1a1a'
+}
+
+function getTricode(league, team, isCollege) {
+  if (isCollege) {
+    return COLLEGE_ABBREVS[team.short] || team.short.split(' ').map(w => w[0]).join('').slice(0, 3).toUpperCase()
+  }
+  const override = {
+    'mlb:Rangers':'TEX','nhl:Rangers':'NYR','mlb:Cardinals':'STL','nfl:Cardinals':'ARI',
+    'nfl:Giants':'NYG','mlb:Giants':'SF','nba:Kings':'SAC','nhl:Kings':'LAK',
+    'nhl:Jets':'WPG','nfl:Jets':'NYJ','nfl:Panthers':'CAR','nhl:Panthers':'FLA',
+  }[`${league}:${team.short}`]
+  return override || TEAM_TRICODES[team.short] || team.short.split(' ').map(w => w[0]).join('').slice(0, 3).toUpperCase()
+}
+
+export default function StepTeams({ selected, setSelected, onBack, onNext, stepNumber, totalSteps, hideFooter }) {
+  const [search, setSearch] = useState('')
+  const [expandedLeague, setExpandedLeague] = useState(null)
 
   function toggle(league, team) {
     const id = `${league}:${team.full}`
@@ -457,23 +404,13 @@ export default function StepTeams({ leagues, selected, setSelected, onBack, onNe
     return selected.some(t => t.id === `${league}:${team.full}`)
   }
 
-  function switchTab(k) {
-    setActiveTab(k)
-    setVisitedTabs(prev => new Set([...prev, k]))
-  }
-
-  const allTabsVisited = teamLeagues.every(k => visitedTabs.has(k))
-  const leaguesWithoutTeams = leagues.filter(l => 
-    !selected.some(t => t.league === l)
-  )
-  const hasAtLeastOneTeamPerLeague = leaguesWithoutTeams.length === 0
-  const isCollege = ['cfb', 'mcbb', 'wcbb'].includes(activeTab)
-
-  const teams = [...(TEAMS[activeTab] || [])].sort((a, b) => {
-    const ca = isCollege ? a.short : (TEAM_CITIES[`${activeTab}:${a.short}`] || TEAM_CITIES[a.short] || a.short)
-    const cb = isCollege ? b.short : (TEAM_CITIES[`${activeTab}:${b.short}`] || TEAM_CITIES[b.short] || b.short)
-    return ca.localeCompare(cb)
-  })
+  // Filter search across all teams
+  const searchResults = search.trim().length >= 1
+    ? ALL_TEAMS.filter(t => {
+        const q = search.toLowerCase()
+        return t.short.toLowerCase().includes(q) || t.full.toLowerCase().includes(q)
+      }).slice(0, 30)
+    : []
 
   return (
     <div className={styles.container}>
@@ -491,55 +428,173 @@ export default function StepTeams({ leagues, selected, setSelected, onBack, onNe
           </div>
         )}
         <h1 className={styles.title}>Pick your teams</h1>
-        <p className={styles.sub}>Choose teams to follow for away games. Browse all tabs before continuing.</p>
+        <p className={styles.sub}>Search any team or browse by league below.</p>
       </div>
 
-      <div className={styles.tabs}>
-        {teamLeagues.map(k => (
-          <div
-            key={k}
-            className={`${styles.tab} ${activeTab === k ? styles.tabActive : ''}`}
-            onClick={() => switchTab(k)}
-            style={{ position: 'relative' }}
-          >
-            {LABELS[k]}
-            {!visitedTabs.has(k) && (
-              <span style={{
-                position: 'absolute', top: -4, right: -4,
-                width: 8, height: 8, borderRadius: '50%',
-                background: 'var(--orange)', display: 'block'
-              }} />
-            )}
-          </div>
-        ))}
+      {/* Search */}
+      <div style={{ position: 'relative', marginBottom: 12 }}>
+        <input
+          type="text"
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          placeholder="Search for any team..."
+          style={{
+            width: '100%',
+            padding: '12px 14px',
+            fontSize: 15,
+            background: 'var(--surface)',
+            border: '1px solid var(--border)',
+            borderRadius: 10,
+            color: 'var(--text)',
+            outline: 'none',
+            boxSizing: 'border-box',
+            fontFamily: 'var(--body)',
+          }}
+        />
       </div>
 
-      {!allTabsVisited && (
-        <div style={{ fontSize: 11, color: 'var(--orange)', marginBottom: 8, fontWeight: 600 }}>
-          💡 Tap each tab to browse all your leagues before continuing
+      {/* Search results dropdown */}
+      {searchResults.length > 0 && (
+        <div style={{
+          marginBottom: 12,
+          background: 'var(--surface2)',
+          border: '1px solid var(--border)',
+          borderRadius: 10,
+          maxHeight: 320,
+          overflowY: 'auto',
+        }}>
+          {searchResults.map(team => {
+            const sel = isSelected(team.league, team)
+            const isCollege = ['cfb','mcbb','wcbb'].includes(team.league)
+            const color = getColor(team.league, team, isCollege)
+            const tricode = getTricode(team.league, team, isCollege)
+            return (
+              <div
+                key={`${team.league}:${team.full}`}
+                onClick={() => toggle(team.league, team)}
+                style={{
+                  padding: '10px 14px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 10,
+                  cursor: 'pointer',
+                  borderBottom: '1px solid var(--border)',
+                  background: sel ? '#1f0f00' : 'transparent',
+                }}
+              >
+                <div style={{
+                  width: 32, height: 32, borderRadius: '50%',
+                  background: color, display: 'flex',
+                  alignItems: 'center', justifyContent: 'center',
+                  fontFamily: 'var(--head)', fontSize: 10,
+                  fontWeight: 700, color: '#fff', flexShrink: 0,
+                }}>{tricode}</div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: 14, color: 'var(--text)', fontWeight: 600 }}>
+                    {isCollege ? team.short : team.full}
+                  </div>
+                  <div style={{ fontSize: 11, color: 'var(--text3)' }}>
+                    {LABELS[team.league]}
+                  </div>
+                </div>
+                <div style={{ color: sel ? 'var(--orange)' : 'var(--text3)', fontSize: 18, fontWeight: 700 }}>
+                  {sel ? '✓' : '+'}
+                </div>
+              </div>
+            )
+          })}
         </div>
       )}
 
-      <div className={styles.teamGrid}>
-        {teams.map(team => {
-          const sel = isSelected(activeTab, team)
-          const color = isCollege 
-            ? (COLLEGE_COLORS[team.short] || '#1a1a1a') 
-            : (TEAM_COLORS[`${activeTab}:${team.short}`] || TEAM_COLORS[team.short] || '#1a1a1a')
-          const tricode = isCollege
-            ? (COLLEGE_ABBREVS[team.short] || team.short.split(' ').map(w=>w[0]).join('').slice(0,3).toUpperCase())
-            : (({'mlb:Rangers':'TEX','nhl:Rangers':'NYR','mlb:Cardinals':'STL','nfl:Cardinals':'ARI',
-                'nfl:Giants':'NYG','mlb:Giants':'SF','nba:Kings':'SAC','nhl:Kings':'LAK',
-                'nhl:Jets':'WPG','nfl:Jets':'NYJ','nfl:Panthers':'CAR','nhl:Panthers':'FLA',
-              })[`${activeTab}:${team.short}`] || TEAM_TRICODES[team.short] || team.short.split(' ').map(w=>w[0]).join('').slice(0,3).toUpperCase())
+      {/* Selected pills */}
+      {selected.length > 0 && (
+        <div style={{ marginBottom: 12 }}>
+          <div style={{
+            fontSize: 11, color: 'var(--text3)', textTransform: 'uppercase',
+            letterSpacing: 0.5, fontFamily: 'var(--head)', marginBottom: 8,
+          }}>
+            Selected ({selected.length})
+          </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+            {selected.map(t => (
+              <div key={t.id} style={{
+                display: 'inline-flex', alignItems: 'center', gap: 6,
+                padding: '4px 10px', background: '#1f0f00',
+                border: '1px solid var(--orange)', borderRadius: 999,
+                fontSize: 12, color: 'var(--text)',
+              }}>
+                <span>{t.short}</span>
+                <span style={{ color: 'var(--text3)', fontSize: 10 }}>{LABELS[t.league]}</span>
+                <button
+                  onClick={() => setSelected(prev => prev.filter(x => x.id !== t.id))}
+                  style={{
+                    background: 'transparent', border: 'none', color: 'var(--orange)',
+                    cursor: 'pointer', fontSize: 14, padding: 0, lineHeight: 1,
+                  }}
+                  aria-label={`Remove ${t.short}`}
+                >×</button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Browse by league */}
+      <div style={{
+        fontSize: 11, color: 'var(--text3)', textTransform: 'uppercase',
+        letterSpacing: 0.5, fontFamily: 'var(--head)', marginBottom: 8, marginTop: 8,
+      }}>
+        Browse by league
+      </div>
+
+      <div style={{ overflowY: 'auto', flex: 1, paddingBottom: 16 }}>
+        {TEAM_SPORTS.map(leagueKey => {
+          const isExpanded = expandedLeague === leagueKey
+          const isCollege = ['cfb','mcbb','wcbb'].includes(leagueKey)
+          const leagueTeams = [...(TEAMS[leagueKey] || [])].sort((a, b) => a.short.localeCompare(b.short))
+          const selectedInLeague = selected.filter(t => t.league === leagueKey).length
           return (
-            <div
-              key={team.full}
-              className={`${styles.teamCard} ${sel ? styles.sel : ''}`}
-              onClick={() => toggle(activeTab, team)}
-            >
-              <div className={styles.teamCircle} style={{ background: color }}>{tricode}</div>
-              <div className={styles.teamName}>{isCollege ? team.short : team.full}</div>
+            <div key={leagueKey} style={{ marginBottom: 6 }}>
+              <div
+                onClick={() => setExpandedLeague(isExpanded ? null : leagueKey)}
+                style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                  padding: '12px 14px', background: 'var(--surface)',
+                  border: '1px solid var(--border)', borderRadius: 10,
+                  cursor: 'pointer', fontSize: 14, color: 'var(--text)',
+                  fontWeight: 600, fontFamily: 'var(--head)',
+                }}
+              >
+                <span>{isExpanded ? '▾' : '▸'}  {LABELS[leagueKey]}</span>
+                <span style={{ fontSize: 11, color: 'var(--text3)' }}>
+                  {selectedInLeague > 0 && `${selectedInLeague} selected`}
+                </span>
+              </div>
+              {isExpanded && (
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 140px))',
+                  gap: 8,
+                  padding: '12px 6px',
+                  justifyContent: 'center',
+                }}>
+                  {leagueTeams.map(team => {
+                    const sel = isSelected(leagueKey, team)
+                    const color = getColor(leagueKey, team, isCollege)
+                    const tricode = getTricode(leagueKey, team, isCollege)
+                    return (
+                      <div
+                        key={team.full}
+                        className={`${styles.teamCard} ${sel ? styles.sel : ''}`}
+                        onClick={() => toggle(leagueKey, team)}
+                      >
+                        <div className={styles.teamCircle} style={{ background: color }}>{tricode}</div>
+                        <div className={styles.teamName}>{isCollege ? team.short : team.full}</div>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
             </div>
           )
         })}
@@ -552,8 +607,7 @@ export default function StepTeams({ leagues, selected, setSelected, onBack, onNe
           <button
             className={styles.nextBtn}
             onClick={onNext}
-            disabled={!hasAtLeastOneTeamPerLeague}
-            title={!hasAtLeastOneTeamPerLeague ? `Pick at least one team from: ${leaguesWithoutTeams.join(', ').toUpperCase()}` : ''}
+            disabled={selected.length === 0}
           >
             Continue
           </button>
