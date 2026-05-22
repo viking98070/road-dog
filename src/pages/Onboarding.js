@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { useNavigate } from 'react-router-dom'
-import StepLeagues from '../components/StepLeagues'
 import StepTeams from '../components/StepTeams'
 import StepShows from '../components/StepShows'
 import StepCity from '../components/StepCity'
@@ -9,7 +8,6 @@ import styles from './Onboarding.module.css'
 
 export default function Onboarding({ session }) {
   const [step, setStep] = useState(1)
-  const [selectedLeagues, setSelectedLeagues] = useState([])
   const [selectedTeams, setSelectedTeams] = useState([])
   const [selectedShows, setSelectedShows] = useState([])
   const [homeCity, setHomeCity] = useState('')
@@ -20,14 +18,17 @@ export default function Onboarding({ session }) {
     setSaving(true)
     const userId = session.user.id
 
-    if (selectedLeagues.length > 0) {
-      await supabase.from('user_leagues').upsert(
-        selectedLeagues.map(k => ({ user_id: userId, league_key: k }))
+    // Auto-derive leagues from picked teams
+    const leaguesFromTeams = Array.from(new Set(selectedTeams.map(t => t.league)))
+    await supabase.from('user_leagues').delete().eq('user_id', userId)
+    if (leaguesFromTeams.length > 0) {
+      await supabase.from('user_leagues').insert(
+        leaguesFromTeams.map(k => ({ user_id: userId, league_key: k }))
       )
     }
 
+    await supabase.from('user_teams').delete().eq('user_id', userId)
     if (selectedTeams.length > 0) {
-      await supabase.from('user_teams').delete().eq('user_id', userId)
       const teams = selectedTeams.map(t => ({
         user_id: userId,
         league_key: t.league,
@@ -39,6 +40,7 @@ export default function Onboarding({ session }) {
       }
     }
 
+    await supabase.from('user_shows').delete().eq('user_id', userId)
     if (selectedShows.length > 0) {
       const showRows = selectedShows.map(s => {
         const name = typeof s === 'string' ? s : s.name
@@ -49,7 +51,6 @@ export default function Onboarding({ session }) {
           attraction_id: attractionId,
         }
       })
-      await supabase.from('user_shows').delete().eq('user_id', userId)
       await supabase.from('user_shows').insert(showRows)
     }
 
@@ -65,7 +66,7 @@ export default function Onboarding({ session }) {
     }
 
     setSaving(false)
-    navigate('/dashboard')
+    navigate('/hub')
   }
 
   return (
@@ -78,52 +79,40 @@ export default function Onboarding({ session }) {
           <div className={`${styles.step} ${step >= 2 ? styles.active : ''}`}>2</div>
           <div className={styles.stepLine} />
           <div className={`${styles.step} ${step >= 3 ? styles.active : ''}`}>3</div>
-          <div className={styles.stepLine} />
-          <div className={`${styles.step} ${step >= 4 ? styles.active : ''}`}>4</div>
         </div>
       </div>
-     {step === 1 && (
-        <StepLeagues
+      {step === 1 && (
+        <StepTeams
           stepNumber={1}
-          totalSteps={4}
-          selected={selectedLeagues}
-          setSelected={setSelectedLeagues}
+          totalSteps={3}
+          selected={selectedTeams}
+          setSelected={setSelectedTeams}
+          onBack={() => {}}
           onNext={() => setStep(2)}
         />
       )}
       {step === 2 && (
-        <StepTeams
+        <StepShows
           stepNumber={2}
-          totalSteps={4}
-          leagues={selectedLeagues}
-          selected={selectedTeams}
-          setSelected={setSelectedTeams}
+          totalSteps={3}
+          selected={selectedShows}
+          setSelected={setSelectedShows}
           onBack={() => setStep(1)}
-          onNext={() => setStep(3)}
+          onFinish={() => setStep(3)}
+          saving={saving}
         />
       )}
       {step === 3 && (
-        <StepShows
-          stepNumber={3}
-          totalSteps={4}
-          selected={selectedShows}
-          setSelected={setSelectedShows}
-          onBack={() => setStep(2)}
-          onFinish={() => setStep(4)}
-          saving={saving}
-        />
-      )}
-      {step === 4 && (
         <StepCity
-          stepNumber={4}
-          totalSteps={4}
+          stepNumber={3}
+          totalSteps={3}
           homeCity={homeCity}
           setHomeCity={setHomeCity}
-          onBack={() => setStep(3)}
+          onBack={() => setStep(2)}
           onFinish={handleFinish}
           saving={saving}
         />
-      )} 
+      )}
     </div>
   )
 }
