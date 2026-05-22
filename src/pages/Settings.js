@@ -1,28 +1,24 @@
 import React, { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import { useNavigate } from 'react-router-dom'
-import StepLeagues from '../components/StepLeagues'
 import StepTeams from '../components/StepTeams'
 import StepShows from '../components/StepShows'
 import StepCity from '../components/StepCity'
 import styles from './Dashboard.module.css'
 
 const SECTIONS = [
-  { key: 'leagues', label: 'Leagues' },
-  { key: 'teams',   label: 'Teams' },
-  { key: 'shows',   label: 'Shows' },
-  { key: 'city',    label: 'Home City' },
+  { key: 'teams', label: 'Teams' },
+  { key: 'shows', label: 'Shows' },
+  { key: 'city',  label: 'Home City' },
 ]
 
 export default function Settings({ session }) {
-  const [activeSection, setActiveSection] = useState('leagues')
+  const [activeSection, setActiveSection] = useState('teams')
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [rebuilding, setRebuilding] = useState(false)
   const navigate = useNavigate()
 
-  // Loaded preferences
-  const [selectedLeagues, setSelectedLeagues] = useState([])
   const [selectedTeams, setSelectedTeams] = useState([])
   const [selectedShows, setSelectedShows] = useState([])
   const [homeCity, setHomeCity] = useState('')
@@ -31,16 +27,12 @@ export default function Settings({ session }) {
     async function load() {
       const userId = session.user.id
 
-      const [leaguesRes, teamsRes, showsRes, userRes] = await Promise.all([
-        supabase.from('user_leagues').select('league_key').eq('user_id', userId),
+      const [teamsRes, showsRes, userRes] = await Promise.all([
         supabase.from('user_teams').select('league_key, team_name').eq('user_id', userId),
         supabase.from('user_shows').select('artist_name, attraction_id').eq('user_id', userId),
         supabase.from('users').select('home_city').eq('id', userId).single(),
       ])
 
-      setSelectedLeagues((leaguesRes.data || []).map(l => l.league_key))
-
-      // Teams in StepTeams use { id, league, name, short } shape
       setSelectedTeams((teamsRes.data || []).map(t => ({
         id: `${t.league_key}:${t.team_name}`,
         league: t.league_key,
@@ -48,7 +40,6 @@ export default function Settings({ session }) {
         short: t.team_name,
       })))
 
-      // Shows are {name, attractionId} objects
       setSelectedShows((showsRes.data || []).map(s => ({
         name: s.artist_name,
         attractionId: s.attraction_id || null,
@@ -64,19 +55,18 @@ export default function Settings({ session }) {
     setSaving(true)
     const userId = session.user.id
 
-    // Wipe and re-insert each category
+    // Auto-derive leagues from picked teams
+    const leaguesFromTeams = Array.from(new Set(selectedTeams.map(t => t.league)))
     await supabase.from('user_leagues').delete().eq('user_id', userId)
-    if (selectedLeagues.length > 0) {
+    if (leaguesFromTeams.length > 0) {
       await supabase.from('user_leagues').insert(
-        selectedLeagues.map(k => ({ user_id: userId, league_key: k }))
+        leaguesFromTeams.map(k => ({ user_id: userId, league_key: k }))
       )
     }
 
-    // Only save teams whose league is still selected
-    const validTeams = selectedTeams.filter(t => selectedLeagues.includes(t.league))
     await supabase.from('user_teams').delete().eq('user_id', userId)
-    if (validTeams.length > 0) {
-      const teams = validTeams.map(t => ({
+    if (selectedTeams.length > 0) {
+      const teams = selectedTeams.map(t => ({
         user_id: userId,
         league_key: t.league,
         team_name: t.name,
@@ -101,7 +91,6 @@ export default function Settings({ session }) {
     setSaving(false)
     setRebuilding(true)
 
-    // Rebuild combos
     try {
       await supabase.functions.invoke('rebuild-combos', {
         body: { user_id: userId }
@@ -179,17 +168,8 @@ export default function Settings({ session }) {
 
         {/* Active section */}
         <div style={{ marginBottom: 80 }}>
-          {activeSection === 'leagues' && (
-            <StepLeagues
-              selected={selectedLeagues}
-              setSelected={setSelectedLeagues}
-              onNext={() => {}}
-              hideFooter={true}
-            />
-          )}
           {activeSection === 'teams' && (
             <StepTeams
-              leagues={selectedLeagues}
               selected={selectedTeams}
               setSelected={setSelectedTeams}
               onBack={() => {}}
@@ -233,7 +213,7 @@ export default function Settings({ session }) {
           gap: 12,
           zIndex: 100,
         }}>
-         <button
+          <button
             onClick={() => navigate('/hub')}
             disabled={saving || rebuilding}
             style={{
