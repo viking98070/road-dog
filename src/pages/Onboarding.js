@@ -66,7 +66,8 @@ export default function Onboarding({ session }) {
     }
 
     setSaving(false)
-    navigate('/hub')
+    // Force a full reload so App.js re-reads the profile with new home_city
+    window.location.href = '/hub'
   }
 
   return (
