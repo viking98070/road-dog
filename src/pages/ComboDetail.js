@@ -108,7 +108,7 @@ function displayCity(combo) {
     }
     return groups
   }
-  const badge = combo.score >= 5 ? '🔥 Hot combo' : combo.score >= 3 ? '⭐ Great combo' : '✈️ Good combo'
+  const badge = combo.score >= 4 ? '🔥 Hot combo' : combo.score >= 2 ? '⭐ Great combo' : '✈️ Good combo'
 
   return (
     <div className={styles.page}>
