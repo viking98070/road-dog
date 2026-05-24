@@ -65,8 +65,8 @@ function displayCity(combo) {
     return `${cities[0]}, ${cities[1]} +${cities.length - 2} more`
   }
   function formatScore(score) {
-    if (score >= 5) return '🔥 Hot combo'
-    if (score >= 3) return '⭐ Great combo'
+    if (score >= 4) return '🔥 Hot combo'
+    if (score >= 2) return '⭐ Great combo'
     return '✈️ Good combo'
   }
 
