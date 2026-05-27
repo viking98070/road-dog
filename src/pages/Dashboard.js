@@ -147,47 +147,50 @@ function displayCity(combo) {
         </div>
 
         {/* Tabs */}
-        <div style={{
-          display: 'flex',
-          gap: 8,
-          marginBottom: 20,
-          borderBottom: '1px solid var(--border)',
-          paddingBottom: 0,
+<div style={{
+  display: 'flex',
+  gap: 0,
+  marginBottom: 20,
+  borderBottom: '1px solid var(--border)',
+  overflowX: 'auto',
+  WebkitOverflowScrolling: 'touch',
+}}>
+  {TABS.map(tab => {
+    const isActive = activeTab === tab.key
+    return (
+      <button
+        key={tab.key}
+        onClick={() => setActiveTab(tab.key)}
+        style={{
+          background: 'transparent',
+          border: 'none',
+          color: isActive ? 'var(--orange)' : 'var(--text2)',
+          fontWeight: isActive ? 700 : 500,
+          fontSize: 13,
+          padding: '10px 14px',
+          cursor: 'pointer',
+          borderBottom: isActive ? '2px solid var(--orange)' : '2px solid transparent',
+          marginBottom: -1,
+          fontFamily: 'var(--head)',
+          textTransform: 'uppercase',
+          letterSpacing: 0.5,
+          whiteSpace: 'nowrap',
+          flexShrink: 0,
+        }}
+      >
+        {tab.label}
+        <span style={{
+          marginLeft: 6,
+          fontSize: 11,
+          color: isActive ? 'var(--orange)' : 'var(--text3)',
+          fontWeight: 600,
         }}>
-          {TABS.map(tab => {
-            const isActive = activeTab === tab.key
-            return (
-              <button
-                key={tab.key}
-                onClick={() => setActiveTab(tab.key)}
-                style={{
-                  background: 'transparent',
-                  border: 'none',
-                  color: isActive ? 'var(--orange)' : 'var(--text2)',
-                  fontWeight: isActive ? 700 : 500,
-                  fontSize: 14,
-                  padding: '10px 16px',
-                  cursor: 'pointer',
-                  borderBottom: isActive ? '2px solid var(--orange)' : '2px solid transparent',
-                  marginBottom: -1,
-                  fontFamily: 'var(--head)',
-                  textTransform: 'uppercase',
-                  letterSpacing: 0.5,
-                }}
-              >
-                {tab.label}
-                <span style={{
-                  marginLeft: 8,
-                  fontSize: 11,
-                  color: isActive ? 'var(--orange)' : 'var(--text3)',
-                  fontWeight: 600,
-                }}>
-                  {tabCounts[tab.key] || 0}
-                </span>
-              </button>
-            )
-          })}
-        </div>
+          {tabCounts[tab.key] || 0}
+        </span>
+      </button>
+    )
+  })}
+</div>
 
         {loading ? (
           <div className={styles.empty}>
