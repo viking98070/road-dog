@@ -192,9 +192,12 @@
     margin-bottom: 20px;
   }
   .welcome h1 {
-    font-size: 24px;
+    font-size: 20px;
   }
   .grid {
     grid-template-columns: 1fr;
+  }
+  .cardCity {
+    font-size: 16px;
   }
 }
