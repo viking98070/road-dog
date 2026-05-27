@@ -279,3 +279,14 @@
 }
 
 .backBtn:hover { border-color: var(--text2); }
+@media (max-width: 600px) {
+  .container {
+    padding: 0 14px;
+  }
+  .titleArea {
+    padding: 20px 0 14px;
+  }
+  .title {
+    font-size: 20px;
+  }
+}
