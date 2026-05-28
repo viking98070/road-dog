@@ -71,8 +71,9 @@ function displayCity(combo) {
   }
 
   function categoryColor(event) {
-    if (event.type === 'music') return '#7B2D8B'
-    if (event.type === 'comedy') return '#F4911E'
+  if (event.league_key === 'marquee') return '#B8860B'
+  if (event.type === 'music') return '#7B2D8B'
+  if (event.type === 'comedy') return '#F4911E'
     const colors = {
       nfl: '#013369', mlb: '#002D72', nba: '#C9082A',
       nhl: '#0033A0', wnba: '#C9082A', mls: '#002F6C',
@@ -82,7 +83,8 @@ function displayCity(combo) {
   }
 
   function categoryLabel(event) {
-    if (event.parent_event) return 'FESTIVAL'
+  if (event.league_key === 'marquee') return 'MARQUEE'
+  if (event.parent_event) return 'FESTIVAL'
     if (event.type === 'music') return 'MUSIC'
     if (event.type === 'comedy') return 'COMEDY'
     if (!event.league_key) return 'EVENT'
@@ -94,7 +96,8 @@ function displayCity(combo) {
   }
 
   function eventDescription(event) {
-    if (event.type === 'sport') {
+  if (event.league_key === 'marquee') return event.artist_name || 'Marquee Event'
+  if (event.type === 'sport') {
       const away = event.away_team || 'TBD'
       const home = event.home_team || 'TBD'
       return `${away} @ ${home}`
