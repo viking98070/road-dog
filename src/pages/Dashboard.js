@@ -138,7 +138,7 @@ function displayCity(combo) {
             onClick={() => navigate('/settings')}
             style={{ background: 'transparent' }}
           >
-            ⚙ Edit preferences
+            ⚙ My Picks
           </button>
           <button className={styles.signOut} onClick={handleSignOut}>Sign out</button>
         </div>
