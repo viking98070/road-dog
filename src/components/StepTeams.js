@@ -551,7 +551,7 @@ export default function StepTeams({ selected, setSelected, onBack, onNext, stepN
         {TEAM_SPORTS.map(leagueKey => {
           const isExpanded = expandedLeague === leagueKey
           const isCollege = ['cfb','mcbb','wcbb'].includes(leagueKey)
-          const leagueTeams = [...(TEAMS[leagueKey] || [])].sort((a, b) => a.short.localeCompare(b.short))
+          const leagueTeams = [...(TEAMS[leagueKey] || [])].sort((a, b) => a.full.localeCompare(b.full))
           const selectedInLeague = selected.filter(t => t.league === leagueKey).length
           return (
             <div key={leagueKey} style={{ marginBottom: 6 }}>
