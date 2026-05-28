@@ -165,8 +165,8 @@ function displayCity(combo) {
                   <div className={styles.eventDate}>
   {isMultiNight
     ? fmtRange(group.firstDate, group.lastDate)
-    : event.end_date && event.end_date !== event.event_date
-      ? fmtRange(event.event_date, event.end_date)
+    : group.endDate && group.endDate !== event.event_date
+      ? fmtRange(event.event_date, group.endDate)
       : fmt(event.event_date)}
 </div>
                 </div>
