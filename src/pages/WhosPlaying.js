@@ -66,13 +66,9 @@ function toYMD(date) {
 
 export default function WhosPlaying({ session }) {
   const navigate = useNavigate()
-  const today = new Date()
-  const in30 = new Date(today)
-  in30.setDate(today.getDate() + 30)
-
   const [city, setCity] = useState('')
-  const [showCitySuggestions, setShowCitySuggestions] = useState(false)
-  const [dateRange, setDateRange] = useState([today, in30])
+const [showCitySuggestions, setShowCitySuggestions] = useState(false)
+const [dateRange, setDateRange] = useState([null, null])
   const [startDate, endDate] = dateRange
   const [selectedLeagues, setSelectedLeagues] = useState([])
   const [selectedGenres, setSelectedGenres] = useState([])
