@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import DatePicker from 'react-datepicker'
+import 'react-datepicker/dist/react-datepicker.css'
 import styles from './Dashboard.module.css'
 
 const LEAGUE_OPTIONS = [
@@ -20,8 +22,8 @@ const GENRE_OPTIONS = [
   'Rock', 'Pop', 'Country', 'Hip-Hop/Rap', 'R&B', 'Alternative',
   'Metal', 'Folk', 'Jazz', 'Latin', 'World', 'Dance/Electronic',
 ]
+
 const CITIES = [
-  // Major metros + NFL/NBA/MLB cities
   'Atlanta, GA', 'Austin, TX', 'Baltimore, MD', 'Boston, MA', 'Buffalo, NY',
   'Charlotte, NC', 'Chicago, IL', 'Cincinnati, OH', 'Cleveland, OH', 'Columbus, OH',
   'Dallas, TX', 'Denver, CO', 'Detroit, MI', 'Green Bay, WI', 'Houston, TX',
@@ -33,7 +35,6 @@ const CITIES = [
   'Sacramento, CA', 'Salt Lake City, UT', 'San Antonio, TX', 'San Diego, CA',
   'San Francisco, CA', 'San Jose, CA', 'Seattle, WA', 'St. Louis, MO',
   'Tampa, FL', 'Washington, DC',
-  // SEC + ACC + Big Ten college football towns
   'Athens, GA', 'Auburn, AL', 'Tuscaloosa, AL', 'Baton Rouge, LA',
   'Oxford, MS', 'Starkville, MS', 'Fayetteville, AR', 'Knoxville, TN',
   'Columbia, SC', 'Gainesville, FL', 'Lexington, KY',
@@ -42,12 +43,10 @@ const CITIES = [
   'Winston-Salem, NC', 'South Bend, IN', 'East Lansing, MI', 'Ann Arbor, MI',
   'State College, PA', 'Madison, WI', 'Iowa City, IA', 'Lincoln, NE',
   'Champaign, IL', 'West Lafayette, IN', 'Bloomington, IN', 'Evanston, IL',
-  // Big 12 + Pac-12 + other major college towns
   'Norman, OK', 'Stillwater, OK', 'Lubbock, TX', 'Waco, TX', 'Manhattan, KS',
   'Lawrence, KS', 'Boulder, CO', 'Provo, UT', 'Logan, UT', 'Tucson, AZ',
   'Tempe, AZ', 'Berkeley, CA', 'Palo Alto, CA', 'Eugene, OR', 'Corvallis, OR',
   'Pullman, WA', 'Boise, ID',
-  // Other significant cities
   'Albuquerque, NM', 'Anaheim, CA', 'Anchorage, AK', 'Arlington, TX',
   'Birmingham, AL', 'Bridgeport, CT', 'Burlington, VT',
   'Charleston, SC', 'Charleston, WV', 'Chattanooga, TN', 'Colorado Springs, CO',
@@ -60,21 +59,21 @@ const CITIES = [
   'Spokane, WA', 'Springfield, MO', 'Stockton, CA', 'Syracuse, NY',
   'Toledo, OH', 'Tulsa, OK', 'Virginia Beach, VA', 'Wichita, KS',
 ]
-function defaultDates() {
-  const today = new Date()
-  const in30 = new Date(today)
-  in30.setDate(today.getDate() + 30)
-  const fmt = (d) => d.toISOString().slice(0, 10)
-  return { start: fmt(today), end: fmt(in30) }
+
+function toYMD(date) {
+  return date.toISOString().slice(0, 10)
 }
 
 export default function WhosPlaying({ session }) {
   const navigate = useNavigate()
-  const defaults = defaultDates()
+  const today = new Date()
+  const in30 = new Date(today)
+  in30.setDate(today.getDate() + 30)
+
   const [city, setCity] = useState('')
   const [showCitySuggestions, setShowCitySuggestions] = useState(false)
-  const [startDate, setStartDate] = useState(defaults.start)
-  const [endDate, setEndDate] = useState(defaults.end)
+  const [dateRange, setDateRange] = useState([today, in30])
+  const [startDate, endDate] = dateRange
   const [selectedLeagues, setSelectedLeagues] = useState([])
   const [selectedGenres, setSelectedGenres] = useState([])
   const [includeComedy, setIncludeComedy] = useState(false)
@@ -106,8 +105,8 @@ export default function WhosPlaying({ session }) {
       const { data, error } = await supabase.functions.invoke('whos-playing-search', {
         body: {
           city: city.trim(),
-          startDate,
-          endDate,
+          startDate: toYMD(startDate),
+          endDate: toYMD(endDate),
           leagues: selectedLeagues,
           musicSelected,
           includeComedy,
@@ -122,14 +121,11 @@ export default function WhosPlaying({ session }) {
 
       let events = data?.results || []
 
-      // Client-side genre filter: if user picked specific genres,
-      // narrow music events to only those genres
       if (musicSelected && selectedGenres.length > 0) {
         events = events.filter(e => {
-          if (e.type !== 'music') return true // keep sports + comedy as-is
+          if (e.type !== 'music') return true
           if (!e.genre) return false
-          // Match user-selected genres against event genre (case-insensitive)
-          return selectedGenres.some(g => 
+          return selectedGenres.some(g =>
             e.genre.toLowerCase().includes(g.toLowerCase()) ||
             g.toLowerCase().includes(e.genre.toLowerCase())
           )
@@ -144,11 +140,13 @@ export default function WhosPlaying({ session }) {
       setLoading(false)
     }
   }
+
   function fmt(d) {
     return new Date(d + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })
   }
 
   function categoryColor(event) {
+    if (event.league_key === 'marquee') return '#B8860B'
     if (event.parent_event) return '#7B2D8B'
     if (event.type === 'music') return '#7B2D8B'
     if (event.type === 'comedy') return '#F4911E'
@@ -161,6 +159,7 @@ export default function WhosPlaying({ session }) {
   }
 
   function categoryLabel(event) {
+    if (event.league_key === 'marquee') return 'MARQUEE'
     if (event.parent_event) return 'FESTIVAL'
     if (event.type === 'music') return 'MUSIC'
     if (event.type === 'comedy') return 'COMEDY'
@@ -173,6 +172,7 @@ export default function WhosPlaying({ session }) {
   }
 
   function eventTitle(event) {
+    if (event.league_key === 'marquee') return event.artist_name || 'Marquee Event'
     if (event.type === 'sport') {
       return `${event.away_team || 'TBD'} @ ${event.home_team || 'TBD'}`
     }
@@ -213,7 +213,6 @@ export default function WhosPlaying({ session }) {
           <p>Pick a city, a date range, and what you're into.</p>
         </div>
 
-        {/* Search inputs */}
         <div style={{
           background: 'var(--surface)',
           border: '1px solid var(--border)',
@@ -221,6 +220,7 @@ export default function WhosPlaying({ session }) {
           padding: 20,
           marginBottom: 20,
         }}>
+          {/* City */}
           <div style={{ marginBottom: 14, position: 'relative' }}>
             <label style={{ display: 'block', fontSize: 11, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: 0.5, fontFamily: 'var(--head)', marginBottom: 6 }}>
               City
@@ -228,10 +228,7 @@ export default function WhosPlaying({ session }) {
             <input
               type="text"
               value={city}
-              onChange={e => {
-                setCity(e.target.value)
-                setShowCitySuggestions(true)
-              }}
+              onChange={e => { setCity(e.target.value); setShowCitySuggestions(true) }}
               onFocus={() => setShowCitySuggestions(true)}
               onBlur={() => setTimeout(() => setShowCitySuggestions(false), 200)}
               placeholder="e.g., Austin, Chicago, New York"
@@ -268,17 +265,8 @@ export default function WhosPlaying({ session }) {
                   {matches.map(c => (
                     <div
                       key={c}
-                      onMouseDown={() => {
-                        setCity(c.split(',')[0])
-                        setShowCitySuggestions(false)
-                      }}
-                      style={{
-                        padding: '10px 14px',
-                        fontSize: 14,
-                        color: 'var(--text)',
-                        cursor: 'pointer',
-                        borderBottom: '1px solid var(--border)',
-                      }}
+                      onMouseDown={() => { setCity(c.split(',')[0]); setShowCitySuggestions(false) }}
+                      style={{ padding: '10px 14px', fontSize: 14, color: 'var(--text)', cursor: 'pointer', borderBottom: '1px solid var(--border)' }}
                       onMouseOver={e => e.currentTarget.style.background = 'var(--surface)'}
                       onMouseOut={e => e.currentTarget.style.background = 'transparent'}
                     >
@@ -290,53 +278,21 @@ export default function WhosPlaying({ session }) {
             })()}
           </div>
 
-          <div style={{ display: 'flex', gap: 12, marginBottom: 14 }}>
-            <div style={{ flex: 1 }}>
-              <label style={{ display: 'block', fontSize: 11, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: 0.5, fontFamily: 'var(--head)', marginBottom: 6 }}>
-                From
-              </label>
-              <input
-                type="date"
-                value={startDate}
-                onChange={e => setStartDate(e.target.value)}
-                style={{
-                  width: '100%',
-                  background: 'var(--bg)',
-                  border: '1px solid var(--border)',
-                  borderRadius: 8,
-                  padding: '10px 12px',
-                  color: 'var(--text)',
-                  fontSize: 14,
-                  outline: 'none',
-                  boxSizing: 'border-box',
-                  fontFamily: 'var(--body)',
-                  colorScheme: 'dark',
-                }}
-              />
-            </div>
-            <div style={{ flex: 1 }}>
-              <label style={{ display: 'block', fontSize: 11, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: 0.5, fontFamily: 'var(--head)', marginBottom: 6 }}>
-                To
-              </label>
-              <input
-                type="date"
-                value={endDate}
-                onChange={e => setEndDate(e.target.value)}
-                style={{
-                  width: '100%',
-                  background: 'var(--bg)',
-                  border: '1px solid var(--border)',
-                  borderRadius: 8,
-                  padding: '10px 12px',
-                  color: 'var(--text)',
-                  fontSize: 14,
-                  outline: 'none',
-                  boxSizing: 'border-box',
-                  fontFamily: 'var(--body)',
-                  colorScheme: 'dark',
-                }}
-              />
-            </div>
+          {/* Date range picker */}
+          <div style={{ marginBottom: 14 }}>
+            <label style={{ display: 'block', fontSize: 11, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: 0.5, fontFamily: 'var(--head)', marginBottom: 6 }}>
+              Date Range
+            </label>
+            <DatePicker
+              selectsRange
+              startDate={startDate}
+              endDate={endDate}
+              onChange={(update) => setDateRange(update)}
+              minDate={new Date()}
+              dateFormat="MMM d, yyyy"
+              placeholderText="Select a date range"
+              className="rdog-datepicker"
+            />
           </div>
 
           {/* Sports */}
@@ -346,42 +302,30 @@ export default function WhosPlaying({ session }) {
             </label>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
               {LEAGUE_OPTIONS.map(l => (
-                <div
-                  key={l.key}
-                  onClick={() => toggleLeague(l.key)}
-                  style={chipStyle(selectedLeagues.includes(l.key))}
-                >
+                <div key={l.key} onClick={() => toggleLeague(l.key)} style={chipStyle(selectedLeagues.includes(l.key))}>
                   {l.label}
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Shows: music genres + comedy */}
+          {/* Shows */}
           <div style={{ marginBottom: 14 }}>
             <label style={{ display: 'block', fontSize: 11, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: 0.5, fontFamily: 'var(--head)', marginBottom: 8 }}>
               Shows
             </label>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
               {GENRE_OPTIONS.map(g => (
-                <div
-                  key={g}
-                  onClick={() => toggleGenre(g)}
-                  style={chipStyle(selectedGenres.includes(g))}
-                >
+                <div key={g} onClick={() => toggleGenre(g)} style={chipStyle(selectedGenres.includes(g))}>
                   {g}
                 </div>
               ))}
-              <div
-                onClick={() => setIncludeComedy(!includeComedy)}
-                style={chipStyle(includeComedy)}
-              >
+              <div onClick={() => setIncludeComedy(!includeComedy)} style={chipStyle(includeComedy)}>
                 Comedy
               </div>
             </div>
           </div>
 
-          
           <button
             onClick={handleSearch}
             disabled={!canSearch || loading}
@@ -400,24 +344,16 @@ export default function WhosPlaying({ session }) {
               width: '100%',
             }}
           >
-            {loading ? 'Searching…' : 'Show me what\'s playing'}
+            {loading ? 'Searching…' : "Show me what's playing"}
           </button>
         </div>
 
         {/* Results */}
         {results !== null && (
           <>
-            <div style={{
-              fontSize: 11,
-              color: 'var(--text3)',
-              textTransform: 'uppercase',
-              letterSpacing: 0.5,
-              fontFamily: 'var(--head)',
-              marginBottom: 10,
-            }}>
+            <div style={{ fontSize: 11, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: 0.5, fontFamily: 'var(--head)', marginBottom: 10 }}>
               {results.length === 0 ? 'No results' : `${results.length} events found`}
             </div>
-
             {results.length === 0 ? (
               <div style={{ color: 'var(--text2)', fontSize: 13, padding: '20px 0', textAlign: 'center' }}>
                 Try a different city or expand your filters.
@@ -462,14 +398,7 @@ export default function WhosPlaying({ session }) {
                         {event.venue}{event.city ? ` · ${event.city}` : ''}
                       </div>
                     </div>
-                    <div style={{
-                      fontFamily: 'var(--head)',
-                      fontSize: 12,
-                      color: 'var(--orange)',
-                      fontWeight: 600,
-                      textAlign: 'right',
-                      whiteSpace: 'nowrap',
-                    }}>
+                    <div style={{ fontFamily: 'var(--head)', fontSize: 12, color: 'var(--orange)', fontWeight: 600, textAlign: 'right', whiteSpace: 'nowrap' }}>
                       {fmt(event.event_date)}
                     </div>
                   </div>
@@ -479,6 +408,58 @@ export default function WhosPlaying({ session }) {
           </>
         )}
       </main>
+
+      <style>{`
+        .rdog-datepicker {
+          width: 100%;
+          background: var(--bg);
+          border: 1px solid var(--border);
+          border-radius: 8px;
+          padding: 10px 12px;
+          color: var(--text);
+          font-size: 14px;
+          outline: none;
+          box-sizing: border-box;
+          font-family: var(--body);
+          cursor: pointer;
+        }
+        .react-datepicker {
+          background: #1a1a1a;
+          border: 1px solid var(--border);
+          font-family: var(--body);
+        }
+        .react-datepicker__header {
+          background: #222;
+          border-bottom: 1px solid var(--border);
+        }
+        .react-datepicker__current-month,
+        .react-datepicker__day-name {
+          color: var(--text);
+        }
+        .react-datepicker__day {
+          color: var(--text2);
+        }
+        .react-datepicker__day:hover {
+          background: var(--orange);
+          color: #000;
+        }
+        .react-datepicker__day--selected,
+        .react-datepicker__day--range-start,
+        .react-datepicker__day--range-end {
+          background: var(--orange) !important;
+          color: #000 !important;
+        }
+        .react-datepicker__day--in-range {
+          background: #1f0f00;
+          color: var(--orange);
+        }
+        .react-datepicker__navigation-icon::before {
+          border-color: var(--text2);
+        }
+        .react-datepicker__day--disabled {
+          color: var(--text3);
+        }
+      `}</style>
     </div>
   )
 }
