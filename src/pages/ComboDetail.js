@@ -108,6 +108,7 @@ function displayCity(combo) {
         count: matches.length,
         firstDate: matches[0].event_date,
         lastDate: matches[matches.length - 1].event_date,
+        endDate: matches[0].end_date || null,
       })
     }
     return groups
