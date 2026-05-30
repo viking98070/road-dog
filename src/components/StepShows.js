@@ -339,7 +339,7 @@ export default function StepShows({ selected, setSelected, onBack, onFinish, sav
             onClick={() => onFinish(selected)}
             disabled={saving}
           >
-            {saving ? 'Saving...' : 'Continue'}
+            {saving ? 'Building your combos…' : 'Start your engines!'}
           </button>
         </div>
       )}
