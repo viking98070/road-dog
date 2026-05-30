@@ -3,22 +3,18 @@ import { supabase } from '../lib/supabase'
 import { useNavigate } from 'react-router-dom'
 import StepTeams from '../components/StepTeams'
 import StepShows from '../components/StepShows'
-import StepCity from '../components/StepCity'
 import styles from './Onboarding.module.css'
 
 export default function Onboarding({ session }) {
   const [step, setStep] = useState(1)
   const [selectedTeams, setSelectedTeams] = useState([])
   const [selectedShows, setSelectedShows] = useState([])
-  const [homeCity, setHomeCity] = useState('')
   const [saving, setSaving] = useState(false)
-  const navigate = useNavigate()
 
-  async function handleFinish() {
+  async function handleFinish(shows) {
     setSaving(true)
     const userId = session.user.id
 
-    // Auto-derive leagues from picked teams
     const leaguesFromTeams = Array.from(new Set(selectedTeams.map(t => t.league)))
     await supabase.from('user_leagues').delete().eq('user_id', userId)
     if (leaguesFromTeams.length > 0) {
@@ -35,28 +31,21 @@ export default function Onboarding({ session }) {
         team_name: t.name
       }))
       for (let i = 0; i < teams.length; i += 10) {
-        const batch = teams.slice(i, i + 10)
-        await supabase.from('user_teams').insert(batch)
+        await supabase.from('user_teams').insert(teams.slice(i, i + 10))
       }
     }
 
     await supabase.from('user_shows').delete().eq('user_id', userId)
-    if (selectedShows.length > 0) {
-      const showRows = selectedShows.map(s => {
+    const allShows = shows || selectedShows
+    if (allShows.length > 0) {
+      const showRows = allShows.map(s => {
         const name = typeof s === 'string' ? s : s.name
         const attractionId = typeof s === 'string' ? null : (s.attractionId || null)
-        return {
-          user_id: userId,
-          artist_name: name,
-          attraction_id: attractionId,
-        }
+        return { user_id: userId, artist_name: name, attraction_id: attractionId }
       })
       await supabase.from('user_shows').insert(showRows)
     }
 
-    await supabase.from('users').update({ home_city: homeCity }).eq('id', userId)
-
-    // Build combos against existing events so the dashboard isn't empty on first load
     try {
       await supabase.functions.invoke('rebuild-combos', {
         body: { user_id: userId }
@@ -66,7 +55,6 @@ export default function Onboarding({ session }) {
     }
 
     setSaving(false)
-    // Force a full reload so App.js re-reads the profile with new home_city
     window.location.href = '/hub'
   }
 
@@ -78,14 +66,13 @@ export default function Onboarding({ session }) {
           <div className={`${styles.step} ${step >= 1 ? styles.active : ''}`}>1</div>
           <div className={styles.stepLine} />
           <div className={`${styles.step} ${step >= 2 ? styles.active : ''}`}>2</div>
-          <div className={styles.stepLine} />
-          <div className={`${styles.step} ${step >= 3 ? styles.active : ''}`}>3</div>
         </div>
       </div>
+
       {step === 1 && (
         <StepTeams
           stepNumber={1}
-          totalSteps={3}
+          totalSteps={2}
           selected={selectedTeams}
           setSelected={setSelectedTeams}
           onBack={() => {}}
@@ -95,21 +82,10 @@ export default function Onboarding({ session }) {
       {step === 2 && (
         <StepShows
           stepNumber={2}
-          totalSteps={3}
+          totalSteps={2}
           selected={selectedShows}
           setSelected={setSelectedShows}
           onBack={() => setStep(1)}
-          onFinish={() => setStep(3)}
-          saving={saving}
-        />
-      )}
-      {step === 3 && (
-        <StepCity
-          stepNumber={3}
-          totalSteps={3}
-          homeCity={homeCity}
-          setHomeCity={setHomeCity}
-          onBack={() => setStep(2)}
           onFinish={handleFinish}
           saving={saving}
         />
