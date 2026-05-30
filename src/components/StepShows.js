@@ -12,7 +12,6 @@ export default function StepShows({ selected, setSelected, onBack, onFinish, sav
   const [loadingPopular, setLoadingPopular] = useState(true)
   const debounceRef = useRef(null)
 
-  // Load popular artists on mount
   useEffect(() => {
     supabase
       .from('popular_artists')
@@ -24,7 +23,6 @@ export default function StepShows({ selected, setSelected, onBack, onFinish, sav
       })
   }, [])
 
-  // Helpers — selected is an array of {name, attractionId|null}
   const isSelected = (name) =>
     selected.some(s => (typeof s === 'string' ? s : s.name).toLowerCase() === name.toLowerCase())
 
@@ -44,16 +42,13 @@ export default function StepShows({ selected, setSelected, onBack, onFinish, sav
     else addArtist(item.name, item.attraction_id)
   }
 
-  // Debounced search
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current)
-
     if (query.trim().length < 2) {
       setSearchResults([])
       setSearching(false)
       return
     }
-
     setSearching(true)
     debounceRef.current = setTimeout(async () => {
       try {
@@ -71,7 +66,6 @@ export default function StepShows({ selected, setSelected, onBack, onFinish, sav
         setSearching(false)
       }
     }, 300)
-
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current)
     }
@@ -81,7 +75,6 @@ export default function StepShows({ selected, setSelected, onBack, onFinish, sav
   if (activeTab === 'Music' && activeGenre !== 'All') {
     filteredPopular = filteredPopular.filter(p => {
       if (activeGenre === 'Other') {
-        // "Other" catches anything not in main genres
         const mainGenres = ['Rock', 'Pop', 'Country', 'Hip-Hop/Rap', 'R&B', 'Dance/Electronic']
         return !p.genre || !mainGenres.includes(p.genre)
       }
@@ -188,103 +181,65 @@ export default function StepShows({ selected, setSelected, onBack, onFinish, sav
 
       {/* Selected chips */}
       {selected.length > 0 && (
-  <div style={{ marginBottom: 16 }}>
-    <div style={{
-      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-      marginBottom: 8,
-    }}>
-      <div style={{
-        fontSize: 11, color: 'var(--text3)', textTransform: 'uppercase',
-        letterSpacing: 0.5, fontFamily: 'var(--head)',
-      }}>
-        Selected ({selected.length})
-      </div>
-      <button
-        onClick={() => setSelected([])}
-        style={{
-          background: 'transparent', border: 'none',
-          color: 'var(--orange)', fontSize: 12,
-          cursor: 'pointer', fontFamily: 'var(--head)',
-          textTransform: 'uppercase', letterSpacing: 0.5,
-        }}
-      >
-        Clear all
-      </button>
-    </div>
-    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-      {selected.map((s, idx) => {
-        const name = typeof s === 'string' ? s : s.name
-        return (
-          <div
-            key={idx}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 6,
-              padding: '4px 10px',
-              background: '#1f0f00',
-              border: '1px solid var(--orange)',
-              borderRadius: 999,
-              fontSize: 12,
-              color: 'var(--text)',
-            }}
-          >
-            <span>{name}</span>
+        <div style={{ marginBottom: 16 }}>
+          <div style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            marginBottom: 8,
+          }}>
+            <div style={{
+              fontSize: 11, color: 'var(--text3)', textTransform: 'uppercase',
+              letterSpacing: 0.5, fontFamily: 'var(--head)',
+            }}>
+              Selected ({selected.length})
+            </div>
             <button
-              onClick={() => removeArtist(name)}
+              onClick={() => setSelected([])}
               style={{
-                background: 'transparent',
-                border: 'none',
-                color: 'var(--orange)',
-                cursor: 'pointer',
-                fontSize: 14,
-                padding: 0,
-                lineHeight: 1,
+                background: 'transparent', border: 'none',
+                color: 'var(--orange)', fontSize: 12,
+                cursor: 'pointer', fontFamily: 'var(--head)',
+                textTransform: 'uppercase', letterSpacing: 0.5,
               }}
-              aria-label={`Remove ${name}`}
-            >×</button>
+            >
+              Clear all
+            </button>
           </div>
-        )
-      })}
-    </div>
-  </div>
-)}
-          {selected.map((s, idx) => {
-            const name = typeof s === 'string' ? s : s.name
-            return (
-              <div
-                key={idx}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 6,
-                  padding: '4px 10px',
-                  background: '#1f0f00',
-                  border: '1px solid var(--orange)',
-                  borderRadius: 999,
-                  fontSize: 12,
-                  color: 'var(--text)',
-                }}
-              >
-                <span>{name}</span>
-                <button
-                  onClick={() => removeArtist(name)}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+            {selected.map((s, idx) => {
+              const name = typeof s === 'string' ? s : s.name
+              return (
+                <div
+                  key={idx}
                   style={{
-                    background: 'transparent',
-                    border: 'none',
-                    color: 'var(--orange)',
-                    cursor: 'pointer',
-                    fontSize: 14,
-                    padding: 0,
-                    lineHeight: 1,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    padding: '4px 10px',
+                    background: '#1f0f00',
+                    border: '1px solid var(--orange)',
+                    borderRadius: 999,
+                    fontSize: 12,
+                    color: 'var(--text)',
                   }}
-                  aria-label={`Remove ${name}`}
                 >
-                  ×
-                </button>
-              </div>
-            )
-          })}
+                  <span>{name}</span>
+                  <button
+                    onClick={() => removeArtist(name)}
+                    style={{
+                      background: 'transparent',
+                      border: 'none',
+                      color: 'var(--orange)',
+                      cursor: 'pointer',
+                      fontSize: 14,
+                      padding: 0,
+                      lineHeight: 1,
+                    }}
+                    aria-label={`Remove ${name}`}
+                  >×</button>
+                </div>
+              )
+            })}
+          </div>
         </div>
       )}
 
@@ -317,14 +272,9 @@ export default function StepShows({ selected, setSelected, onBack, onFinish, sav
           😂 Comedy
         </div>
       </div>
-      {/* Music genre sub-tabs (only show when Music is active) */}
+
       {activeTab === 'Music' && (
-        <div style={{
-          display: 'flex',
-          gap: 6,
-          marginBottom: 12,
-          flexWrap: 'wrap',
-        }}>
+        <div style={{ display: 'flex', gap: 6, marginBottom: 12, flexWrap: 'wrap' }}>
           {['All', 'Rock', 'Pop', 'Country', 'Hip-Hop/Rap', 'R&B', 'Dance/Electronic', 'Other'].map(g => (
             <div
               key={g}
@@ -351,9 +301,7 @@ export default function StepShows({ selected, setSelected, onBack, onFinish, sav
 
       <div className={styles.showList}>
         {loadingPopular ? (
-          <div style={{ color: 'var(--text2)', fontSize: 13, padding: 12 }}>
-            Loading…
-          </div>
+          <div style={{ color: 'var(--text2)', fontSize: 13, padding: 12 }}>Loading…</div>
         ) : filteredPopular.length === 0 ? (
           <div style={{ color: 'var(--text2)', fontSize: 13, padding: 12 }}>
             No popular artists found. Try searching above.
@@ -384,7 +332,7 @@ export default function StepShows({ selected, setSelected, onBack, onFinish, sav
         )}
       </div>
 
- {!hideFooter && (
+      {!hideFooter && (
         <div className={styles.footer}>
           <button className={styles.backBtn} onClick={onBack}>← Back</button>
           <div className={styles.count}><b>{selected.length}</b> selected</div>
