@@ -45,7 +45,7 @@ export default function Onboarding({ session }) {
       })
       await supabase.from('user_shows').insert(showRows)
     }
-
+await supabase.from('users').update({ home_city: 'set' }).eq('id', userId)
     try {
       await supabase.functions.invoke('rebuild-combos', {
         body: { user_id: userId }
