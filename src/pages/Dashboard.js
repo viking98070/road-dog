@@ -10,12 +10,66 @@ const TABS = [
   { key: 'shows_only', label: 'Shows Only' },
 ]
 
+// Metro clusters — suburbs that should collapse into the primary city
+const METRO_CLUSTERS = {
+  'New York, NY': ['Bronx, NY', 'Brooklyn, NY', 'Queens, NY', 'Staten Island, NY', 'Newark, NJ', 'East Rutherford, NJ', 'Elmont, NY', 'Uniondale, NY', 'Hempstead, NY'],
+  'Los Angeles, CA': ['Anaheim, CA', 'Carson, CA', 'Inglewood, CA', 'Burbank, CA', 'Long Beach, CA', 'El Segundo, CA', 'Cerritos, CA', 'Ontario, CA'],
+  'San Francisco, CA': ['Oakland, CA', 'San Jose, CA', 'Berkeley, CA', 'Santa Clara, CA', 'Fremont, CA', 'San Ramon, CA'],
+  'Dallas, TX': ['Arlington, TX', 'Addison, TX', 'Irving, TX', 'Frisco, TX', 'Allen, TX'],
+  'Washington, DC': ['Alexandria, VA', 'Arlington, VA', 'Landover, MD', 'Bristow, VA', 'Baltimore, MD'],
+  'Philadelphia, PA': ['Camden, NJ', 'Bensalem, PA', 'Voorhees, NJ', 'Wilmington, DE'],
+  'Chicago, IL': ['Bridgeview, IL', 'Rosemont, IL', 'Hoffman Estates, IL', 'Tinley Park, IL', 'Waukegan, IL'],
+  'Boston, MA': ['Foxborough, MA', 'Worcester, MA', 'Providence, RI', 'Wantagh, NY'],
+  'Miami, FL': ['Fort Lauderdale, FL', 'Sunrise, FL', 'Miami Gardens, FL', 'Coral Gables, FL', 'West Palm Beach, FL'],
+  'Atlanta, GA': ['Alpharetta, GA', 'Duluth, GA', 'Kennesaw, GA', 'Marietta, GA', 'Gainesville, GA'],
+  'Seattle, WA': ['Tacoma, WA', 'Bellevue, WA', 'Auburn, WA', 'Airway Heights, WA', 'George, WA'],
+  'Denver, CO': ['Aurora, CO', 'Commerce City, CO', 'Brighton, CO', 'Morrison, CO'],
+  'Phoenix, AZ': ['Glendale, AZ', 'Tempe, AZ', 'Scottsdale, AZ', 'Mesa, AZ', 'Chandler, AZ', 'Peoria, AZ'],
+  'Minneapolis, MN': ['Saint Paul, MN', 'Bloomington, MN', 'Eden Prairie, MN'],
+  'Tampa, FL': ['St. Petersburg, FL', 'Clearwater, FL', 'Brandon, FL'],
+  'Kansas City, MO': ['Independence, MO', 'Overland Park, KS', 'Bonner Springs, KS'],
+  'Nashville, TN': ['Murfreesboro, TN', 'Franklin, TN'],
+  'New Orleans, LA': ['Metairie, LA', 'Bossier City, LA'],
+  'Portland, OR': ['Beaverton, OR', 'Hillsboro, OR', 'Ridgefield, WA'],
+  'Pittsburgh, PA': ['Burgettstown, PA', 'Cranberry Township, PA'],
+  'Cleveland, OH': ['Berea, OH', 'Akron, OH'],
+  'Charlotte, NC': ['Concord, NC', 'Kannapolis, NC'],
+  'Sacramento, CA': ['Elk Grove, CA', 'Rancho Cordova, CA'],
+  'Las Vegas, NV': ['Henderson, NV', 'Paradise, NV'],
+  'Indianapolis, IN': ['Noblesville, IN', 'Fishers, IN'],
+  'Cincinnati, OH': ['Covington, KY', 'Newport, KY'],
+  'Louisville, KY': ['Clarksville, IN'],
+}
+
+// Build reverse lookup: suburb -> primary city
+const SUBURB_TO_PRIMARY = {}
+for (const [primary, suburbs] of Object.entries(METRO_CLUSTERS)) {
+  for (const suburb of suburbs) {
+    SUBURB_TO_PRIMARY[suburb] = primary
+  }
+}
+
+function collapseCities(cities) {
+  if (!cities || cities.length === 0) return cities
+  const collapsed = []
+  for (const city of cities) {
+    const primary = SUBURB_TO_PRIMARY[city]
+    if (primary) {
+      // Map to primary city
+      if (!collapsed.includes(primary)) collapsed.push(primary)
+    } else {
+      if (!collapsed.includes(city)) collapsed.push(city)
+    }
+  }
+  return collapsed
+}
+
 export default function Dashboard({ session }) {
   const [combos, setCombos] = useState([])
   const [loading, setLoading] = useState(true)
   const [selected, setSelected] = useState(null)
   const [activeTab, setActiveTab] = useState('sports_plus_shows')
-const navigate = useNavigate()
+  const navigate = useNavigate()
   
   useEffect(() => {
     loadCombos()
@@ -54,16 +108,18 @@ const navigate = useNavigate()
   }
 
   function formatDate(dateStr) {
-    // Parse as local date (noon UTC avoids timezone shifts to prior/next day)
     return new Date(dateStr + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
   }
-function displayCity(combo) {
-    const cities = combo.cities && combo.cities.length > 0 ? combo.cities : [combo.city]
+
+  function displayCity(combo) {
+    const raw = combo.cities && combo.cities.length > 0 ? combo.cities : [combo.city]
+    const cities = collapseCities(raw)
     if (!cities[0]) return ''
     if (cities.length === 1) return cities[0]
     if (cities.length === 2) return `${cities[0]} & ${cities[1]}`
     return `${cities[0]}, ${cities[1]} +${cities.length - 2} more`
   }
+
   function formatScore(score) {
     if (score >= 4) return '🔥 Hot combo'
     if (score >= 2) return '⭐ Great combo'
@@ -71,9 +127,9 @@ function displayCity(combo) {
   }
 
   function categoryColor(event) {
-  if (event.league_key === 'marquee') return '#B8860B'
-  if (event.type === 'music') return '#7B2D8B'
-  if (event.type === 'comedy') return '#F4911E'
+    if (event.league_key === 'marquee') return '#B8860B'
+    if (event.type === 'music') return '#7B2D8B'
+    if (event.type === 'comedy') return '#F4911E'
     const colors = {
       nfl: '#013369', mlb: '#002D72', nba: '#C9082A',
       nhl: '#0033A0', wnba: '#C9082A', mls: '#002F6C',
@@ -83,8 +139,8 @@ function displayCity(combo) {
   }
 
   function categoryLabel(event) {
-  if (event.league_key === 'marquee') return 'MARQUEE'
-  if (event.parent_event) return 'FESTIVAL'
+    if (event.league_key === 'marquee') return 'MARQUEE'
+    if (event.parent_event) return 'FESTIVAL'
     if (event.type === 'music') return 'MUSIC'
     if (event.type === 'comedy') return 'COMEDY'
     if (!event.league_key) return 'EVENT'
@@ -96,16 +152,13 @@ function displayCity(combo) {
   }
 
   function eventDescription(event) {
-  if (event.league_key === 'marquee') return event.artist_name || 'Marquee Event'
-  if (event.type === 'sport') {
+    if (event.league_key === 'marquee') return event.artist_name || 'Marquee Event'
+    if (event.type === 'sport') {
       const away = event.away_team || 'TBD'
       const home = event.home_team || 'TBD'
       return `${away} @ ${home}`
     }
-    // For festivals, show the festival name (more iconic than the individual artist)
-    if (event.parent_event) {
-      return event.parent_event
-    }
+    if (event.parent_event) return event.parent_event
     return event.artist_name || 'Untitled event'
   }
 
@@ -150,50 +203,50 @@ function displayCity(combo) {
         </div>
 
         {/* Tabs */}
-<div style={{
-  display: 'flex',
-  gap: 0,
-  marginBottom: 20,
-  borderBottom: '1px solid var(--border)',
-  overflowX: 'auto',
-  WebkitOverflowScrolling: 'touch',
-}}>
-  {TABS.map(tab => {
-    const isActive = activeTab === tab.key
-    return (
-      <button
-        key={tab.key}
-        onClick={() => setActiveTab(tab.key)}
-        style={{
-          background: 'transparent',
-          border: 'none',
-          color: isActive ? 'var(--orange)' : 'var(--text2)',
-          fontWeight: isActive ? 700 : 500,
-          fontSize: 13,
-          padding: '10px 14px',
-          cursor: 'pointer',
-          borderBottom: isActive ? '2px solid var(--orange)' : '2px solid transparent',
-          marginBottom: -1,
-          fontFamily: 'var(--head)',
-          textTransform: 'uppercase',
-          letterSpacing: 0.5,
-          whiteSpace: 'nowrap',
-          flexShrink: 0,
-        }}
-      >
-        {tab.label}
-        <span style={{
-          marginLeft: 6,
-          fontSize: 11,
-          color: isActive ? 'var(--orange)' : 'var(--text3)',
-          fontWeight: 600,
+        <div style={{
+          display: 'flex',
+          gap: 0,
+          marginBottom: 20,
+          borderBottom: '1px solid var(--border)',
+          overflowX: 'auto',
+          WebkitOverflowScrolling: 'touch',
         }}>
-          {tabCounts[tab.key] || 0}
-        </span>
-      </button>
-    )
-  })}
-</div>
+          {TABS.map(tab => {
+            const isActive = activeTab === tab.key
+            return (
+              <button
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key)}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  color: isActive ? 'var(--orange)' : 'var(--text2)',
+                  fontWeight: isActive ? 700 : 500,
+                  fontSize: 13,
+                  padding: '10px 14px',
+                  cursor: 'pointer',
+                  borderBottom: isActive ? '2px solid var(--orange)' : '2px solid transparent',
+                  marginBottom: -1,
+                  fontFamily: 'var(--head)',
+                  textTransform: 'uppercase',
+                  letterSpacing: 0.5,
+                  whiteSpace: 'nowrap',
+                  flexShrink: 0,
+                }}
+              >
+                {tab.label}
+                <span style={{
+                  marginLeft: 6,
+                  fontSize: 11,
+                  color: isActive ? 'var(--orange)' : 'var(--text3)',
+                  fontWeight: 600,
+                }}>
+                  {tabCounts[tab.key] || 0}
+                </span>
+              </button>
+            )
+          })}
+        </div>
 
         {loading ? (
           <div className={styles.empty}>
