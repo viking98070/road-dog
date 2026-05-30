@@ -188,13 +188,67 @@ export default function StepShows({ selected, setSelected, onBack, onFinish, sav
 
       {/* Selected chips */}
       {selected.length > 0 && (
-        <div style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          gap: 6,
-          marginBottom: 16,
-          padding: '8px 0',
-        }}>
+  <div style={{ marginBottom: 16 }}>
+    <div style={{
+      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+      marginBottom: 8,
+    }}>
+      <div style={{
+        fontSize: 11, color: 'var(--text3)', textTransform: 'uppercase',
+        letterSpacing: 0.5, fontFamily: 'var(--head)',
+      }}>
+        Selected ({selected.length})
+      </div>
+      <button
+        onClick={() => setSelected([])}
+        style={{
+          background: 'transparent', border: 'none',
+          color: 'var(--orange)', fontSize: 12,
+          cursor: 'pointer', fontFamily: 'var(--head)',
+          textTransform: 'uppercase', letterSpacing: 0.5,
+        }}
+      >
+        Clear all
+      </button>
+    </div>
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+      {selected.map((s, idx) => {
+        const name = typeof s === 'string' ? s : s.name
+        return (
+          <div
+            key={idx}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 6,
+              padding: '4px 10px',
+              background: '#1f0f00',
+              border: '1px solid var(--orange)',
+              borderRadius: 999,
+              fontSize: 12,
+              color: 'var(--text)',
+            }}
+          >
+            <span>{name}</span>
+            <button
+              onClick={() => removeArtist(name)}
+              style={{
+                background: 'transparent',
+                border: 'none',
+                color: 'var(--orange)',
+                cursor: 'pointer',
+                fontSize: 14,
+                padding: 0,
+                lineHeight: 1,
+              }}
+              aria-label={`Remove ${name}`}
+            >×</button>
+          </div>
+        )
+      })}
+    </div>
+  </div>
+)}
           {selected.map((s, idx) => {
             const name = typeof s === 'string' ? s : s.name
             return (
