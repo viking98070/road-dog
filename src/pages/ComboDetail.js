@@ -19,7 +19,9 @@ function displayCity(combo) {
     if (!cities[0]) return ''
     if (cities.length === 1) return cities[0]
     if (cities.length === 2) return `${cities[0]} & ${cities[1]}`
-    return `${cities[0]}, ${cities[1]} +${cities.length - 2} more`
+    const last = cities[cities.length - 1]
+    const rest = cities.slice(0, -1).join(', ')
+    return `${rest} & ${last}`
   }
   function categoryColor(event) {
   if (event.league_key === 'marquee') return '#B8860B'
