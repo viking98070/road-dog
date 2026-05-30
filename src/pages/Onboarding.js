@@ -11,8 +11,9 @@ export default function Onboarding({ session }) {
   const [selectedShows, setSelectedShows] = useState([])
   const [saving, setSaving] = useState(false)
 
-  async function handleFinish(shows) {
-    setSaving(true)
+ async function handleFinish(shows) {
+  console.log('handleFinish called with', shows?.length, 'shows')
+  setSaving(true)
     const userId = session.user.id
 
     const leaguesFromTeams = Array.from(new Set(selectedTeams.map(t => t.league)))
