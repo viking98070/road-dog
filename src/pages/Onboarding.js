@@ -12,7 +12,6 @@ export default function Onboarding({ session }) {
   const [saving, setSaving] = useState(false)
 
  async function handleFinish(shows) {
-  console.log('handleFinish called with', shows?.length, 'shows')
   setSaving(true)
     const userId = session.user.id
 
