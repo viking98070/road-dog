@@ -510,11 +510,27 @@ export default function StepTeams({ selected, setSelected, onBack, onNext, stepN
       {selected.length > 0 && (
         <div style={{ marginBottom: 12 }}>
           <div style={{
-            fontSize: 11, color: 'var(--text3)', textTransform: 'uppercase',
-            letterSpacing: 0.5, fontFamily: 'var(--head)', marginBottom: 8,
-          }}>
-            Selected ({selected.length})
-          </div>
+  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+  marginBottom: 8,
+}}>
+  <div style={{
+    fontSize: 11, color: 'var(--text3)', textTransform: 'uppercase',
+    letterSpacing: 0.5, fontFamily: 'var(--head)',
+  }}>
+    Selected ({selected.length})
+  </div>
+  <button
+    onClick={() => setSelected([])}
+    style={{
+      background: 'transparent', border: 'none',
+      color: 'var(--orange)', fontSize: 12,
+      cursor: 'pointer', fontFamily: 'var(--head)',
+      textTransform: 'uppercase', letterSpacing: 0.5,
+    }}
+  >
+    Clear all
+  </button>
+</div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
             {selected.map(t => (
               <div key={t.id} style={{
