@@ -2,17 +2,29 @@ import React, { useState } from 'react'
 import styles from './Step.module.css'
 
 const CITIES = [
-  'Atlanta, GA', 'Baltimore, MD', 'Boston, MA', 'Charlotte, NC',
-  'Chicago, IL', 'Cincinnati, OH', 'Cleveland, OH', 'Columbus, OH',
-  'Dallas, TX', 'Denver, CO', 'Detroit, MI', 'Green Bay, WI',
-  'Houston, TX', 'Indianapolis, IN', 'Jacksonville, FL', 'Kansas City, MO',
-  'Las Vegas, NV', 'Los Angeles, CA', 'Memphis, TN', 'Miami, FL',
-  'Milwaukee, WI', 'Minneapolis, MN', 'Nashville, TN', 'New Orleans, LA',
-  'New York, NY', 'Oakland, CA', 'Orlando, FL', 'Philadelphia, PA',
+  'Atlanta, GA', 'Austin, TX', 'Baltimore, MD', 'Boston, MA', 'Buffalo, NY',
+  'Charlotte, NC', 'Chicago, IL', 'Cincinnati, OH', 'Cleveland, OH', 'Columbus, OH',
+  'Dallas, TX', 'Denver, CO', 'Detroit, MI', 'Green Bay, WI', 'Houston, TX',
+  'Indianapolis, IN', 'Jacksonville, FL', 'Kansas City, MO', 'Las Vegas, NV',
+  'Los Angeles, CA', 'Louisville, KY', 'Memphis, TN', 'Miami, FL', 'Milwaukee, WI',
+  'Minneapolis, MN', 'Nashville, TN', 'New Orleans, LA', 'New York, NY',
+  'Oakland, CA', 'Oklahoma City, OK', 'Orlando, FL', 'Philadelphia, PA',
   'Phoenix, AZ', 'Pittsburgh, PA', 'Portland, OR', 'Raleigh, NC',
   'Sacramento, CA', 'Salt Lake City, UT', 'San Antonio, TX', 'San Diego, CA',
-  'San Francisco, CA', 'Seattle, WA', 'St. Louis, MO', 'Tampa, FL',
-  'Washington, DC',
+  'San Francisco, CA', 'San Jose, CA', 'Seattle, WA', 'St. Louis, MO',
+  'Tampa, FL', 'Washington, DC',
+  'Albuquerque, NM', 'Anaheim, CA', 'Anchorage, AK', 'Arlington, TX',
+  'Birmingham, AL', 'Boise, ID', 'Bridgeport, CT', 'Burlington, VT',
+  'Charleston, SC', 'Chattanooga, TN', 'Colorado Springs, CO',
+  'Des Moines, IA', 'El Paso, TX', 'Fort Lauderdale, FL', 'Fort Worth, TX',
+  'Fresno, CA', 'Grand Rapids, MI', 'Hartford, CT', 'Honolulu, HI',
+  'Lansing, MI', 'Little Rock, AR', 'Long Beach, CA',
+  'Mesa, AZ', 'Mobile, AL', 'Newark, NJ', 'Omaha, NE',
+  'Providence, RI', 'Reno, NV', 'Richmond, VA', 'Rochester, NY',
+  'Savannah, GA', 'Scottsdale, AZ', 'Spokane, WA',
+  'Springfield, MO', 'Syracuse, NY', 'Toledo, OH', 'Tulsa, OK',
+  'Virginia Beach, VA', 'Wichita, KS',
+]
 ]
 
 export default function StepCity({ homeCity, setHomeCity, onBack, onFinish, saving, stepNumber, totalSteps, hideFooter }) {
