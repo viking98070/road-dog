@@ -25,7 +25,6 @@ const CITIES = [
   'Springfield, MO', 'Syracuse, NY', 'Toledo, OH', 'Tulsa, OK',
   'Virginia Beach, VA', 'Wichita, KS',
 ]
-]
 
 export default function StepCity({ homeCity, setHomeCity, onBack, onFinish, saving, stepNumber, totalSteps, hideFooter }) {
   const [search, setSearch] = useState('')
