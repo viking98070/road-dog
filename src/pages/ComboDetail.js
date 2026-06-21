@@ -62,6 +62,7 @@ export default function ComboDetail({ combo, onBack }) {
     if (!cities[0]) return ''
     if (cities.length === 1) return cities[0]
     if (cities.length === 2) return `${cities[0]} & ${cities[1]}`
+    if (cities.length === 3) return `${cities[0]}, ${cities[1]} & ${cities[2]}`
     const last = cities[cities.length - 1]
     const rest = cities.slice(0, -1).join(', ')
     return `${rest} & ${last}`
@@ -112,6 +113,12 @@ export default function ComboDetail({ combo, onBack }) {
     const preview = others.slice(0, 4).join(', ')
     const more = others.length > 4 ? ` +${others.length - 4} more` : ''
     return `Also playing: ${preview}${more}`
+  }
+
+  function eventLocation(event) {
+    if (event.city && event.state) return `${event.city}, ${event.state}`
+    if (event.city) return event.city
+    return ''
   }
 
   function groupEvents(events) {
@@ -173,6 +180,7 @@ export default function ComboDetail({ combo, onBack }) {
               const event = group.primary
               const lineup = lineupPreview(event)
               const isMultiNight = group.count > 1
+              const location = eventLocation(event)
               return (
                 <div key={event.id} className={styles.eventCard}>
                   <div className={styles.eventLeague} style={{background:categoryColor(event)}}>{categoryLabel(event)}</div>
@@ -190,7 +198,7 @@ export default function ComboDetail({ combo, onBack }) {
                         {event.parent_event}
                       </div>
                     )}
-                    <div className={styles.eventMeta}>{event.venue}{event.city ? ` · ${event.city}` : ''}</div>
+                    <div className={styles.eventMeta}>{event.venue}{location ? ` · ${location}` : ''}</div>
                     {lineup && (
                       <div style={{ fontSize: 11, color: 'var(--text3)', marginTop: 4, fontStyle: 'italic' }}>
                         {lineup}
@@ -211,7 +219,7 @@ export default function ComboDetail({ combo, onBack }) {
         )}
         <div className={styles.sectionTitle} style={{marginTop:28}}>Plan your trip</div>
         <div className={styles.planGrid}>
-          
+          <a
             href={`https://www.google.com/travel/flights?q=Flights%20to%20${encodeURIComponent(combo.city)}%20${combo.start_date}%20to%20${combo.end_date}`}
             target="_blank"
             rel="noreferrer"
@@ -221,7 +229,7 @@ export default function ComboDetail({ combo, onBack }) {
             <div className={styles.planLabel}>Flights</div>
             <div className={styles.planSub}>Google Flights</div>
           </a>
-          
+          <a
             href={`https://www.google.com/travel/hotels/${encodeURIComponent(combo.city)}?q=Hotels%20in%20${encodeURIComponent(combo.city)}&checkin=${combo.start_date}&checkout=${combo.end_date}`}
             target="_blank"
             rel="noreferrer"
@@ -231,7 +239,7 @@ export default function ComboDetail({ combo, onBack }) {
             <div className={styles.planLabel}>Hotels</div>
             <div className={styles.planSub}>Google Hotels</div>
           </a>
-          
+          <a
             href={`https://www.stubhub.com/find/s/?q=${encodeURIComponent(combo.city)}`}
             target="_blank"
             rel="noreferrer"
