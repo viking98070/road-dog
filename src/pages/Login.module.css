@@ -133,3 +133,7 @@
   background: var(--orange);
   color: #fff;
 }
+.modeActive {
+     background: var(--orange);
+     color: #fff;
+   }
