@@ -9,6 +9,7 @@ import Settings from './pages/Settings'
 import Hub from './pages/Hub'
 import WhosPlaying from './pages/WhosPlaying'
 import Legal from './pages/Legal'
+import ResetPassword from './pages/ResetPassword'
 export default function App() {
   const [session, setSession] = useState(undefined)
   const [profile, setProfile] = useState(null)
@@ -53,6 +54,7 @@ const hasOnboarded = profile?.home_city
         <Route path="/dashboard" element={<Navigate to="/combos" />} />
         <Route path="/privacy" element={<Legal type="privacy" />} />
         <Route path="/terms" element={<Legal type="terms" />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
       </Routes>
     </BrowserRouter>
   )
