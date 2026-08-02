@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import styles from './Step.module.css'
 
 const TEAM_SPORTS = ['nfl', 'mlb', 'nba', 'nhl', 'cfb', 'mcbb', 'wcbb', 'mls', 'nwsl', 'wnba']
@@ -389,6 +389,7 @@ function getTricode(league, team, isCollege) {
 
 export default function StepTeams({ selected, setSelected, onBack, onNext, stepNumber, totalSteps, hideFooter }) {
   const [search, setSearch] = useState('')
+  const searchRef = useRef(null)
   const [expandedLeague, setExpandedLeague] = useState(null)
 
   function toggle(league, team) {
@@ -434,13 +435,14 @@ export default function StepTeams({ selected, setSelected, onBack, onNext, stepN
       {/* Search */}
       <div style={{ position: 'relative', marginBottom: 12 }}>
         <input
+          ref={searchRef}
           type="text"
           value={search}
           onChange={e => setSearch(e.target.value)}
           placeholder="Search for any team..."
           style={{
             width: '100%',
-            padding: '12px 14px',
+            padding: '12px 40px 12px 14px',
             fontSize: 15,
             background: 'var(--surface)',
             border: '1px solid var(--border)',
@@ -451,6 +453,29 @@ export default function StepTeams({ selected, setSelected, onBack, onNext, stepN
             fontFamily: 'var(--body)',
           }}
         />
+        {search && (
+          <button
+            type="button"
+            onClick={() => {
+              setSearch('')
+              searchRef.current?.focus()
+            }}
+            aria-label="Clear search"
+            style={{
+              position: 'absolute',
+              right: 10,
+              top: '50%',
+              transform: 'translateY(-50%)',
+              background: 'transparent',
+              border: 'none',
+              color: 'var(--text3)',
+              fontSize: 20,
+              lineHeight: 1,
+              cursor: 'pointer',
+              padding: 4,
+            }}
+          >×</button>
+        )}
       </div>
 
       {/* Search results dropdown */}
