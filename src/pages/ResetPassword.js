@@ -7,28 +7,52 @@ export default function ResetPassword() {
   const [confirm, setConfirm] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [ready, setReady] = useState(false)   // recovery session detected
-  const [done, setDone] = useState(false)     // password successfully updated
+  const [ready, setReady] = useState(false)       // recovery session established
+  const [done, setDone] = useState(false)         // password successfully updated
+  const [linkError, setLinkError] = useState('')  // the reset link itself is bad/expired
 
   useEffect(() => {
-    // When the user arrives from the reset email, Supabase fires PASSWORD_RECOVERY
-    // and establishes a temporary recovery session from the URL fragment.
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'PASSWORD_RECOVERY') {
-        setReady(true)
-      } else if (session) {
-        // If a session already exists on mount (e.g. the event fired before this
-        // listener attached), treat the page as ready to accept a new password.
-        setReady(true)
+    let active = true
+
+    // The reset email links here with ?token_hash=...&type=recovery.
+    // Exchange that token for a recovery session before showing the form.
+    const params = new URLSearchParams(window.location.search)
+    const tokenHash = params.get('token_hash')
+
+    async function establish() {
+      if (tokenHash) {
+        const { error } = await supabase.auth.verifyOtp({
+          token_hash: tokenHash,
+          type: 'recovery',
+        })
+        if (!active) return
+        if (error) {
+          setLinkError('This reset link is invalid or has expired. Request a new one from the login page.')
+        } else {
+          setReady(true)
+          // Strip the token from the URL so it can't be reused or leak via history.
+          window.history.replaceState({}, document.title, '/reset-password')
+        }
+        return
       }
+
+      // Fallback: an existing recovery session (older hash-fragment links, or the
+      // page opened directly while already in a recovery session).
+      const { data: { session } } = await supabase.auth.getSession()
+      if (active && session) setReady(true)
+    }
+
+    // Safety net for implicit-flow links that fire PASSWORD_RECOVERY.
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if ((event === 'PASSWORD_RECOVERY' || session) && active) setReady(true)
     })
 
-    // Fallback: check for an existing session on mount in case the event already fired.
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) setReady(true)
-    })
+    establish()
 
-    return () => subscription.unsubscribe()
+    return () => {
+      active = false
+      subscription.unsubscribe()
+    }
   }, [])
 
   async function handleUpdate(e) {
@@ -84,8 +108,10 @@ export default function ResetPassword() {
             <div className={styles.sentIcon}>🔑</div>
             <h2>Reset password</h2>
             <p>
-              Open this page from the password reset link in your email.<br />
-              If you came from that link and still see this, the link may have expired — request a new one from the login page.
+              {linkError
+                ? linkError
+                : <>Open this page from the password reset link in your email.<br />
+                    If you came from that link and still see this, it may still be verifying — give it a moment, or request a new link from the login page.</>}
             </p>
           </div>
         </div>
