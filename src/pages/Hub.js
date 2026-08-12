@@ -42,7 +42,9 @@ export default function Hub({ session }) {
   return (
     <div className={styles.page}>
       <header className={styles.header}>
-        <div className={styles.logo}>Road<span>Dog</span></div>
+        <div className={styles.logo}>
+          <img src="/roaddog-wordmark-horizontal.svg" alt="Road Dog" style={{ height: '26px', width: 'auto', display: 'block' }} />
+        </div>
         <button className={styles.signOut} onClick={handleSignOut}>Sign out</button>
       </header>
 
