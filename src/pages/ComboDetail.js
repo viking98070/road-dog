@@ -221,39 +221,20 @@ export default function ComboDetail({ combo, onBack }) {
         {(() => {
           const raw = combo.cities && combo.cities.length > 0 ? combo.cities : [combo.city]
           const primaryCity = collapseCities(raw)[0] || combo.city || ''
-          const cityQ = encodeURIComponent(primaryCity)
+          const links = [
+            { icon: '✈️', label: 'Flights', sub: 'Google Flights', url: 'https://www.google.com/travel/flights?q=' + encodeURIComponent('flights to ' + primaryCity) },
+            { icon: '🏨', label: 'Hotels', sub: 'Google Hotels', url: 'https://www.google.com/search?q=' + encodeURIComponent('hotels in ' + primaryCity) },
+            { icon: '🎟️', label: 'Tickets', sub: 'Ticketmaster', url: 'https://www.ticketmaster.com/search?q=' + encodeURIComponent(primaryCity) },
+          ]
           return (
             <div className={styles.planGrid}>
-              
-                href={`https://www.google.com/travel/flights?q=${encodeURIComponent('flights to ' + primaryCity)}`}
-                target="_blank"
-                rel="noreferrer"
-                className={styles.planCard}
-              >
-                <div className={styles.planIcon}>✈️</div>
-                <div className={styles.planLabel}>Flights</div>
-                <div className={styles.planSub}>Google Flights</div>
-              </a>
-              
-                href={`https://www.google.com/search?q=${encodeURIComponent('hotels in ' + primaryCity)}`}
-                target="_blank"
-                rel="noreferrer"
-                className={styles.planCard}
-              >
-                <div className={styles.planIcon}>🏨</div>
-                <div className={styles.planLabel}>Hotels</div>
-                <div className={styles.planSub}>Google Hotels</div>
-              </a>
-              
-                href={`https://www.ticketmaster.com/search?q=${cityQ}`}
-                target="_blank"
-                rel="noreferrer"
-                className={styles.planCard}
-              >
-                <div className={styles.planIcon}>🎟️</div>
-                <div className={styles.planLabel}>Tickets</div>
-                <div className={styles.planSub}>Ticketmaster</div>
-              </a>
+              {links.map(link => (
+                <a key={link.label} href={link.url} target="_blank" rel="noreferrer" className={styles.planCard}>
+                  <div className={styles.planIcon}>{link.icon}</div>
+                  <div className={styles.planLabel}>{link.label}</div>
+                  <div className={styles.planSub}>{link.sub}</div>
+                </a>
+              ))}
             </div>
           )
         })()}
