@@ -107,7 +107,9 @@ export default function Login() {
     return (
       <div className={styles.page}>
         <div className={styles.card}>
-          <div className={styles.logo}>Road<span>Dog</span></div>
+          <div className={styles.logo}>
+            <img src="/roaddog-wordmark.svg" alt="Road Dog" style={{ width: '170px', maxWidth: '65%', height: 'auto', display: 'block', margin: '0 auto' }} />
+          </div>
           <div className={styles.sent}>
             <div className={styles.sentIcon}>✉️</div>
             <h2>Check your email</h2>
@@ -122,7 +124,9 @@ export default function Login() {
     return (
       <div className={styles.page}>
         <div className={styles.card}>
-          <div className={styles.logo}>Road<span>Dog</span></div>
+          <div className={styles.logo}>
+            <img src="/roaddog-wordmark.svg" alt="Road Dog" style={{ width: '170px', maxWidth: '65%', height: 'auto', display: 'block', margin: '0 auto' }} />
+          </div>
           <div className={styles.sent}>
             <div className={styles.sentIcon}>✅</div>
             <h2>Confirm your email</h2>
@@ -137,7 +141,9 @@ export default function Login() {
     return (
       <div className={styles.page}>
         <div className={styles.card}>
-          <div className={styles.logo}>Road<span>Dog</span></div>
+          <div className={styles.logo}>
+            <img src="/roaddog-wordmark.svg" alt="Road Dog" style={{ width: '170px', maxWidth: '65%', height: 'auto', display: 'block', margin: '0 auto' }} />
+          </div>
           <div className={styles.sent}>
             <div className={styles.sentIcon}>🔑</div>
             <h2>Check your email</h2>
@@ -153,7 +159,9 @@ export default function Login() {
   return (
     <div className={styles.page}>
       <div className={styles.card}>
-        <div className={styles.logo}>Road<span>Dog</span></div>
+        <div className={styles.logo}>
+          <img src="/roaddog-wordmark.svg" alt="Road Dog" style={{ width: '170px', maxWidth: '65%', height: 'auto', display: 'block', margin: '0 auto' }} />
+        </div>
 
         <div className={styles.modeTabs}>
           <div
