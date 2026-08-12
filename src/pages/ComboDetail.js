@@ -245,14 +245,14 @@ export default function ComboDetail({ combo, onBack }) {
                 <div className={styles.planSub}>Google Hotels</div>
               </a>
               
-                href={`https://www.stubhub.com/find/s/?q=${cityQ}`}
+                href={`https://www.ticketmaster.com/search?q=${cityQ}`}
                 target="_blank"
                 rel="noreferrer"
                 className={styles.planCard}
               >
                 <div className={styles.planIcon}>🎟️</div>
                 <div className={styles.planLabel}>Tickets</div>
-                <div className={styles.planSub}>StubHub</div>
+                <div className={styles.planSub}>Ticketmaster</div>
               </a>
             </div>
           )
