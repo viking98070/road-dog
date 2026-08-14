@@ -55,10 +55,13 @@ function slugify(s) {
 function ticketUrl(event) {
   const base = 'https://seatgeek.com/'
   if (event.type === 'sport') {
+    if (event.league_key === 'cfb') {
+      const venueSlug = slugify(event.venue)
+      return venueSlug ? `${base}venues/${venueSlug}/tickets` : base
+    }
     const team = event.home_team || event.away_team || ''
     let slug = slugify(team)
     if (!slug) return base
-    if (event.league_key === 'cfb') slug += '-football'
     if (event.league_key === 'mcbb' || event.league_key === 'wcbb') slug += '-basketball'
     return `${base}${slug}-tickets`
   }
