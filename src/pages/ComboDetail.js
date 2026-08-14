@@ -43,6 +43,30 @@ function collapseCities(cities) {
   return collapsed
 }
 
+function slugify(s) {
+  return (s || '')
+    .toLowerCase()
+    .replace(/&/g, ' and ')
+    .replace(/['’.]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+}
+
+function ticketUrl(event) {
+  const base = 'https://seatgeek.com/'
+  if (event.type === 'sport') {
+    const team = event.home_team || event.away_team || ''
+    let slug = slugify(team)
+    if (!slug) return base
+    if (event.league_key === 'cfb') slug += '-football'
+    if (event.league_key === 'mcbb' || event.league_key === 'wcbb') slug += '-basketball'
+    return `${base}${slug}-tickets`
+  }
+  const name = event.artist_name || event.parent_event || ''
+  const slug = slugify(name)
+  return slug ? `${base}${slug}-tickets` : base
+}
+
 export default function ComboDetail({ combo, onBack }) {
   const [events, setEvents] = useState([])
   const [loading, setLoading] = useState(true)
@@ -204,6 +228,7 @@ export default function ComboDetail({ combo, onBack }) {
                         {lineup}
                       </div>
                     )}
+                    <div style={{ marginTop: 8 }}>{(<a href={ticketUrl(event)} target="_blank" rel="noreferrer" style={{ fontSize: 12, fontWeight: 700, color: 'var(--orange)', textDecoration: 'none' }}>Get tickets ↗</a>)}</div>
                   </div>
                   <div className={styles.eventDate}>
                     {isMultiNight
@@ -238,7 +263,6 @@ export default function ComboDetail({ combo, onBack }) {
           const links = [
             { icon: '✈️', label: 'Flights', sub: 'Google Flights', url: 'https://www.google.com/travel/flights?q=' + encodeURIComponent(flightsQuery) },
             { icon: '🏨', label: 'Hotels', sub: 'Google Hotels', url: 'https://www.google.com/travel/search?q=' + encodeURIComponent('hotels in ' + primaryCity) },
-            { icon: '🎟️', label: 'Tickets', sub: 'Ticketmaster', url: 'https://www.ticketmaster.com/search?q=' + encodeURIComponent(primaryCity) },
           ]
           return (
             <div className={styles.planGrid}>
