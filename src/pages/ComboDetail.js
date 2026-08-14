@@ -221,20 +221,32 @@ export default function ComboDetail({ combo, onBack }) {
         {(() => {
           const raw = combo.cities && combo.cities.length > 0 ? combo.cities : [combo.city]
           const primaryCity = collapseCities(raw)[0] || combo.city || ''
+          const isoDate = dt => {
+            const y = dt.getFullYear()
+            const m = String(dt.getMonth() + 1).padStart(2, '0')
+            const day = String(dt.getDate()).padStart(2, '0')
+            return `${y}-${m}-${day}`
+          }
+          const shiftDate = (d, delta) => {
+            const dt = new Date(d + 'T12:00:00')
+            dt.setDate(dt.getDate() + delta)
+            return isoDate(dt)
+          }
+          const flyIn = shiftDate(combo.start_date, -1)
+          const flyOut = shiftDate(combo.end_date, 1)
+          const flightsQuery = `flights to ${primaryCity} on ${flyIn} through ${flyOut}`
           const links = [
-            { icon: '✈️', label: 'Flights', sub: 'Google Flights', url: 'https://www.google.com/travel/flights?q=' + encodeURIComponent('flights to ' + primaryCity) },
+            { icon: '✈️', label: 'Flights', sub: 'Google Flights', url: 'https://www.google.com/travel/flights?q=' + encodeURIComponent(flightsQuery) },
             { icon: '🏨', label: 'Hotels', sub: 'Google Hotels', url: 'https://www.google.com/search?q=' + encodeURIComponent('hotels in ' + primaryCity) },
             { icon: '🎟️', label: 'Tickets', sub: 'Ticketmaster', url: 'https://www.ticketmaster.com/search?q=' + encodeURIComponent(primaryCity) },
           ]
           return (
             <div className={styles.planGrid}>
-              {links.map(link => (
-                <a key={link.label} href={link.url} target="_blank" rel="noreferrer" className={styles.planCard}>
+              {links.map(link => (<a key={link.label} href={link.url} target="_blank" rel="noreferrer" className={styles.planCard}>
                   <div className={styles.planIcon}>{link.icon}</div>
                   <div className={styles.planLabel}>{link.label}</div>
                   <div className={styles.planSub}>{link.sub}</div>
-                </a>
-              ))}
+                </a>))}
             </div>
           )
         })()}
