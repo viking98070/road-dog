@@ -237,7 +237,7 @@ export default function ComboDetail({ combo, onBack }) {
           const flightsQuery = `flights to ${primaryCity} on ${flyIn} through ${flyOut}`
           const links = [
             { icon: '✈️', label: 'Flights', sub: 'Google Flights', url: 'https://www.google.com/travel/flights?q=' + encodeURIComponent(flightsQuery) },
-            { icon: '🏨', label: 'Hotels', sub: 'Google Hotels', url: 'https://www.google.com/search?q=' + encodeURIComponent('hotels in ' + primaryCity) },
+            { icon: '🏨', label: 'Hotels', sub: 'Google Hotels', url: 'https://www.google.com/travel/search?q=' + encodeURIComponent('hotels in ' + primaryCity) },
             { icon: '🎟️', label: 'Tickets', sub: 'Ticketmaster', url: 'https://www.ticketmaster.com/search?q=' + encodeURIComponent(primaryCity) },
           ]
           return (
