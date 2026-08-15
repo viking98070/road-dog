@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { Analytics } from '@vercel/analytics/react'
 import { supabase } from './lib/supabase'
 import Home from './pages/Home'
 import Login from './pages/Login'
@@ -84,6 +85,7 @@ export default function App() {
         <Route path="/terms" element={<Legal type="terms" />} />
         <Route path="/reset-password" element={<ResetPassword />} />
       </Routes>
+      <Analytics />
     </BrowserRouter>
   )
 }
