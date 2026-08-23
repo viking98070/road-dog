@@ -87,7 +87,7 @@ These third-party sites have their own privacy policies, which we do not control
 
 const TERMS_CONTENT = {
   title: 'Terms of Use',
-  updated: 'June 21, 2026',
+  updated: 'August 23, 2026',
   sections: [
     {
       intro: true,
@@ -124,39 +124,45 @@ This document is provided for informational purposes and is not a substitute for
       heading: '4. Event and Ticketing Data',
       body: `Road Dog displays event information sourced from third parties, including Ticketmaster, ESPN, and College Football Data. We do not control, guarantee, or take responsibility for the accuracy of this data, including event dates, venues, lineups, or availability. Always confirm event details and purchase tickets directly through the official source.
 
-Road Dog is not a ticket seller. Any links to purchase tickets, book travel, or reserve accommodations direct you to third-party websites, which have their own terms and privacy practices independent of Road Dog.`
+Road Dog is not a ticket seller. Any links to purchase tickets, book travel, or reserve accommodations direct you to third-party websites, which have their own terms and privacy practices independent of Road Dog.
+
+Some of these links may be affiliate links, meaning we may earn a commission if you make a purchase through them, at no additional cost to you.`
     },
     {
       heading: '5. Intellectual Property',
       body: 'The Service, including its design, features, and content (excluding third-party event data and team/artist names, which belong to their respective owners), is owned by Road Dog. You may not copy, modify, or distribute any part of the Service without our permission.'
     },
     {
-      heading: '6. Disclaimers',
+      heading: '6. No Affiliation',
+      body: 'Road Dog is an independent service. We are not affiliated with, endorsed by, sponsored by, or otherwise associated with any sports team, league, venue, artist, promoter, or ticketing company referenced in the Service. All team names, artist names, logos, and trademarks are the property of their respective owners and are used for identification and informational purposes only.'
+    },
+    {
+      heading: '7. Disclaimers',
       body: 'The Service is provided "as is" without warranties of any kind, express or implied. We do not guarantee that the Service will be uninterrupted, error-free, or that trip recommendations will always be accurate or complete.'
     },
     {
-      heading: '7. Limitation of Liability',
+      heading: '8. Limitation of Liability',
       body: 'To the fullest extent permitted by law, Road Dog is not liable for any indirect, incidental, or consequential damages arising from your use of the Service, including any losses related to travel plans, ticket purchases, or event attendance based on information provided through the Service.'
     },
     {
-      heading: '8. Changes to the Service',
+      heading: '9. Changes to the Service',
       body: 'We may modify, suspend, or discontinue any part of the Service at any time, with or without notice.'
     },
     {
-      heading: '9. Termination',
+      heading: '10. Termination',
       body: 'You may stop using the Service and delete your account at any time. We may suspend or terminate your access if you violate these Terms.'
     },
     {
-      heading: '10. Governing Law',
-      body: 'These Terms are governed by the laws of the United States, without regard to conflict of law principles.'
+      heading: '11. Governing Law',
+      body: 'These Terms are governed by the laws of the State of California, without regard to its conflict of law principles. Any disputes arising from these Terms or your use of the Service will be subject to the exclusive jurisdiction of the state and federal courts located in California.'
     },
     {
-      heading: '11. Contact Us',
+      heading: '12. Contact Us',
       body: 'If you have questions about these Terms, contact us at:',
       contact: 'support@roaddogapp.com'
     },
     {
-      heading: '12. Changes to These Terms',
+      heading: '13. Changes to These Terms',
       body: 'We may update these Terms from time to time. Continued use of the Service after changes take effect constitutes acceptance of the updated Terms.'
     },
   ]
