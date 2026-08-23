@@ -4,7 +4,7 @@ import styles from './Legal.module.css'
 
 const PRIVACY_CONTENT = {
   title: 'Privacy Policy',
-  updated: 'June 21, 2026',
+  updated: 'August 23, 2026',
   sections: [
     {
       intro: true,
@@ -19,8 +19,9 @@ This policy is provided for informational purposes and is not a substitute for l
         'Account information: your email address and login credentials, used to create and secure your account.',
         "Your picks: the sports leagues and teams you follow, artists and shows you're interested in, and your home city. We use this to find and recommend trip combos for you.",
         'Contact information for notifications: your email address and, if you enable them, push notification permissions, used to send you updates about events, trips, and your account.',
+        'Usage and analytics data: we use Vercel Web Analytics to understand how the Service is used. This is a privacy-friendly, cookieless tool that collects aggregate information such as page views, the site or link that referred you, your device and browser type, and your approximate (country-level) location. It does not use cookies or persistent identifiers, does not track you across other websites, and is not tied to your account or identity.',
       ],
-      footer: "We do not collect analytics data, advertising identifiers, or browsing behavior beyond what's needed to operate the Service. We do not maintain a separate marketing email list outside of product notifications."
+      footer: 'We do not use advertising identifiers, sell your information, or track your activity across other websites or apps. We do not maintain a separate marketing email list outside of product notifications.'
     },
     {
       heading: '2. How We Use Your Information',
@@ -39,17 +40,25 @@ This policy is provided for informational purposes and is not a substitute for l
 
 We share limited information with third-party services necessary to operate the Service, including:`,
       list: [
-        'Supabase, our database and authentication provider, which stores your account and pick data',
+        'Supabase, our database and authentication provider, which stores your account and pick data.',
+        'Resend, our email delivery provider, which processes your email address to send you account and notification emails.',
+        'Vercel, our website host and analytics provider, which processes technical and aggregate usage data as described in Section 1.',
         'Ticketmaster, ESPN, and College Football Data, whose APIs we use to source event and game data. These services do not receive your personal account information as part of this data sourcing.',
       ],
       footer: 'We may disclose information if required by law or to protect the rights, safety, or property of Road Dog or others.'
     },
     {
-      heading: '4. Data Retention',
-      body: 'We retain your account information for as long as your account is active. You may request deletion of your account and associated data at any time by contacting us (see Section 8).'
+      heading: '4. Third-Party Links and Affiliate Cookies',
+      body: `Some links in the Service take you to third-party sites to buy tickets or book travel. Some of these may be affiliate links: a third-party partner may set a cookie in your browser to attribute a purchase to Road Dog, and we may earn a commission at no extra cost to you.
+
+These third-party sites have their own privacy policies, which we do not control. You can manage or block cookies through your browser settings.`
     },
     {
-      heading: '5. Your Choices',
+      heading: '5. Data Retention',
+      body: 'We retain your account information for as long as your account is active. You may request deletion of your account and associated data at any time by contacting us (see Section 9).'
+    },
+    {
+      heading: '6. Your Choices',
       list: [
         "You can update or delete your picks (teams, shows, home city) at any time within the app's settings.",
         'You can opt out of push notifications through your device settings, and out of email notifications through your account settings.',
@@ -57,20 +66,20 @@ We share limited information with third-party services necessary to operate the 
       ]
     },
     {
-      heading: "6. Children's Privacy",
+      heading: "7. Children's Privacy",
       body: 'The Service is not directed to children under 13, and we do not knowingly collect personal information from children under 13.'
     },
     {
-      heading: '7. International Users',
+      heading: '8. International Users',
       body: 'Road Dog is available to users globally. By using the Service, you understand that your information may be processed in the United States, where our service providers operate.'
     },
     {
-      heading: '8. Contact Us',
+      heading: '9. Contact Us',
       body: 'If you have questions about this Privacy Policy or your data, contact us at:',
       contact: 'support@roaddogapp.com'
     },
     {
-      heading: '9. Changes to This Policy',
+      heading: '10. Changes to This Policy',
       body: 'We may update this Privacy Policy from time to time. If we make material changes, we will notify you through the Service or by email.'
     },
   ]
