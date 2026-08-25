@@ -182,7 +182,7 @@ export default function ComboDetail({ combo, onBack }) {
     return groups
   }
 
-  const badge = combo.score >= 4 ? '🔥 Hot combo' : combo.score >= 2 ? '⭐ Great combo' : '✈️ Good combo'
+  const badge = combo.score >= 4 ? '🌭 Hot Dog' : combo.score >= 2 ? '🐕 Big Dog' : '🐶 Good Dog'
 
   return (
     <div className={styles.page}>
