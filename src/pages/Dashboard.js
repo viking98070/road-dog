@@ -121,9 +121,9 @@ export default function Dashboard({ session }) {
   }
 
   function formatScore(score) {
-    if (score >= 4) return '🔥 Hot combo'
-    if (score >= 2) return '⭐ Great combo'
-    return '✈️ Good combo'
+    if (score >= 4) return '🌭 Hot Dog'
+    if (score >= 2) return '🐕 Big Dog'
+    return '🐶 Good Dog'
   }
 
   function categoryColor(event) {
@@ -198,7 +198,7 @@ export default function Dashboard({ session }) {
       </header>
       <main className={styles.main}>
         <div className={styles.welcome}>
-          <h1>Trip Combos</h1>
+          <h1>Trips</h1>
           <p>Away games and shows that line up in the same city.</p>
         </div>
 
@@ -251,12 +251,12 @@ export default function Dashboard({ session }) {
         {loading ? (
           <div className={styles.empty}>
             <div className={styles.spinner} />
-            <p>Loading your combos…</p>
+            <p>Loading your trips…</p>
           </div>
         ) : filteredCombos.length === 0 ? (
           <div className={styles.empty}>
             <div className={styles.emptyIcon}>✈️</div>
-            <h2>No combos in this category yet</h2>
+            <h2>No trips in this category yet</h2>
             <p>Try a different tab, or check back as schedules update.</p>
           </div>
         ) : (
