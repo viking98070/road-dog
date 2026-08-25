@@ -55,7 +55,7 @@ export default function Hub({ session }) {
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16, maxWidth: 720, margin: '0 auto', width: '100%' }}>
-          {/* Trip Combos card */}
+          {/* Road Trips card */}
           <div
             onClick={() => navigate('/combos')}
             style={cardStyle}
@@ -65,12 +65,12 @@ export default function Hub({ session }) {
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16 }}>
               <div style={{ fontSize: 32, lineHeight: 1 }}>🎯</div>
               <div style={{ flex: 1 }}>
-                <div style={titleStyle}>Trip Combos</div>
+                <div style={titleStyle}>Road Trips</div>
                 <div style={{ fontSize: 14, color: 'var(--text2)', lineHeight: 1.5, marginBottom: 8 }}>
                   Curated road trips for your favorite teams and artists. Multiple events lining up in the same city.
                 </div>
                 <div style={{ fontSize: 13, color: 'var(--orange)', fontWeight: 600 }}>
-                  {comboCount === null ? 'Loading…' : `${comboCount} combos ready →`}
+                  {comboCount === null ? 'Loading…' : `${comboCount} trips ready →`}
                 </div>
               </div>
             </div>
@@ -109,7 +109,7 @@ export default function Hub({ session }) {
               <div style={{ flex: 1 }}>
                 <div style={titleStyle}>My Picks</div>
                 <div style={{ fontSize: 14, color: 'var(--text2)', lineHeight: 1.5, marginBottom: 8 }}>
-                  Update your leagues, teams, artists, and home city. We'll refresh your combos.
+                  Update your leagues, teams, artists, and home city. We'll refresh your trips.
                 </div>
                 <div style={{ fontSize: 13, color: 'var(--orange)', fontWeight: 600 }}>
                   Edit preferences →
