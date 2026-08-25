@@ -65,7 +65,7 @@ export default function Hub({ session }) {
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16 }}>
               <div style={{ fontSize: 32, lineHeight: 1 }}>🎯</div>
               <div style={{ flex: 1 }}>
-                <div style={titleStyle}>Road Trips</div>
+                <div style={titleStyle}>Trips</div>
                 <div style={{ fontSize: 14, color: 'var(--text2)', lineHeight: 1.5, marginBottom: 8 }}>
                   Curated road trips for your favorite teams and artists. Multiple events lining up in the same city.
                 </div>
