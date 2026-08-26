@@ -123,20 +123,21 @@ export default function Dashboard({ session }) {
   function tierBadge(score) {
     let cfg
     if (score >= 4) {
-      // Hot Dog — the trophy: filled orange pill that pops
-      cfg = { emoji: '🌭', label: 'Hot Dog', color: '#0F0F0F', bg: 'var(--orange)', weight: 800, fs: 12.5, pad: '4px 11px' }
+      // Hot Dog — the trophy: tinted orange pill with border + glow, so the emoji stays legible
+      cfg = { emoji: '🌭', label: 'Hot Dog', color: '#FB923C', bg: 'rgba(249,115,22,0.14)', border: '1px solid rgba(249,115,22,0.55)', shadow: '0 0 14px rgba(249,115,22,0.30)', weight: 700, fs: 12.5, pad: '4px 11px' }
     } else if (score >= 2) {
-      // Big Dog — medium: bright orange text
-      cfg = { emoji: '🐕', label: 'Big Dog', color: 'var(--orange)', bg: 'transparent', weight: 700, fs: 12.5, pad: '4px 2px' }
+      // Big Dog — medium: bare bright orange text
+      cfg = { emoji: '🐕', label: 'Big Dog', color: 'var(--orange)', bg: 'transparent', border: 'none', shadow: 'none', weight: 700, fs: 12.5, pad: '4px 2px' }
     } else {
       // Good Dog — muted: quiet gray, recedes
-      cfg = { emoji: '🐶', label: 'Good Dog', color: 'var(--text3)', bg: 'transparent', weight: 600, fs: 12, pad: '4px 2px' }
+      cfg = { emoji: '🐶', label: 'Good Dog', color: 'var(--text3)', bg: 'transparent', border: 'none', shadow: 'none', weight: 600, fs: 12, pad: '4px 2px' }
     }
     return (
       <span style={{
         display: 'inline-flex', alignItems: 'center', gap: 5, whiteSpace: 'nowrap',
         background: cfg.bg, color: cfg.color, fontWeight: cfg.weight,
         fontSize: cfg.fs, padding: cfg.pad, borderRadius: 999,
+        border: cfg.border, boxShadow: cfg.shadow,
       }}>
         <span style={{ fontSize: 16, lineHeight: 1 }}>{cfg.emoji}</span>
         {cfg.label}
