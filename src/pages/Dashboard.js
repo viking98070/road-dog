@@ -121,26 +121,17 @@ export default function Dashboard({ session }) {
   }
 
   function tierBadge(score) {
-    let cfg
-    if (score >= 4) {
-      // Hot Dog — the trophy: tinted orange pill with border + glow, so the emoji stays legible
-      cfg = { emoji: '🌭', label: 'Hot Dog', color: '#FB923C', bg: 'rgba(249,115,22,0.14)', border: '1px solid rgba(249,115,22,0.55)', shadow: '0 0 14px rgba(249,115,22,0.30)', weight: 700, fs: 12.5, pad: '4px 11px' }
-    } else if (score >= 2) {
-      // Big Dog — medium: bare bright orange text
-      cfg = { emoji: '🐕', label: 'Big Dog', color: 'var(--orange)', bg: 'transparent', border: 'none', shadow: 'none', weight: 700, fs: 12.5, pad: '4px 2px' }
-    } else {
-      // Good Dog — muted: quiet gray, recedes
-      cfg = { emoji: '🐶', label: 'Good Dog', color: 'var(--text3)', bg: 'transparent', border: 'none', shadow: 'none', weight: 600, fs: 12, pad: '4px 2px' }
-    }
+    // Only the top trips earn a badge — everything else shows nothing.
+    if (score < 4) return null
     return (
       <span style={{
         display: 'inline-flex', alignItems: 'center', gap: 5, whiteSpace: 'nowrap',
-        background: cfg.bg, color: cfg.color, fontWeight: cfg.weight,
-        fontSize: cfg.fs, padding: cfg.pad, borderRadius: 999,
-        border: cfg.border, boxShadow: cfg.shadow,
+        background: 'rgba(249,115,22,0.14)', color: '#FB923C', fontWeight: 700,
+        fontSize: 12.5, padding: '4px 11px', borderRadius: 999,
+        border: '1px solid rgba(249,115,22,0.55)', boxShadow: '0 0 14px rgba(249,115,22,0.30)',
       }}>
-        <span style={{ fontSize: 16, lineHeight: 1 }}>{cfg.emoji}</span>
-        {cfg.label}
+        <span style={{ fontSize: 16, lineHeight: 1 }}>🌭</span>
+        Hot Dog
       </span>
     )
   }
