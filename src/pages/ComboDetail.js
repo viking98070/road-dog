@@ -182,7 +182,29 @@ export default function ComboDetail({ combo, onBack }) {
     return groups
   }
 
-  const badge = combo.score >= 4 ? '🌭 Hot Dog' : combo.score >= 2 ? '🐕 Big Dog' : '🐶 Good Dog'
+  function tierBadge(score) {
+    let cfg
+    if (score >= 4) {
+      // Hot Dog — the trophy: filled orange pill that pops
+      cfg = { emoji: '🌭', label: 'Hot Dog', color: '#0F0F0F', bg: 'var(--orange)', weight: 800, fs: 15, pad: '6px 15px' }
+    } else if (score >= 2) {
+      // Big Dog — medium: bright orange text
+      cfg = { emoji: '🐕', label: 'Big Dog', color: 'var(--orange)', bg: 'transparent', weight: 700, fs: 15, pad: '6px 4px' }
+    } else {
+      // Good Dog — muted: quiet gray, recedes
+      cfg = { emoji: '🐶', label: 'Good Dog', color: 'var(--text3)', bg: 'transparent', weight: 600, fs: 14, pad: '6px 4px' }
+    }
+    return (
+      <span style={{
+        display: 'inline-flex', alignItems: 'center', gap: 7, whiteSpace: 'nowrap',
+        background: cfg.bg, color: cfg.color, fontWeight: cfg.weight,
+        fontSize: cfg.fs, padding: cfg.pad, borderRadius: 999,
+      }}>
+        <span style={{ fontSize: 20, lineHeight: 1 }}>{cfg.emoji}</span>
+        {cfg.label}
+      </span>
+    )
+  }
 
   return (
     <div className={styles.page}>
@@ -193,7 +215,7 @@ export default function ComboDetail({ combo, onBack }) {
       <div className={styles.hero}>
         <div className={styles.heroCity}>{displayCity(combo)}</div>
         <div className={styles.heroDates}>{fmtRange(combo.start_date, combo.end_date)}</div>
-        <div className={styles.heroBadge}>{badge}</div>
+        <div className={styles.heroBadge}>{tierBadge(combo.score)}</div>
       </div>
       <div className={styles.body}>
         <div className={styles.sectionTitle}>What's happening</div>
