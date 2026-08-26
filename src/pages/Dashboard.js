@@ -120,10 +120,28 @@ export default function Dashboard({ session }) {
     return `${cities[0]}, ${cities[1]} +${cities.length - 2} more`
   }
 
-  function formatScore(score) {
-    if (score >= 4) return '🌭 Hot Dog'
-    if (score >= 2) return '🐕 Big Dog'
-    return '🐶 Good Dog'
+  function tierBadge(score) {
+    let cfg
+    if (score >= 4) {
+      // Hot Dog — the trophy: filled orange pill that pops
+      cfg = { emoji: '🌭', label: 'Hot Dog', color: '#0F0F0F', bg: 'var(--orange)', weight: 800, fs: 12.5, pad: '4px 11px' }
+    } else if (score >= 2) {
+      // Big Dog — medium: bright orange text
+      cfg = { emoji: '🐕', label: 'Big Dog', color: 'var(--orange)', bg: 'transparent', weight: 700, fs: 12.5, pad: '4px 2px' }
+    } else {
+      // Good Dog — muted: quiet gray, recedes
+      cfg = { emoji: '🐶', label: 'Good Dog', color: 'var(--text3)', bg: 'transparent', weight: 600, fs: 12, pad: '4px 2px' }
+    }
+    return (
+      <span style={{
+        display: 'inline-flex', alignItems: 'center', gap: 5, whiteSpace: 'nowrap',
+        background: cfg.bg, color: cfg.color, fontWeight: cfg.weight,
+        fontSize: cfg.fs, padding: cfg.pad, borderRadius: 999,
+      }}>
+        <span style={{ fontSize: 16, lineHeight: 1 }}>{cfg.emoji}</span>
+        {cfg.label}
+      </span>
+    )
   }
 
   function categoryColor(event) {
@@ -270,7 +288,7 @@ export default function Dashboard({ session }) {
               >
                 <div className={styles.cardHeader}>
                   <div className={styles.cardCity}>{displayCity(combo)}</div>
-                  <div className={styles.cardBadge}>{formatScore(combo.score)}</div>
+                  <div className={styles.cardBadge}>{tierBadge(combo.score)}</div>
                 </div>
                 <div className={styles.cardDates}>
                   {formatDate(combo.start_date)} – {formatDate(combo.end_date)}
