@@ -126,7 +126,8 @@ export default function ComboDetail({ combo, onBack }) {
     if (event.type === 'sport') {
       const away = event.away_team || 'TBD'
       const home = event.home_team || 'TBD'
-      return <>{away} <span>@</span> {home}</>
+      const sep = event.neutral_site ? 'vs' : '@'
+      return <>{away} <span>{sep}</span> {home}</>
     }
     return event.artist_name || 'Untitled event'
   }
@@ -211,7 +212,7 @@ export default function ComboDetail({ combo, onBack }) {
     }
     const titleFor = e => {
       if (e.league_key === 'marquee') return e.artist_name || 'Marquee Event'
-      if (e.type === 'sport') return `${e.away_team || 'TBD'} @ ${e.home_team || 'TBD'}`
+      if (e.type === 'sport') return `${e.away_team || 'TBD'} ${e.neutral_site ? 'vs' : '@'} ${e.home_team || 'TBD'}`
       return e.artist_name || 'Event'
     }
     const groups = groupEvents(events)
