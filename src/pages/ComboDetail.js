@@ -184,26 +184,17 @@ export default function ComboDetail({ combo, onBack }) {
   }
 
   function tierBadge(score) {
-    let cfg
-    if (score >= 4) {
-      // Hot Dog — the trophy: tinted orange pill with border + glow, so the emoji stays legible
-      cfg = { emoji: '🌭', label: 'Hot Dog', color: '#FB923C', bg: 'rgba(249,115,22,0.14)', border: '1px solid rgba(249,115,22,0.55)', shadow: '0 0 14px rgba(249,115,22,0.30)', weight: 700, fs: 15, pad: '6px 14px' }
-    } else if (score >= 2) {
-      // Big Dog — medium: bare bright orange text
-      cfg = { emoji: '🐕', label: 'Big Dog', color: 'var(--orange)', bg: 'transparent', border: 'none', shadow: 'none', weight: 700, fs: 15, pad: '6px 4px' }
-    } else {
-      // Good Dog — muted: quiet gray, recedes
-      cfg = { emoji: '🐶', label: 'Good Dog', color: 'var(--text3)', bg: 'transparent', border: 'none', shadow: 'none', weight: 600, fs: 14, pad: '6px 4px' }
-    }
+    // Single-badge model: only top trips get crowned. Everything below threshold shows nothing.
+    if (score < 4) return null
     return (
       <span style={{
         display: 'inline-flex', alignItems: 'center', gap: 7, whiteSpace: 'nowrap',
-        background: cfg.bg, color: cfg.color, fontWeight: cfg.weight,
-        fontSize: cfg.fs, padding: cfg.pad, borderRadius: 999,
-        border: cfg.border, boxShadow: cfg.shadow,
+        background: 'rgba(249,115,22,0.14)', color: '#FB923C', fontWeight: 700,
+        fontSize: 15, padding: '6px 14px', borderRadius: 999,
+        border: '1px solid rgba(249,115,22,0.55)', boxShadow: '0 0 14px rgba(249,115,22,0.30)',
       }}>
-        <span style={{ fontSize: 18, lineHeight: 1 }}>{cfg.emoji}</span>
-        {cfg.label}
+        <span style={{ fontSize: 18, lineHeight: 1 }}>🌭</span>
+        Hot Dog
       </span>
     )
   }
@@ -256,14 +247,16 @@ export default function ComboDetail({ combo, onBack }) {
         <button className={styles.back} onClick={onBack}>← Back</button>
         <div className={styles.logo}>Road<span>Dog</span></div>
       </div>
-      <div className={styles.hero} style={{ position: 'relative' }}>
-        <div style={{ position: 'absolute', top: 0, right: 0 }}>{(<button onClick={handleShare} style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6, background: shared ? 'rgba(249,115,22,0.14)' : 'transparent', color: shared ? '#FB923C' : '#CFCFCF', border: shared ? '1px solid rgba(249,115,22,0.55)' : '1px solid rgba(255,255,255,0.18)', borderRadius: 999, fontSize: 12.5, fontWeight: 700, padding: '6px 12px', fontFamily: 'inherit', lineHeight: 1, transition: 'all .15s ease' }}>{shared ? 'Copied ✓' : 'Share'}</button>)}</div>
+      <div className={styles.hero}>
         <div className={styles.heroCity}>{displayCity(combo)}</div>
         <div className={styles.heroDates}>{fmtRange(combo.start_date, combo.end_date)}</div>
         <div className={styles.heroBadge}>{tierBadge(combo.score)}</div>
       </div>
       <div className={styles.body}>
-        <div className={styles.sectionTitle}>What's happening</div>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+          <div className={styles.sectionTitle}>The Lineup</div>
+          {(<button onClick={handleShare} style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6, background: shared ? 'rgba(249,115,22,0.14)' : 'transparent', color: shared ? '#FB923C' : '#CFCFCF', border: shared ? '1px solid rgba(249,115,22,0.55)' : '1px solid rgba(255,255,255,0.18)', borderRadius: 999, fontSize: 12.5, fontWeight: 700, padding: '6px 12px', fontFamily: 'inherit', lineHeight: 1, transition: 'all .15s ease' }}>{shared ? 'Copied ✓' : 'Share'}</button>)}
+        </div>
         {loading ? (
           <div className={styles.loading}><div className={styles.spinner}/><p>Loading…</p></div>
         ) : events.length === 0 ? (
