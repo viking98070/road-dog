@@ -63,7 +63,7 @@ export default function Hub({ session }) {
             onMouseOut={e => e.currentTarget.style.borderColor = 'var(--border)'}
           >
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16 }}>
-              <div style={{ fontSize: 32, lineHeight: 1 }}>🎯</div>
+              <div style={{ fontSize: 32, lineHeight: 1 }}>📍</div>
               <div style={{ flex: 1 }}>
                 <div style={titleStyle}>Trips</div>
                 <div style={{ fontSize: 14, color: 'var(--text2)', lineHeight: 1.5, marginBottom: 8 }}>
