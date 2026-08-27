@@ -253,9 +253,9 @@ export default function ComboDetail({ combo, onBack }) {
         <div className={styles.heroBadge}>{tierBadge(combo.score)}</div>
       </div>
       <div className={styles.body}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
-          <div className={styles.sectionTitle}>On this trip</div>
-          {(<button onClick={handleShare} style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6, background: shared ? 'rgba(249,115,22,0.14)' : 'transparent', color: shared ? '#FB923C' : '#CFCFCF', border: shared ? '1px solid rgba(249,115,22,0.55)' : '1px solid rgba(255,255,255,0.18)', borderRadius: 999, fontSize: 12.5, fontWeight: 700, padding: '6px 12px', fontFamily: 'inherit', lineHeight: 1, transition: 'all .15s ease' }}>{shared ? 'Copied ✓' : 'Share'}</button>)}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div className={styles.sectionTitle} style={{ marginBottom: 0 }}>The Lineup</div>
+          {(<button onClick={handleShare} style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6, background: shared ? 'rgba(249,115,22,0.14)' : 'transparent', color: shared ? '#FB923C' : '#9AA0A6', border: shared ? '1px solid rgba(249,115,22,0.55)' : '1px solid rgba(255,255,255,0.16)', borderRadius: 999, fontSize: 11.5, fontWeight: 700, padding: '4px 10px', fontFamily: 'inherit', lineHeight: 1, transition: 'all .15s ease' }}>{shared ? 'Copied ✓' : 'Share'}</button>)}
         </div>
         {loading ? (
           <div className={styles.loading}><div className={styles.spinner}/><p>Loading…</p></div>
@@ -270,7 +270,7 @@ export default function ComboDetail({ combo, onBack }) {
               const location = eventLocation(event)
               return (
                 <div key={event.id} className={styles.eventCard}>
-                  <div className={styles.eventLeague} style={{background:categoryColor(event)}}>{categoryLabel(event)}</div>
+                  <div className={styles.eventLeague} style={{ background: categoryColor(event), minWidth: 64, boxSizing: 'border-box', textAlign: 'center', whiteSpace: 'nowrap', flexShrink: 0 }}>{categoryLabel(event)}</div>
                   <div className={styles.eventInfo}>
                     <div className={styles.eventName}>
                       {eventTitle(event)}
