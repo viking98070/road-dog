@@ -73,6 +73,7 @@ function ticketUrl(event) {
 export default function ComboDetail({ combo, onBack }) {
   const [events, setEvents] = useState([])
   const [loading, setLoading] = useState(true)
+  const [shared, setShared] = useState(false)
 
   useEffect(() => {
     if (!combo.event_ids || combo.event_ids.length === 0) { setLoading(false); return }
@@ -207,13 +208,56 @@ export default function ComboDetail({ combo, onBack }) {
     )
   }
 
+  function buildShareText() {
+    const city = displayCity(combo)
+    const dates = fmtRange(combo.start_date, combo.end_date)
+    const iconFor = e => {
+      if (e.type === 'music') return '🎵'
+      if (e.type === 'comedy') return '🎤'
+      if (e.league_key === 'marquee') return '⭐'
+      const m = { nfl:'🏈', cfb:'🏈', nba:'🏀', mcbb:'🏀', wcbb:'🏀', wnba:'🏀', nhl:'🏒', mlb:'⚾', mls:'⚽', nwsl:'⚽' }
+      return m[e.league_key] || '🎟️'
+    }
+    const titleFor = e => {
+      if (e.type === 'sport') return `${e.away_team || 'TBD'} @ ${e.home_team || 'TBD'}`
+      return e.artist_name || 'Event'
+    }
+    const groups = groupEvents(events)
+    const nfl = groups.filter(g => g.primary.league_key === 'nfl')
+    const rest = groups.filter(g => g.primary.league_key !== 'nfl').sort((a, b) => a.firstDate.localeCompare(b.firstDate))
+    const ordered = [...nfl, ...rest]
+    const lines = ordered.map(g => `${iconFor(g.primary)} ${titleFor(g.primary)}`)
+    const body = lines.length ? '\n' + lines.join('\n') : ''
+    return `🌭 Found this trip on Road Dog:\n\n${city} · ${dates}${body}\n\nStack multiple games + shows into one trip → https://roaddogapp.com`
+  }
+
+  async function handleShare() {
+    const text = buildShareText()
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: 'Road Dog', text })
+        return
+      } catch (err) {
+        if (err && err.name === 'AbortError') return
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(text)
+      setShared(true)
+      setTimeout(() => setShared(false), 2000)
+    } catch {
+      setShared(false)
+    }
+  }
+
   return (
     <div className={styles.page}>
       <div className={styles.header}>
         <button className={styles.back} onClick={onBack}>← Back</button>
         <div className={styles.logo}>Road<span>Dog</span></div>
       </div>
-      <div className={styles.hero}>
+      <div className={styles.hero} style={{ position: 'relative' }}>
+        <div style={{ position: 'absolute', top: 0, right: 0 }}>{(<button onClick={handleShare} style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6, background: shared ? 'rgba(249,115,22,0.14)' : 'transparent', color: shared ? '#FB923C' : '#CFCFCF', border: shared ? '1px solid rgba(249,115,22,0.55)' : '1px solid rgba(255,255,255,0.18)', borderRadius: 999, fontSize: 12.5, fontWeight: 700, padding: '6px 12px', fontFamily: 'inherit', lineHeight: 1, transition: 'all .15s ease' }}>{shared ? 'Copied ✓' : 'Share'}</button>)}</div>
         <div className={styles.heroCity}>{displayCity(combo)}</div>
         <div className={styles.heroDates}>{fmtRange(combo.start_date, combo.end_date)}</div>
         <div className={styles.heroBadge}>{tierBadge(combo.score)}</div>
