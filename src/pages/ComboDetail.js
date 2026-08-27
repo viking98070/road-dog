@@ -254,7 +254,7 @@ export default function ComboDetail({ combo, onBack }) {
       </div>
       <div className={styles.body}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
-          <div className={styles.sectionTitle}>The Lineup</div>
+          <div className={styles.sectionTitle}>On this trip</div>
           {(<button onClick={handleShare} style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6, background: shared ? 'rgba(249,115,22,0.14)' : 'transparent', color: shared ? '#FB923C' : '#CFCFCF', border: shared ? '1px solid rgba(249,115,22,0.55)' : '1px solid rgba(255,255,255,0.18)', borderRadius: 999, fontSize: 12.5, fontWeight: 700, padding: '6px 12px', fontFamily: 'inherit', lineHeight: 1, transition: 'all .15s ease' }}>{shared ? 'Copied ✓' : 'Share'}</button>)}
         </div>
         {loading ? (
