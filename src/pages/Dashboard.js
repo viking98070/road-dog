@@ -88,7 +88,7 @@ export default function Dashboard({ session }) {
     const allIds = [...new Set(comboData.flatMap(c => c.event_ids || []))]
     const { data: eventData } = await supabase
       .from('events')
-      .select('id, away_team, home_team, league_key, artist_name, type, event_date, parent_event, lineup')
+      .select('id, away_team, home_team, league_key, artist_name, type, event_date, parent_event, lineup, neutral_site')
       .in('id', allIds)
 
     const eventMap = {}
@@ -166,7 +166,8 @@ export default function Dashboard({ session }) {
     if (event.type === 'sport') {
       const away = event.away_team || 'TBD'
       const home = event.home_team || 'TBD'
-      return `${away} @ ${home}`
+      const sep = event.neutral_site ? 'vs' : '@'
+      return `${away} ${sep} ${home}`
     }
     if (event.parent_event) return event.parent_event
     return event.artist_name || 'Untitled event'
