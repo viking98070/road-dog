@@ -222,9 +222,18 @@ export default function ComboDetail({ combo, onBack }) {
     return `🌭 Found this trip on Road Dog:\n\n${city} · ${dates}${body}\n\nStack multiple games + shows into one trip → https://roaddogapp.com`
   }
 
+  function prefersNativeShare() {
+    if (typeof navigator === 'undefined' || !navigator.share) return false
+    const ua = navigator.userAgent || ''
+    const mobileUA = /Android|iPhone|iPad|iPod|Mobile|Silk|Kindle/i.test(ua)
+    const coarse = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(pointer: coarse)').matches
+    const touch = (navigator.maxTouchPoints || 0) > 0
+    return mobileUA || (coarse && touch)
+  }
+
   async function handleShare() {
     const text = buildShareText()
-    if (navigator.share) {
+    if (prefersNativeShare()) {
       try {
         await navigator.share({ title: 'Road Dog', text })
         return
