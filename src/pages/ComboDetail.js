@@ -210,6 +210,7 @@ export default function ComboDetail({ combo, onBack }) {
       return m[e.league_key] || '🎟️'
     }
     const titleFor = e => {
+      if (e.league_key === 'marquee') return e.artist_name || 'Marquee Event'
       if (e.type === 'sport') return `${e.away_team || 'TBD'} @ ${e.home_team || 'TBD'}`
       return e.artist_name || 'Event'
     }
