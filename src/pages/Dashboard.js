@@ -111,6 +111,15 @@ export default function Dashboard({ session }) {
     return new Date(dateStr + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
   }
 
+  // A combo counts as "new" for a few days after it was emailed in a digest.
+  // alerted_at is stamped by send-combo-alerts; baseline combos have old stamps
+  // (or null) so they never light up here.
+  function isNew(combo) {
+    if (!combo.alerted_at) return false
+    const NEW_WINDOW_MS = 3 * 24 * 60 * 60 * 1000
+    return Date.now() - new Date(combo.alerted_at).getTime() < NEW_WINDOW_MS
+  }
+
   function displayCity(combo) {
     const raw = combo.cities && combo.cities.length > 0 ? combo.cities : [combo.city]
     const cities = collapseCities(raw)
@@ -280,7 +289,20 @@ export default function Dashboard({ session }) {
                 style={{ cursor: 'pointer' }}
               >
                 <div className={styles.cardHeader}>
-                  <div className={styles.cardCity}>{displayCity(combo)}</div>
+                  <div className={styles.cardCity} style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                    <span>{displayCity(combo)}</span>
+                    {isNew(combo) && (
+                      <span style={{
+                        display: 'inline-flex', alignItems: 'center', whiteSpace: 'nowrap',
+                        background: '#F97316', color: '#0F0F0F', fontWeight: 700,
+                        fontSize: 10.5, lineHeight: 1, padding: '3px 8px',
+                        borderRadius: 999, letterSpacing: 0.6, textTransform: 'uppercase',
+                        fontFamily: 'var(--head)',
+                      }}>
+                        New
+                      </span>
+                    )}
+                  </div>
                   <div className={styles.cardBadge}>{tierBadge(combo.score)}</div>
                 </div>
                 <div className={styles.cardDates}>
