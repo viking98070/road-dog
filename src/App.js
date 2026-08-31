@@ -11,7 +11,6 @@ import Hub from './pages/Hub'
 import WhosPlaying from './pages/WhosPlaying'
 import Legal from './pages/Legal'
 import ResetPassword from './pages/ResetPassword'
-
 function LoadingScreen() {
   return (
     <div
@@ -38,7 +37,6 @@ function LoadingScreen() {
     </div>
   )
 }
-
 export default function App() {
   const [session, setSession] = useState(undefined)
   const [profile, setProfile] = useState(null)
@@ -77,10 +75,11 @@ export default function App() {
         <Route path="/login" element={session ? <Navigate to={hasOnboarded ? '/hub' : '/onboarding'} /> : <Login />} />
         <Route path="/onboarding" element={session ? <Onboarding session={session} /> : <Navigate to="/" />} />
         <Route path="/hub" element={gateForOnboarding(<Hub session={session} />)} />
-        <Route path="/combos" element={gateForOnboarding(<Dashboard session={session} />)} />
+        <Route path="/trips" element={gateForOnboarding(<Dashboard session={session} />)} />
+        <Route path="/combos" element={<Navigate to="/trips" replace />} />
         <Route path="/whos-playing" element={gateForOnboarding(<WhosPlaying session={session} />)} />
         <Route path="/settings" element={gateForOnboarding(<Settings session={session} />)} />
-        <Route path="/dashboard" element={<Navigate to="/combos" />} />
+        <Route path="/dashboard" element={<Navigate to="/trips" replace />} />
         <Route path="/privacy" element={<Legal type="privacy" />} />
         <Route path="/terms" element={<Legal type="terms" />} />
         <Route path="/reset-password" element={<ResetPassword />} />
