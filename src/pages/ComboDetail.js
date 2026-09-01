@@ -55,14 +55,16 @@ function slugify(s) {
 function ticketUrl(event) {
   const base = 'https://seatgeek.com/'
   if (event.type === 'sport') {
-    if (event.league_key === 'cfb') {
+    // College leagues are keyed on SeatGeek by a mascot slug that frequently
+    // 404s (duplicate mascots, formatting mismatches). Fall back to the venue
+    // page, which resolves reliably. Covers CFB + men's/women's college hoops.
+    if (event.league_key === 'cfb' || event.league_key === 'mcbb' || event.league_key === 'wcbb') {
       const venueSlug = slugify(event.venue)
       return venueSlug ? `${base}venues/${venueSlug}/tickets` : base
     }
     const team = event.home_team || event.away_team || ''
-    let slug = slugify(team)
+    const slug = slugify(team)
     if (!slug) return base
-    if (event.league_key === 'mcbb' || event.league_key === 'wcbb') slug += '-basketball'
     return `${base}${slug}-tickets`
   }
   const name = event.artist_name || event.parent_event || ''
