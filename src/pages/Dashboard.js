@@ -64,6 +64,16 @@ function collapseCities(cities) {
   return collapsed
 }
 
+// Today's date in the viewer's own time zone, as YYYY-MM-DD (the same format
+// as trip_combos.end_date). Used to hide trips that have already ended, so a
+// stalled rebuild can never put past trips back on the board.
+function localToday() {
+  const d = new Date()
+  const mm = String(d.getMonth() + 1).padStart(2, '0')
+  const dd = String(d.getDate()).padStart(2, '0')
+  return `${d.getFullYear()}-${mm}-${dd}`
+}
+
 export default function Dashboard({ session }) {
   const [combos, setCombos] = useState([])
   const [loading, setLoading] = useState(true)
@@ -76,10 +86,12 @@ export default function Dashboard({ session }) {
   }, [])
 
   async function loadCombos() {
+    // Only trips that end today or later. A trip still in progress stays visible.
     const { data: comboData, error } = await supabase
       .from('trip_combos')
       .select('*')
       .eq('user_id', session.user.id)
+      .gte('end_date', localToday())
       .order('score', { ascending: false })
       .order('start_date', { ascending: true })
 
