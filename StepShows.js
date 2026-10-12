@@ -119,7 +119,7 @@ export default function StepShows({ selected, setSelected, onBack, onFinish, sav
               <div style={{ padding: 16, color: 'var(--text2)', fontSize: 13 }}>Searching…</div>
             ) : searchResults.length === 0 ? (
               <div style={{ padding: 16, color: 'var(--text2)', fontSize: 13 }}>
-                No matching artists with upcoming events. Try a different name?
+                No matching artists found. Try a different spelling?
               </div>
             ) : (
               searchResults.map(result => {
@@ -157,7 +157,12 @@ export default function StepShows({ selected, setSelected, onBack, onFinish, sav
                         {result.name}
                       </div>
                       <div style={{ fontSize: 11, color: 'var(--text3)' }}>
-                        {result.genre || result.segment} · {result.upcomingEventsCount} upcoming events
+                        {[
+                          result.genre || result.segment,
+                          result.upcomingEventsCount > 0
+                            ? `${result.upcomingEventsCount} upcoming ${result.upcomingEventsCount === 1 ? 'event' : 'events'}`
+                            : "No shows announced yet — we'll catch the next tour",
+                        ].filter(Boolean).join(' · ')}
                       </div>
                     </div>
                     <div style={{ color: alreadyAdded ? 'var(--orange)' : 'var(--text3)', fontSize: 18, fontWeight: 700 }}>
