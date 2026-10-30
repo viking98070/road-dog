@@ -28,8 +28,6 @@ const GENRE_OPTIONS = [
   'Metal', 'Folk', 'Jazz', 'Latin', 'World', 'Dance/Electronic',
 ]
 
-const POPULAR_CITIES = ['New York', 'Chicago', 'Los Angeles', 'Dallas', 'Boston', 'Las Vegas', 'Nashville', 'Denver']
-
 const CITIES = [
   'Atlanta, GA', 'Austin, TX', 'Baltimore, MD', 'Boston, MA', 'Buffalo, NY',
   'Charlotte, NC', 'Chicago, IL', 'Cincinnati, OH', 'Cleveland, OH', 'Columbus, OH',
@@ -164,7 +162,6 @@ export default function WhosPlaying({ session }) {
 
   const [city, setCity] = useState(readLastCity)
   const [cityDraft, setCityDraft] = useState(readLastCity)
-  const [editingCity, setEditingCity] = useState(!readLastCity())
   const [showSuggest, setShowSuggest] = useState(false)
 
   const [preset, setPreset] = useState('thisWeekend')
@@ -220,7 +217,7 @@ export default function WhosPlaying({ session }) {
   function chooseCity(c) {
     const name = c.split(',')[0].trim()
     if (!name) return
-    setCity(name); setCityDraft(name); setEditingCity(false); setShowSuggest(false)
+    setCity(name); setCityDraft(name); setShowSuggest(false)
     setOpenCollege({}); saveLastCity(name)
   }
 
@@ -283,49 +280,39 @@ export default function WhosPlaying({ session }) {
         <section className="wp-hero">
           <div className="wp-eyebrow">What's on</div>
           <h1 className="wp-q">
-            <span>Everything in </span>
-            {editingCity ? (
-              <span className="wp-cityedit">
-                <input
-                  autoFocus
-                  aria-label="City"
-                  value={cityDraft}
-                  placeholder="Pick a city"
-                  onChange={e => { setCityDraft(e.target.value); setShowSuggest(true) }}
-                  onFocus={() => setShowSuggest(true)}
-                  onBlur={() => setTimeout(() => { setShowSuggest(false); if (city) { setEditingCity(false); setCityDraft(city) } }, 150)}
-                  onKeyDown={e => {
-                    if (e.key === 'Enter') chooseCity(suggestions[0] || cityDraft)
-                    if (e.key === 'Escape' && city) { setEditingCity(false); setCityDraft(city) }
-                  }}
-                />
-                {showSuggest && suggestions.length > 0 && (
-                  <div className="wp-suggest" role="listbox">
-                    {suggestions.map(c => (
-                      <div key={c} role="option" aria-selected="false" className="wp-sugg" onMouseDown={() => chooseCity(c)}>{c}</div>
-                    ))}
-                  </div>
-                )}
-              </span>
-            ) : (
-              <button type="button" className="wp-tok" onClick={() => { setEditingCity(true); setCityDraft('') }}>
-                {city}<i>▾</i>
-              </button>
-            )}
-            <br />
-            <button type="button" className="wp-tok" onClick={() => { setPreset('custom'); setShowPicker(true) }}>
-              {rangeLabel(startDate, endDate)}<i>▾</i>
-            </button>
+            {city
+              ? <>Everything in <span className="wp-hl">{city}</span><br /><span className="wp-hl">{rangeLabel(startDate, endDate)}</span></>
+              : <>Everything playing<br />in one city</>}
           </h1>
 
-          {!city && (
-            <div className="wp-row">
-              <span className="wp-lbl">Popular</span>
-              {POPULAR_CITIES.map(c => (
-                <button type="button" key={c} className="wp-chip" onClick={() => chooseCity(c)}>{c}</button>
-              ))}
-            </div>
-          )}
+          <div className="wp-search">
+            <svg className="wp-pin" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+              <path fill="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5Z" />
+            </svg>
+            <input
+              id="wp-city"
+              aria-label="City"
+              autoComplete="off"
+              autoFocus={!city}
+              value={cityDraft}
+              placeholder="Search a city, e.g. Chicago"
+              onChange={e => { setCityDraft(e.target.value); setShowSuggest(true) }}
+              onFocus={e => { e.target.select(); setShowSuggest(true) }}
+              onBlur={() => setTimeout(() => { setShowSuggest(false); setCityDraft(city) }, 150)}
+              onKeyDown={e => {
+                if (e.key === 'Enter') { chooseCity(suggestions[0] || cityDraft); e.target.blur() }
+                if (e.key === 'Escape') { setCityDraft(city); e.target.blur() }
+              }}
+            />
+            {city && cityDraft === city && <span className="wp-change" aria-hidden="true">Change</span>}
+            {showSuggest && suggestions.length > 0 && cityDraft !== city && (
+              <div className="wp-suggest" role="listbox">
+                {suggestions.map(c => (
+                  <div key={c} role="option" aria-selected="false" className="wp-sugg" onMouseDown={() => chooseCity(c)}>{c}</div>
+                ))}
+              </div>
+            )}
+          </div>
 
           <div className="wp-row">
             <span className="wp-lbl">When</span>
@@ -394,7 +381,7 @@ export default function WhosPlaying({ session }) {
         <div className="wp-layout">
           <section className="wp-results" aria-live="polite">
             {!city && (
-              <div className="wp-empty">Pick a city above to see every game, concert and comedy show there.</div>
+              <div className="wp-empty">Type a city above to see every game, concert and comedy show there.</div>
             )}
 
             {city && rangeReady && loading && (
@@ -469,13 +456,15 @@ export default function WhosPlaying({ session }) {
         .wp-hero{padding:8px 0 18px;margin-bottom:8px}
         .wp-eyebrow{font-family:var(--head);font-weight:600;color:var(--orange);letter-spacing:2px;font-size:13px;text-transform:uppercase}
         .wp-q{font-family:var(--head);font-weight:700;font-size:clamp(32px,6vw,54px);line-height:1.2;margin:8px 0 18px;text-transform:uppercase;color:var(--text)}
-        .wp-tok{font:inherit;text-transform:inherit;color:var(--orange);background:none;border:0;border-bottom:4px solid var(--orange);padding:0 4px;cursor:pointer;white-space:nowrap;line-height:1.1}
-        .wp-tok i{font-style:normal;font-size:.45em;vertical-align:middle;margin-left:6px;opacity:.85}
-        .wp-tok:focus-visible,.wp-chip:focus-visible,.wp-btn:focus-visible,.wp-tk:focus-visible{outline:2px solid var(--text);outline-offset:2px}
-        .wp-cityedit{position:relative;display:inline-block}
-        .wp-cityedit input{font:inherit;text-transform:uppercase;color:var(--orange);background:transparent;border:0;border-bottom:4px solid var(--orange);width:8.5em;max-width:70vw;padding:0 4px;outline:none}
-        .wp-cityedit input::placeholder{color:var(--text3)}
-        .wp-suggest{position:absolute;top:calc(100% + 6px);left:0;min-width:260px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;z-index:20;box-shadow:0 8px 24px rgba(0,0,0,.45);font-family:var(--body);text-transform:none;font-size:15px;font-weight:500;letter-spacing:0;line-height:1.3;overflow:hidden}
+        .wp-hl{color:var(--orange)}
+        .wp-chip:focus-visible,.wp-btn:focus-visible,.wp-tk:focus-visible{outline:2px solid var(--text);outline-offset:2px}
+        .wp-search{position:relative;display:flex;align-items:center;max-width:460px;background:var(--bg);border:2px solid var(--border);border-radius:12px;padding:0 14px;margin-bottom:6px}
+        .wp-search:focus-within{border-color:var(--orange)}
+        .wp-pin{color:var(--orange);flex-shrink:0}
+        .wp-search input{flex:1;min-width:0;background:transparent;border:0;outline:none;color:var(--text);font-family:var(--body);font-size:17px;font-weight:600;padding:13px 10px}
+        .wp-search input::placeholder{color:var(--text3);font-weight:500}
+        .wp-change{color:var(--orange);font-size:13px;font-weight:600;pointer-events:none}
+        .wp-suggest{position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--surface2);border:1px solid var(--border);border-radius:10px;z-index:20;box-shadow:0 8px 24px rgba(0,0,0,.45);font-family:var(--body);text-transform:none;font-size:15px;font-weight:500;letter-spacing:0;line-height:1.3;overflow:hidden}
         .wp-sugg{padding:10px 14px;color:var(--text);cursor:pointer;border-bottom:1px solid var(--border)}
         .wp-sugg:hover{background:var(--surface)}
         .wp-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
