@@ -185,20 +185,22 @@ export default function WhosPlaying({ session }) {
 
   const [startDate, endDate] = preset === 'custom' ? customRange : presetRange(preset)
   const rangeReady = !!(startDate && endDate)
+  const startYMD = rangeReady ? toYMD(startDate) : ''
+  const endYMD = rangeReady ? toYMD(endDate) : ''
 
   // One search per city + dates, always for everything. Type and league/genre
   // filters run on the results in the browser, so switching them is instant.
   useEffect(() => {
-    if (!city || !rangeReady) return
-    const key = `${city.toLowerCase()}|${toYMD(startDate)}|${toYMD(endDate)}`
+    if (!city || !startYMD || !endYMD) return
+    const key = `${city.toLowerCase()}|${startYMD}|${endYMD}`
     if (cache.current[key]) { setResults(cache.current[key]); setError(''); return }
     const id = ++reqId.current
     setLoading(true); setError('')
     supabase.functions.invoke('whos-playing-search', {
       body: {
         city,
-        startDate: toYMD(startDate),
-        endDate: toYMD(endDate),
+        startDate: startYMD,
+        endDate: endYMD,
         leagues: ALL_LEAGUES,
         musicSelected: true,
         includeComedy: true,
@@ -213,8 +215,7 @@ export default function WhosPlaying({ session }) {
       if (id !== reqId.current) return
       console.error('Search error:', e); setError("Couldn't load events. Try again in a moment."); setResults([])
     }).finally(() => { if (id === reqId.current) setLoading(false) })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [city, rangeReady && toYMD(startDate), rangeReady && toYMD(endDate)])
+  }, [city, startYMD, endYMD])
 
   function chooseCity(c) {
     const name = c.split(',')[0].trim()
