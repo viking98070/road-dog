@@ -64,6 +64,55 @@ function collapseCities(cities) {
   return collapsed
 }
 
+// How trips are ordered. "soonest" (default) groups by month in date order —
+// the way people plan. "best" puts the highest-scoring trips first.
+const SORTS = [
+  { key: 'soonest', label: 'Soonest' },
+  { key: 'best', label: 'Best' },
+]
+const SORT_STORAGE_KEY = 'roaddog.tripSort'
+
+function loadSortPref() {
+  try {
+    const v = window.localStorage.getItem(SORT_STORAGE_KEY)
+    return SORTS.some(s => s.key === v) ? v : 'soonest'
+  } catch (_) {
+    return 'soonest'
+  }
+}
+
+function saveSortPref(v) {
+  try { window.localStorage.setItem(SORT_STORAGE_KEY, v) } catch (_) { /* private mode etc. */ }
+}
+
+function sortCombos(list, mode) {
+  const byDate = (a, b) => (a.start_date < b.start_date ? -1 : a.start_date > b.start_date ? 1 : 0)
+  return [...list].sort((a, b) =>
+    mode === 'best'
+      ? (b.score - a.score) || byDate(a, b)
+      : byDate(a, b) || (b.score - a.score)
+  )
+}
+
+// "November" for this year's months, "January 2027" once the year changes.
+function monthLabel(dateStr) {
+  const d = new Date(dateStr + 'T12:00:00')
+  const sameYear = d.getFullYear() === new Date().getFullYear()
+  return d.toLocaleDateString('en-US', sameYear ? { month: 'long' } : { month: 'long', year: 'numeric' })
+}
+
+// Split an already date-sorted list into [{ label, combos }] by start month.
+function groupByMonth(list) {
+  const groups = []
+  for (const combo of list) {
+    const label = monthLabel(combo.start_date)
+    const last = groups[groups.length - 1]
+    if (last && last.label === label) last.combos.push(combo)
+    else groups.push({ label, combos: [combo] })
+  }
+  return groups
+}
+
 // Today's date in the viewer's own time zone, as YYYY-MM-DD (the same format
 // as trip_combos.end_date). Used to hide trips that have already ended, so a
 // stalled rebuild can never put past trips back on the board.
@@ -79,7 +128,13 @@ export default function Dashboard({ session }) {
   const [loading, setLoading] = useState(true)
   const [selected, setSelected] = useState(null)
   const [activeTab, setActiveTab] = useState('sports_plus_shows')
+  const [sortMode, setSortMode] = useState(loadSortPref)
   const navigate = useNavigate()
+
+  function changeSort(mode) {
+    setSortMode(mode)
+    saveSortPref(mode)
+  }
   
   useEffect(() => {
     loadCombos()
@@ -198,7 +253,11 @@ export default function Dashboard({ session }) {
     return <ComboDetail combo={selected} onBack={() => setSelected(null)} />
   }
 
-  const filteredCombos = combos.filter(c => c.combo_type === activeTab)
+  const filteredCombos = sortCombos(combos.filter(c => c.combo_type === activeTab), sortMode)
+  // Month headers only make sense when the list is in date order.
+  const sections = sortMode === 'soonest'
+    ? groupByMonth(filteredCombos)
+    : [{ label: null, combos: filteredCombos }]
   const tabCounts = {}
   for (const tab of TABS) {
     tabCounts[tab.key] = combos.filter(c => c.combo_type === tab.key).length
@@ -280,6 +339,45 @@ export default function Dashboard({ session }) {
           })}
         </div>
 
+        {/* Sort toggle */}
+        {!loading && filteredCombos.length > 1 && (
+          <div style={{
+            display: 'flex', justifyContent: 'flex-end', alignItems: 'center',
+            gap: 8, marginBottom: 16,
+          }}>
+            <span style={{
+              fontSize: 11, color: 'var(--text3)', textTransform: 'uppercase',
+              letterSpacing: 0.5, fontFamily: 'var(--head)',
+            }}>
+              Sort
+            </span>
+            <div style={{
+              display: 'inline-flex', padding: 3, gap: 2,
+              background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 999,
+            }}>
+              {SORTS.map(s => {
+                const on = sortMode === s.key
+                return (
+                  <button
+                    key={s.key}
+                    onClick={() => changeSort(s.key)}
+                    aria-pressed={on}
+                    style={{
+                      border: 'none', cursor: 'pointer', borderRadius: 999,
+                      padding: '5px 12px', fontSize: 12, fontWeight: 600,
+                      fontFamily: 'var(--head)', textTransform: 'uppercase', letterSpacing: 0.5,
+                      background: on ? 'var(--orange)' : 'transparent',
+                      color: on ? '#0F0F0F' : 'var(--text2)',
+                    }}
+                  >
+                    {s.label}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        )}
+
         {loading ? (
           <div className={styles.empty}>
             <div className={styles.spinner} />
@@ -291,9 +389,23 @@ export default function Dashboard({ session }) {
             <h2>No trips in this category yet</h2>
             <p>Try a different tab, or check back as schedules update.</p>
           </div>
-        ) : (
+        ) : sections.map(section => (
+          <section key={section.label || 'all'} style={{ marginBottom: section.label ? 28 : 0 }}>
+            {section.label && (
+              <h2 style={{
+                fontFamily: 'var(--head)', fontSize: 15, fontWeight: 700,
+                textTransform: 'uppercase', letterSpacing: 1,
+                color: 'var(--text2)', margin: '0 0 12px',
+                display: 'flex', alignItems: 'baseline', gap: 8,
+              }}>
+                {section.label}
+                <span style={{ fontSize: 12, color: 'var(--text3)', fontWeight: 500, letterSpacing: 0.5 }}>
+                  {section.combos.length} {section.combos.length === 1 ? 'trip' : 'trips'}
+                </span>
+              </h2>
+            )}
           <div className={styles.grid}>
-            {filteredCombos.map(combo => (
+            {section.combos.map(combo => (
               <div
                 key={combo.id}
                 className={styles.card}
@@ -362,7 +474,8 @@ export default function Dashboard({ session }) {
               </div>
             ))}
           </div>
-        )}
+          </section>
+        ))}
       </main>
     </div>
   )
