@@ -178,6 +178,26 @@ export default function Dashboard({ session }) {
     return new Date(dateStr + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
   }
 
+  // "Dec 4" for a one-day trip, "Nov 14 – Nov 15" otherwise.
+  function formatDateRange(start, end) {
+    if (!end || start === end) return formatDate(start)
+    return `${formatDate(start)} – ${formatDate(end)}`
+  }
+
+  // Short day label for an event row: "Sat 14". Adds the month ("Fri Jan 1")
+  // when the event falls in a different month than the trip starts, so a
+  // trip that crosses a month boundary never reads ambiguously.
+  function dayLabel(dateStr, tripStart) {
+    const d = new Date(dateStr + 'T12:00:00')
+    const t = new Date(tripStart + 'T12:00:00')
+    const weekday = d.toLocaleDateString('en-US', { weekday: 'short' })
+    const sameMonth = d.getMonth() === t.getMonth() && d.getFullYear() === t.getFullYear()
+    const rest = sameMonth
+      ? d.toLocaleDateString('en-US', { day: 'numeric' })
+      : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+    return `${weekday} ${rest}`
+  }
+
   // A combo counts as "new" for a few days after it was emailed in a digest.
   // alerted_at is stamped by send-combo-alerts; baseline combos have old stamps
   // (or null) so they never light up here.
@@ -430,12 +450,16 @@ export default function Dashboard({ session }) {
                   <div className={styles.cardBadge}>{tierBadge(combo.score)}</div>
                 </div>
                 <div className={styles.cardDates}>
-                  {formatDate(combo.start_date)} – {formatDate(combo.end_date)}
+                  {formatDateRange(combo.start_date, combo.end_date)}
                 </div>
                 <div className={styles.cardTeams}>
                   {combo.events && (() => {
+                    // Date order first, so rows read like an itinerary and
+                    // each group's first date is its earliest night.
+                    const ordered = [...combo.events].sort((a, b) =>
+                      (a.event_date || '').localeCompare(b.event_date || ''))
                     const grouped = []
-                    for (const event of combo.events) {
+                    for (const event of ordered) {
                       const key = `${categoryLabel(event)}|${eventDescription(event)}`
                       const existing = grouped.find(g => g.key === key)
                       if (existing) {
@@ -450,6 +474,11 @@ export default function Dashboard({ session }) {
                       <>
                         {visible.map((g, i) => (
                           <div key={i} className={styles.cardTeamRow}>
+                            {g.event.event_date && (
+                              <span className={styles.cardEventDay}>
+                                {dayLabel(g.event.event_date, combo.start_date)}
+                              </span>
+                            )}
                             <span
                               className={styles.cardLeaguePill}
                               style={{ background: categoryColor(g.event) }}

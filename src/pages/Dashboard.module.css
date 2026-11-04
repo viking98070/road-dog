@@ -150,6 +150,17 @@
   gap: 7px;
 }
 
+.cardEventDay {
+  font-family: var(--head);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text3);
+  letter-spacing: 0.3px;
+  min-width: 44px;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
 .cardLeaguePill {
   font-family: var(--head);
   font-size: 9px;
