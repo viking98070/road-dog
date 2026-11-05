@@ -4,7 +4,23 @@ import styles from './Step.module.css'
 
 // requireOne: set during onboarding when the user skipped teams, so they can't
 // finish with nothing followed (no teams AND no artists = no trips, ever).
-export default function StepShows({ selected, setSelected, onBack, onFinish, saving, hideFooter, requireOne }) {
+// Genre chips on the Music tab. `match` is the Ticketmaster genre name stored in popular_artists.
+const GENRES = [
+  { label: 'All', match: null },
+  { label: 'Rock', match: 'Rock' },
+  { label: 'Pop', match: 'Pop' },
+  { label: 'Country', match: 'Country' },
+  { label: 'Hip-Hop', match: 'Hip-Hop/Rap' },
+  { label: 'R&B', match: 'R&B' },
+  { label: 'Metal', match: 'Metal' },
+  { label: 'Latin', match: 'Latin' },
+  { label: 'Electronic', match: 'Dance/Electronic' },
+  { label: 'Alternative', match: 'Alternative' },
+  { label: 'Other', match: '__other__' },
+]
+const NAMED_GENRES = GENRES.map(g => g.match).filter(m => m && m !== '__other__')
+
+export default function StepShows({ selected, setSelected, onBack, onFinish, saving, hideFooter, requireOne, stepNumber, totalSteps }) {
   const [activeTab, setActiveTab] = useState('Music')
   const [activeGenre, setActiveGenre] = useState('All')
   const [query, setQuery] = useState('')
@@ -74,19 +90,35 @@ export default function StepShows({ selected, setSelected, onBack, onFinish, sav
   }, [query])
 
   let filteredPopular = popular.filter(p => p.segment === activeTab)
-  if (activeTab === 'Music' && activeGenre !== 'All') {
-    filteredPopular = filteredPopular.filter(p => {
-      if (activeGenre === 'Other') {
-        const mainGenres = ['Rock', 'Pop', 'Country', 'Hip-Hop/Rap', 'R&B', 'Dance/Electronic']
-        return !p.genre || !mainGenres.includes(p.genre)
-      }
-      return p.genre === activeGenre
-    })
+  const genre = GENRES.find(g => g.label === activeGenre) || GENRES[0]
+  if (activeTab === 'Music' && genre.match) {
+    filteredPopular = filteredPopular.filter(p =>
+      genre.match === '__other__'
+        ? !p.genre || !NAMED_GENRES.includes(p.genre)
+        : p.genre === genre.match
+    )
   }
+  // Only show genre chips that actually have artists in them.
+  const musicPopular = popular.filter(p => p.segment === 'Music')
+  const visibleGenres = GENRES.filter(g =>
+    !g.match ||
+    musicPopular.some(p => g.match === '__other__'
+      ? !p.genre || !NAMED_GENRES.includes(p.genre)
+      : p.genre === g.match)
+  )
+  const nothingPicked = selected.length === 0
 
   return (
     <div className={styles.container}>
       <div className={styles.titleArea}>
+        {stepNumber && totalSteps && (
+          <div style={{
+            fontSize: 11, color: 'var(--orange)', textTransform: 'uppercase',
+            letterSpacing: 1, fontFamily: 'var(--head)', fontWeight: 700, marginBottom: 6,
+          }}>
+            Step {stepNumber} of {totalSteps}
+          </div>
+        )}
         <h1 className={styles.title}>Shows</h1>
         <p className={styles.sub}>Search for artists or comedians, or pick from popular options below.</p>
       </div>
@@ -129,7 +161,7 @@ export default function StepShows({ selected, setSelected, onBack, onFinish, sav
               <div style={{ padding: 16, color: 'var(--text2)', fontSize: 13 }}>Searching…</div>
             ) : searchResults.length === 0 ? (
               <div style={{ padding: 16, color: 'var(--text2)', fontSize: 13 }}>
-                No matching artists with upcoming events. Try a different name?
+                No artist by that name is on tour right now. Check the spelling, or try again later — once they announce dates, you can follow them here.
               </div>
             ) : (
               searchResults.map(result => {
@@ -277,7 +309,7 @@ export default function StepShows({ selected, setSelected, onBack, onFinish, sav
 
       {activeTab === 'Music' && (
         <div style={{ display: 'flex', gap: 6, marginBottom: 12, flexWrap: 'wrap' }}>
-          {['All', 'Rock', 'Pop', 'Country', 'Hip-Hop/Rap', 'R&B', 'Dance/Electronic', 'Other'].map(g => (
+          {visibleGenres.map(({ label: g }) => (
             <div
               key={g}
               onClick={() => setActiveGenre(g)}
@@ -301,12 +333,12 @@ export default function StepShows({ selected, setSelected, onBack, onFinish, sav
         </div>
       )}
 
-      <div className={styles.showList}>
+      <div className={styles.showList} style={hideFooter ? undefined : { paddingBottom: 96 }}>
         {loadingPopular ? (
           <div style={{ color: 'var(--text2)', fontSize: 13, padding: 12 }}>Loading…</div>
         ) : filteredPopular.length === 0 ? (
           <div style={{ color: 'var(--text2)', fontSize: 13, padding: 12 }}>
-            No popular artists found. Try searching above.
+            Nothing here right now. Try searching above.
           </div>
         ) : (
           filteredPopular.map(item => {
@@ -337,15 +369,19 @@ export default function StepShows({ selected, setSelected, onBack, onFinish, sav
       {!hideFooter && (
         <div className={styles.footer}>
           <button className={styles.backBtn} onClick={onBack}>← Back</button>
-          {requireOne && selected.length === 0
+          {requireOne && nothingPicked
             ? <div className={styles.count} style={{ textAlign: 'center' }}>Pick at least one artist</div>
             : <div className={styles.count}><b>{selected.length}</b> selected</div>}
           <button
             className={styles.nextBtn}
             onClick={() => onFinish(selected)}
-            disabled={saving || (requireOne && selected.length === 0)}
+            disabled={saving || (requireOne && nothingPicked)}
           >
-            {saving ? 'Building your combos…' : 'Start your engines!'}
+            {saving
+              ? 'Building your trips…'
+              : nothingPicked && !requireOne
+                ? 'Skip — show my trips →'
+                : 'Start your engines!'}
           </button>
         </div>
       )}
