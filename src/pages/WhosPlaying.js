@@ -408,7 +408,8 @@ export default function WhosPlaying({ session }) {
                 )}
 
                 {days.map(({ day, main, college }) => {
-                  const open = openCollege[day] || main.length === 0
+                  // Only tuck college games away when there are enough to crowd the day.
+                  const open = openCollege[day] || main.length === 0 || college.length <= 2
                   const shown = open ? [...main, ...college] : main
                   return (
                     <div key={day} className="wp-day">
@@ -426,7 +427,7 @@ export default function WhosPlaying({ session }) {
                       ))}
                       {!open && college.length > 0 && (
                         <button type="button" className="wp-more" onClick={() => setOpenCollege(o => ({ ...o, [day]: true }))}>
-                          + {college.length} college game{college.length === 1 ? '' : 's'}
+                          Show {college.length} college games ▾
                         </button>
                       )}
                     </div>
@@ -491,8 +492,8 @@ export default function WhosPlaying({ session }) {
         .wp-fest{font-size:12px;color:var(--orange);font-weight:600;margin-top:2px}
         .wp-v{color:var(--text3);font-size:13px;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
         .wp-tk{color:var(--orange);font-weight:600;font-size:13px;white-space:nowrap;text-decoration:none}
-        .wp-more{background:none;border:0;color:var(--text2);font-size:13px;font-weight:600;padding:2px 4px;cursor:pointer;font-family:var(--body)}
-        .wp-more:hover{color:var(--orange)}
+        .wp-more{display:block;width:100%;margin-top:8px;background:transparent;border:1px dashed var(--border);border-radius:12px;color:var(--text2);font-size:14px;font-weight:600;padding:12px;cursor:pointer;font-family:var(--body);text-align:center}
+        .wp-more:hover{color:var(--orange);border-color:var(--orange)}
         .wp-empty{color:var(--text2);font-size:15px;padding:28px 0}
         .wp-error{color:#FCA5A5;font-size:14px;padding:12px 0}
         .wp-skel{height:62px;border-radius:12px;background:linear-gradient(90deg,var(--surface),var(--surface2),var(--surface));background-size:200% 100%;animation:wpsh 1.2s infinite linear;margin-top:8px}
