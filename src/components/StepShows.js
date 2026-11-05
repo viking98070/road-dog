@@ -21,13 +21,16 @@ const GENRES = [
 const NAMED_GENRES = GENRES.map(g => g.match).filter(m => m && m !== '__other__')
 
 export default function StepShows({ selected, setSelected, onBack, onFinish, saving, hideFooter, requireOne, stepNumber, totalSteps }) {
-  const [activeTab, setActiveTab] = useState('Music')
+  // Opens on "Fan favorites" when there are enough of them (see below).
+  const [activeTab, setActiveTab] = useState('Fans')
   const [activeGenre, setActiveGenre] = useState('All')
   const [query, setQuery] = useState('')
   const [searchResults, setSearchResults] = useState([])
   const [searching, setSearching] = useState(false)
   const [popular, setPopular] = useState([])
   const [loadingPopular, setLoadingPopular] = useState(true)
+  const [fanFaves, setFanFaves] = useState([])
+  const [loadingFans, setLoadingFans] = useState(true)
   const debounceRef = useRef(null)
 
   useEffect(() => {
@@ -39,7 +42,18 @@ export default function StepShows({ selected, setSelected, onBack, onFinish, sav
         if (!error && data) setPopular(data)
         setLoadingPopular(false)
       })
+    // Most-followed artists across Road Dog (names + counts only).
+    supabase
+      .rpc('fan_favorite_artists', { max_rows: 25 })
+      .then(({ data, error }) => {
+        if (!error && data) setFanFaves(data)
+        setLoadingFans(false)
+      })
   }, [])
+
+  // Only offer the tab once there's a real list behind it.
+  const showFansTab = fanFaves.length >= 5
+  const tab = activeTab === 'Fans' && !showFansTab && !loadingFans ? 'Music' : activeTab
 
   const isSelected = (name) =>
     selected.some(s => (typeof s === 'string' ? s : s.name).toLowerCase() === name.toLowerCase())
@@ -89,9 +103,9 @@ export default function StepShows({ selected, setSelected, onBack, onFinish, sav
     }
   }, [query])
 
-  let filteredPopular = popular.filter(p => p.segment === activeTab)
+  let filteredPopular = popular.filter(p => p.segment === tab)
   const genre = GENRES.find(g => g.label === activeGenre) || GENRES[0]
-  if (activeTab === 'Music' && genre.match) {
+  if (tab === 'Music' && genre.match) {
     filteredPopular = filteredPopular.filter(p =>
       genre.match === '__other__'
         ? !p.genre || !NAMED_GENRES.includes(p.genre)
@@ -289,17 +303,26 @@ export default function StepShows({ selected, setSelected, onBack, onFinish, sav
         Popular right now
       </div>
 
-      {/* Music / Comedy tabs */}
+      {/* Fan favorites / Music / Comedy tabs */}
       <div className={styles.tabs} style={{ overflowX: 'auto', flexWrap: 'nowrap' }}>
+        {showFansTab && (
+          <div
+            className={`${styles.tab} ${tab === 'Fans' ? styles.tabActive : ''}`}
+            onClick={() => setActiveTab('Fans')}
+            style={{ whiteSpace: 'nowrap' }}
+          >
+            ⭐ Fan favorites
+          </div>
+        )}
         <div
-          className={`${styles.tab} ${activeTab === 'Music' ? styles.tabActive : ''}`}
+          className={`${styles.tab} ${tab === 'Music' ? styles.tabActive : ''}`}
           onClick={() => setActiveTab('Music')}
           style={{ whiteSpace: 'nowrap' }}
         >
           🎤 Music
         </div>
         <div
-          className={`${styles.tab} ${activeTab === 'Comedy' ? styles.tabActive : ''}`}
+          className={`${styles.tab} ${tab === 'Comedy' ? styles.tabActive : ''}`}
           onClick={() => setActiveTab('Comedy')}
           style={{ whiteSpace: 'nowrap' }}
         >
@@ -307,7 +330,7 @@ export default function StepShows({ selected, setSelected, onBack, onFinish, sav
         </div>
       </div>
 
-      {activeTab === 'Music' && (
+      {tab === 'Music' && (
         <div style={{ display: 'flex', gap: 6, marginBottom: 12, flexWrap: 'wrap' }}>
           {visibleGenres.map(({ label: g }) => (
             <div
@@ -334,7 +357,35 @@ export default function StepShows({ selected, setSelected, onBack, onFinish, sav
       )}
 
       <div className={styles.showList} style={hideFooter ? undefined : { paddingBottom: 96 }}>
-        {loadingPopular ? (
+        {tab === 'Fans' && loadingFans ? (
+          <div style={{ color: 'var(--text2)', fontSize: 13, padding: 12 }}>Loading…</div>
+        ) : tab === 'Fans' ? (
+          <>
+            <div style={{ fontSize: 12, color: 'var(--text3)', margin: '2px 0 10px' }}>
+              The artists Road Dog fans follow most.
+            </div>
+            {fanFaves.map(item => {
+              const sel = isSelected(item.artist_name)
+              return (
+                <div
+                  key={item.artist_name}
+                  className={`${styles.showRow} ${sel ? styles.sel : ''}`}
+                  onClick={() => sel ? removeArtist(item.artist_name) : addArtist(item.artist_name, item.attraction_id)}
+                >
+                  <span>
+                    {item.artist_name}
+                    <span style={{ color: 'var(--text3)', fontSize: 11, marginLeft: 8 }}>
+                      {item.fans} fans
+                    </span>
+                  </span>
+                  <div className={`${styles.showCheck} ${sel ? styles.checked : ''}`}>
+                    {sel && '✓'}
+                  </div>
+                </div>
+              )
+            })}
+          </>
+        ) : loadingPopular ? (
           <div style={{ color: 'var(--text2)', fontSize: 13, padding: 12 }}>Loading…</div>
         ) : filteredPopular.length === 0 ? (
           <div style={{ color: 'var(--text2)', fontSize: 13, padding: 12 }}>
