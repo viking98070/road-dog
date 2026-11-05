@@ -4,19 +4,19 @@
 .back:hover { border-color: var(--text2); color: var(--text); }
 .logo { font-family: var(--head); font-size: 20px; font-weight: 700; color: var(--text); letter-spacing: 2px; text-transform: uppercase; }
 .logo span { color: var(--orange); }
-.hero { background: linear-gradient(160deg, #1f0800 0%, #0F0F0F 60%); padding: 32px 24px 28px; border-bottom: 1px solid var(--border); }
+.hero { background: linear-gradient(160deg, #1f0800 0%, #0F0F0F 60%); padding: 32px 0 28px; border-bottom: 1px solid var(--border); }
 .heroCity { font-family: var(--head); font-size: 40px; font-weight: 700; color: var(--text); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; }
 .heroDates { font-size: 16px; color: var(--orange); font-weight: 600; margin-bottom: 6px; }
 .heroBadge { display: flex; align-items: center; flex-wrap: wrap; gap: 10px 12px; margin-top: 10px; }
 .heroReason { font-size: 13px; color: var(--text2); }
 /* Hero content lines up with the lineup column below it. */
-.column { max-width: 800px; margin: 0 auto; width: 100%; }
+.column { max-width: 800px; margin: 0 auto; width: 100%; padding: 0 24px; box-sizing: border-box; }
 .column .back { margin-bottom: 18px; }
 .heroTop > .heroCity { flex: 1; min-width: 0; overflow-wrap: anywhere; }
 .heroTop { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
 .share { flex-shrink: 0; margin-top: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; background: rgba(249,115,22,0.10); color: #FB923C; border: 1px solid rgba(249,115,22,0.55); border-radius: 10px; font-size: 13px; font-weight: 700; padding: 9px 14px; font-family: inherit; line-height: 1; white-space: nowrap; transition: background .15s ease; }
 .share:hover, .shareDone { background: rgba(249,115,22,0.18); }
-.body { flex: 1; max-width: 800px; margin: 0 auto; width: 100%; padding: 28px 24px; }
+.body { flex: 1; max-width: 800px; margin: 0 auto; width: 100%; padding: 28px 24px; box-sizing: border-box; }
 .sectionTitle { font-family: var(--head); font-size: 13px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 12px; }
 .eventList { display: flex; flex-direction: column; gap: 8px; }
 .eventCard { background: var(--surface); border: 0.5px solid var(--border); border-radius: 12px; padding: 14px; display: flex; align-items: center; gap: 12px; }
@@ -41,7 +41,10 @@
     padding: 10px 14px;
   }
   .hero {
-    padding: 24px 16px 20px;
+    padding: 24px 0 20px;
+  }
+  .column {
+    padding: 0 14px;
   }
   .heroCity {
     font-size: 28px;
