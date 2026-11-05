@@ -129,7 +129,19 @@ export default function Dashboard({ session }) {
   const [selected, setSelected] = useState(null)
   const [activeTab, setActiveTab] = useState('sports_plus_shows')
   const [sortMode, setSortMode] = useState(loadSortPref)
+  // Arriving straight from onboarding (?welcome=1): show a one-time "we found
+  // N trips" banner. The flag is read once, then removed from the URL so a
+  // refresh or a shared link never shows it again.
+  const [isWelcome, setIsWelcome] = useState(() => {
+    try { return new URLSearchParams(window.location.search).get('welcome') === '1' } catch (_) { return false }
+  })
   const navigate = useNavigate()
+
+  useEffect(() => {
+    if (isWelcome) {
+      try { window.history.replaceState(null, '', window.location.pathname) } catch (_) { /* ignore */ }
+    }
+  }, [isWelcome])
 
   function changeSort(mode) {
     setSortMode(mode)
@@ -167,6 +179,13 @@ export default function Dashboard({ session }) {
     }))
 
     setCombos(combosWithEvents)
+
+    // Open on a tab that actually has trips. A fan who follows only artists
+    // has nothing under the default Sports + Shows tab, and landing on an
+    // empty tab looks like the app found nothing.
+    const hasTrips = key => combosWithEvents.some(c => c.combo_type === key)
+    setActiveTab(current => hasTrips(current) ? current : (TABS.find(t => hasTrips(t.key))?.key || current))
+
     setLoading(false)
   }
 
@@ -312,6 +331,38 @@ export default function Dashboard({ session }) {
           <h1>Trips</h1>
           <p>Away games and shows that line up in the same city.</p>
         </div>
+
+        {isWelcome && !loading && (
+          <div style={{
+            display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12,
+            background: 'rgba(249,115,22,0.10)', border: '1px solid rgba(249,115,22,0.45)',
+            borderRadius: 12, padding: '14px 16px', marginBottom: 20,
+          }}>
+            <div>
+              <div style={{
+                fontFamily: 'var(--head)', fontSize: 18, fontWeight: 700,
+                textTransform: 'uppercase', letterSpacing: 0.5, color: 'var(--text)',
+              }}>
+                {combos.length > 0
+                  ? `You're all set — we found ${combos.length} ${combos.length === 1 ? 'trip' : 'trips'} for you 🌭`
+                  : `You're all set 🌭`}
+              </div>
+              <div style={{ fontSize: 13, color: 'var(--text2)', marginTop: 4 }}>
+                {combos.length > 0
+                  ? "We'll email you when new ones line up. Tap any trip for tickets, flights and hotels."
+                  : "Nothing lines up yet — we'll email you as soon as your teams and artists land in the same city."}
+              </div>
+            </div>
+            <button
+              onClick={() => setIsWelcome(false)}
+              aria-label="Dismiss"
+              style={{
+                background: 'transparent', border: 'none', color: 'var(--text3)',
+                fontSize: 20, lineHeight: 1, cursor: 'pointer', padding: 2, flexShrink: 0,
+              }}
+            >×</button>
+          </div>
+        )}
 
         {/* Tabs */}
         <div style={{

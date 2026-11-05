@@ -55,7 +55,8 @@ await supabase.from('users').update({ home_city: 'set' }).eq('id', userId)
     }
 
     setSaving(false)
-    window.location.href = '/hub'
+    // Land new users on their trips — the payoff — not the hub menu.
+    window.location.href = '/trips?welcome=1'
   }
 
   return (
