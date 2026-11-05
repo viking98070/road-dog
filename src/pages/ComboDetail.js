@@ -85,7 +85,7 @@ export default function ComboDetail({ combo, onBack }) {
   }, [combo])
 
   const fmt = d => new Date(d + 'T12:00:00').toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' })
-  const fmtRange = (s, e) => `${new Date(s + 'T12:00:00').toLocaleDateString('en-US', { month:'short', day:'numeric' })} – ${new Date(e + 'T12:00:00').toLocaleDateString('en-US', { month:'short', day:'numeric' })}`
+  const fmtRange = (s, e) => (!e || s === e) ? new Date(s + 'T12:00:00').toLocaleDateString('en-US', { month:'short', day:'numeric' }) : `${new Date(s + 'T12:00:00').toLocaleDateString('en-US', { month:'short', day:'numeric' })} – ${new Date(e + 'T12:00:00').toLocaleDateString('en-US', { month:'short', day:'numeric' })}`
 
   function displayCity(combo) {
     const raw = combo.cities && combo.cities.length > 0 ? combo.cities : [combo.city]
@@ -203,6 +203,18 @@ export default function ComboDetail({ combo, onBack }) {
     )
   }
 
+  // One line saying why this trip earned the Hot Dog badge, from the same
+  // things the score rewards: lots of events, few cities, few days.
+  function hotDogReason() {
+    if (combo.score < 4 || loading || events.length === 0) return null
+    const n = groupEvents(events).length
+    const days = Math.round((new Date(combo.end_date + 'T12:00:00') - new Date(combo.start_date + 'T12:00:00')) / 86400000) + 1
+    const cityCount = collapseCities(combo.cities && combo.cities.length > 0 ? combo.cities : [combo.city]).length
+    const where = cityCount <= 1 ? 'all in one city' : `across ${cityCount} cities`
+    const when = days === 1 ? 'in one day' : `in ${days} days`
+    return `${n} events ${when}, ${where} — one of your best trips.`
+  }
+
   function buildShareText() {
     const city = displayCity(combo)
     const dates = fmtRange(combo.start_date, combo.end_date)
@@ -258,13 +270,26 @@ export default function ComboDetail({ combo, onBack }) {
   return (
     <div className={styles.page}>
       <AppNav />
-      <div style={{ padding: '14px 24px 0' }}>
-        <button className={styles.back} onClick={onBack}>← All trips</button>
-      </div>
       <div className={styles.hero}>
-        <div className={styles.heroCity}>{displayCity(combo)}</div>
-        <div className={styles.heroDates}>{fmtRange(combo.start_date, combo.end_date)}</div>
-        <div className={styles.heroBadge}>{tierBadge(combo.score)}</div>
+        <div className={styles.column}>
+          <button className={styles.back} onClick={onBack}>← All trips</button>
+          <div className={styles.heroTop}>
+            <div className={styles.heroCity}>{displayCity(combo)}</div>
+            <button
+              onClick={handleShare}
+              className={`${styles.share} ${shared ? styles.shareDone : ''}`}
+            >
+              {shared ? 'Copied ✓' : '🔗 Share trip'}
+            </button>
+          </div>
+          <div className={styles.heroDates}>{fmtRange(combo.start_date, combo.end_date)}</div>
+          {combo.score >= 4 && (
+            <div className={styles.heroBadge}>
+              {tierBadge(combo.score)}
+              {hotDogReason() && <span className={styles.heroReason}>{hotDogReason()}</span>}
+            </div>
+          )}
+        </div>
       </div>
       <div className={styles.body}>
         <div className={styles.sectionTitle}>The Lineup</div>
@@ -348,7 +373,6 @@ export default function ComboDetail({ combo, onBack }) {
             </div>
           )
         })()}
-        {(<button onClick={handleShare} style={{ marginTop: 16, width: '100%', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8, background: shared ? 'rgba(249,115,22,0.16)' : 'rgba(249,115,22,0.10)', color: '#FB923C', border: '1px solid rgba(249,115,22,0.55)', borderRadius: 12, fontSize: 14, fontWeight: 700, padding: '13px 16px', fontFamily: 'inherit', lineHeight: 1, transition: 'all .15s ease' }}>{shared ? 'Copied ✓' : '🔗 Share Trip'}</button>)}
       </div>
     </div>
   )
