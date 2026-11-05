@@ -75,8 +75,8 @@ await supabase.from('users').update({ home_city: 'set' }).eq('id', userId)
           totalSteps={2}
           selected={selectedTeams}
           setSelected={setSelectedTeams}
-          onBack={() => {}}
           onNext={() => setStep(2)}
+          onSkip={() => setStep(2)}
         />
       )}
       {step === 2 && (
@@ -88,6 +88,7 @@ await supabase.from('users').update({ home_city: 'set' }).eq('id', userId)
           onBack={() => setStep(1)}
           onFinish={handleFinish}
           saving={saving}
+          requireOne={selectedTeams.length === 0}
         />
       )}
     </div>

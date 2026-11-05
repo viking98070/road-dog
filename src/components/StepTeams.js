@@ -387,7 +387,7 @@ function getTricode(league, team, isCollege) {
   return override || TEAM_TRICODES[team.short] || team.short.split(' ').map(w => w[0]).join('').slice(0, 3).toUpperCase()
 }
 
-export default function StepTeams({ selected, setSelected, onBack, onNext, stepNumber, totalSteps, hideFooter }) {
+export default function StepTeams({ selected, setSelected, onBack, onNext, onSkip, stepNumber, totalSteps, hideFooter }) {
   const [search, setSearch] = useState('')
   const searchRef = useRef(null)
   const [expandedLeague, setExpandedLeague] = useState(null)
@@ -439,7 +439,7 @@ export default function StepTeams({ selected, setSelected, onBack, onNext, stepN
           type="text"
           value={search}
           onChange={e => setSearch(e.target.value)}
-          placeholder="Search for any team..."
+          placeholder="Try 'Steelers' or 'Penn State'"
           style={{
             width: '100%',
             padding: '12px 40px 12px 14px',
@@ -643,8 +643,36 @@ export default function StepTeams({ selected, setSelected, onBack, onNext, stepN
 
       {!hideFooter && (
         <div className={styles.footer}>
-          <button className={styles.backBtn} onClick={onBack}>← Back</button>
-          <div className={styles.count}><b>{selected.length}</b> teams</div>
+          {/* Back only when there's somewhere to go back to (not on step 1). */}
+          {onBack
+            ? <button className={styles.backBtn} onClick={onBack}>← Back</button>
+            : <div style={{ minWidth: 1 }} />}
+
+          {selected.length === 0 ? (
+            // No teams yet: say what unlocks Continue, and give artist-only
+            // fans a way through — Road Dog builds shows-only trips too.
+            <div style={{ textAlign: 'center', lineHeight: 1.35 }}>
+              <div className={styles.count}>Pick at least one team</div>
+              {onSkip && (
+                <button
+                  type="button"
+                  onClick={onSkip}
+                  style={{
+                    background: 'transparent', border: 'none', padding: 0,
+                    color: 'var(--orange)', fontSize: 12, fontWeight: 600,
+                    cursor: 'pointer', fontFamily: 'var(--body)',
+                  }}
+                >
+                  Just here for shows? Skip →
+                </button>
+              )}
+            </div>
+          ) : (
+            <div className={styles.count}>
+              <b>{selected.length}</b> {selected.length === 1 ? 'team' : 'teams'}
+            </div>
+          )}
+
           <button
             className={styles.nextBtn}
             onClick={onNext}

@@ -2,7 +2,9 @@ import React, { useState, useEffect, useRef } from 'react'
 import { supabase } from '../lib/supabase'
 import styles from './Step.module.css'
 
-export default function StepShows({ selected, setSelected, onBack, onFinish, saving, hideFooter }) {
+// requireOne: set during onboarding when the user skipped teams, so they can't
+// finish with nothing followed (no teams AND no artists = no trips, ever).
+export default function StepShows({ selected, setSelected, onBack, onFinish, saving, hideFooter, requireOne }) {
   const [activeTab, setActiveTab] = useState('Music')
   const [activeGenre, setActiveGenre] = useState('All')
   const [query, setQuery] = useState('')
@@ -335,11 +337,13 @@ export default function StepShows({ selected, setSelected, onBack, onFinish, sav
       {!hideFooter && (
         <div className={styles.footer}>
           <button className={styles.backBtn} onClick={onBack}>← Back</button>
-          <div className={styles.count}><b>{selected.length}</b> selected</div>
+          {requireOne && selected.length === 0
+            ? <div className={styles.count} style={{ textAlign: 'center' }}>Pick at least one artist</div>
+            : <div className={styles.count}><b>{selected.length}</b> selected</div>}
           <button
             className={styles.nextBtn}
             onClick={() => onFinish(selected)}
-            disabled={saving}
+            disabled={saving || (requireOne && selected.length === 0)}
           >
             {saving ? 'Building your combos…' : 'Start your engines!'}
           </button>
