@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import styles from './ComboDetail.module.css'
+import AppNav from '../components/AppNav'
 
 const METRO_CLUSTERS = {
   'New York, NY': ['Bronx, NY', 'Brooklyn, NY', 'Queens, NY', 'Staten Island, NY', 'Newark, NJ', 'East Rutherford, NJ', 'Elmont, NY', 'Uniondale, NY'],
@@ -256,9 +257,9 @@ export default function ComboDetail({ combo, onBack }) {
 
   return (
     <div className={styles.page}>
-      <div className={styles.header}>
-        <button className={styles.back} onClick={onBack}>← Back</button>
-        <div className={styles.logo}>Road<span>Dog</span></div>
+      <AppNav />
+      <div style={{ padding: '14px 24px 0' }}>
+        <button className={styles.back} onClick={onBack}>← All trips</button>
       </div>
       <div className={styles.hero}>
         <div className={styles.heroCity}>{displayCity(combo)}</div>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import AppNav from '../components/AppNav'
 import { supabase } from '../lib/supabase'
 import ComboDetail from './ComboDetail'
 import styles from './Dashboard.module.css'
@@ -135,8 +135,6 @@ export default function Dashboard({ session }) {
   const [isWelcome, setIsWelcome] = useState(() => {
     try { return new URLSearchParams(window.location.search).get('welcome') === '1' } catch (_) { return false }
   })
-  const navigate = useNavigate()
-
   useEffect(() => {
     if (isWelcome) {
       try { window.history.replaceState(null, '', window.location.pathname) } catch (_) { /* ignore */ }
@@ -187,10 +185,6 @@ export default function Dashboard({ session }) {
     setActiveTab(current => hasTrips(current) ? current : (TABS.find(t => hasTrips(t.key))?.key || current))
 
     setLoading(false)
-  }
-
-  async function handleSignOut() {
-    await supabase.auth.signOut()
   }
 
   function formatDate(dateStr) {
@@ -304,28 +298,7 @@ export default function Dashboard({ session }) {
 
   return (
     <div className={styles.page}>
-      <header className={styles.header}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-          <button 
-            className={styles.signOut} 
-            onClick={() => navigate('/hub')}
-            style={{ background: 'transparent' }}
-          >
-            ← Hub
-          </button>
-          <div className={styles.logo}>Road<span>Dog</span></div>
-        </div>
-        <div style={{ display: 'flex', gap: 10 }}>
-          <button 
-            className={styles.signOut} 
-            onClick={() => navigate('/settings')}
-            style={{ background: 'transparent' }}
-          >
-            ⚙ My Picks
-          </button>
-          <button className={styles.signOut} onClick={handleSignOut}>Sign out</button>
-        </div>
-      </header>
+      <AppNav />
       <main className={styles.main}>
         <div className={styles.welcome}>
           <h1>Trips</h1>

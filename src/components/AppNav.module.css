@@ -1,0 +1,105 @@
+/* ---------- Top bar (all sizes) ---------- */
+.top {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 14px 24px;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  background: var(--bg);
+  z-index: 60;
+}
+
+.logo {
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: var(--head);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  line-height: 1;
+}
+.logo span { color: var(--orange); }
+
+.topTabs {
+  display: flex;
+  gap: 4px;
+  flex: 1;
+}
+
+.topTab {
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  cursor: pointer;
+  font-family: var(--head);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--text2);
+  transition: background 0.15s, color 0.15s;
+}
+.topTab:hover { color: var(--text); background: var(--surface); }
+.topTab.active { color: var(--orange); background: rgba(249, 115, 22, 0.10); }
+
+.signOut {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 7px 14px;
+  color: var(--text2);
+  font-size: 13px;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+.signOut:hover { border-color: var(--text2); color: var(--text); }
+
+/* ---------- Bottom tab bar (phones only) ---------- */
+.bottom { display: none; }
+
+@media (max-width: 640px) {
+  .top { padding: 10px 14px; gap: 12px; justify-content: space-between; }
+  .logo { font-size: 18px; }
+  .topTabs { display: none; }
+  .signOut { padding: 5px 10px; font-size: 12px; }
+
+  .bottom {
+    display: flex;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 60;
+    background: var(--bg);
+    border-top: 1px solid var(--border);
+    /* Keep clear of the iPhone home indicator when installed as an app. */
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .bottomTab {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    height: 60px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--text3);
+    font-family: var(--head);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+  }
+  .bottomTab.active { color: var(--orange); }
+}

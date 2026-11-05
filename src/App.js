@@ -7,7 +7,6 @@ import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import Onboarding from './pages/Onboarding'
 import Settings from './pages/Settings'
-import Hub from './pages/Hub'
 import WhosPlaying from './pages/WhosPlaying'
 import Legal from './pages/Legal'
 import ResetPassword from './pages/ResetPassword'
@@ -71,10 +70,10 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={session ? <Navigate to={hasOnboarded ? '/hub' : '/onboarding'} /> : <Home />} />
-        <Route path="/login" element={session ? <Navigate to={hasOnboarded ? '/hub' : '/onboarding'} /> : <Login />} />
+        <Route path="/" element={session ? <Navigate to={hasOnboarded ? '/trips' : '/onboarding'} /> : <Home />} />
+        <Route path="/login" element={session ? <Navigate to={hasOnboarded ? '/trips' : '/onboarding'} /> : <Login />} />
         <Route path="/onboarding" element={session ? <Onboarding session={session} /> : <Navigate to="/" />} />
-        <Route path="/hub" element={gateForOnboarding(<Hub session={session} />)} />
+        <Route path="/hub" element={<Navigate to="/trips" replace />} />
         <Route path="/trips" element={gateForOnboarding(<Dashboard session={session} />)} />
         <Route path="/combos" element={<Navigate to="/trips" replace />} />
         <Route path="/whos-playing" element={gateForOnboarding(<WhosPlaying session={session} />)} />

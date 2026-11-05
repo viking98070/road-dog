@@ -4,9 +4,10 @@ import { supabase } from '../lib/supabase'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 import styles from './Dashboard.module.css'
+import AppNav from '../components/AppNav'
 
-// Where the "Follow my teams" button goes. Change this if your team picker lives elsewhere.
-const FOLLOW_TEAMS_PATH = '/hub'
+// Where the "Follow my teams" button goes: the team picker on My Picks.
+const FOLLOW_TEAMS_PATH = '/settings'
 
 const ALL_LEAGUES = ['nfl', 'mlb', 'nba', 'nhl', 'mls', 'nwsl', 'wnba', 'cfb', 'mcbb', 'wcbb']
 
@@ -266,14 +267,7 @@ export default function WhosPlaying({ session }) {
 
   return (
     <div className={styles.page}>
-      <header className={styles.header}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-          <button className={styles.signOut} onClick={() => navigate('/hub')} style={{ background: 'transparent' }}>
-            ← Hub
-          </button>
-          <div className={styles.logo}>Road<span>Dog</span></div>
-        </div>
-      </header>
+      <AppNav />
 
       <main className={styles.main}>
         {/* ---------- Search as a sentence ---------- */}

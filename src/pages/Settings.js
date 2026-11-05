@@ -5,6 +5,7 @@ import StepTeams from '../components/StepTeams'
 import StepShows from '../components/StepShows'
 import StepCity from '../components/StepCity'
 import styles from './Dashboard.module.css'
+import AppNav from '../components/AppNav'
 
 const SECTIONS = [
   { key: 'teams', label: 'Teams' },
@@ -100,7 +101,7 @@ export default function Settings({ session }) {
     }
 
     setRebuilding(false)
-    navigate('/hub')
+    navigate('/trips')
   }
 
   if (loading) {
@@ -116,14 +117,9 @@ export default function Settings({ session }) {
 
   return (
     <div className={styles.page}>
-      <header className={styles.header}>
-        <div className={styles.logo}>Road<span>Dog</span></div>
-        <button className={styles.signOut} onClick={() => navigate('/hub')}>
-          ← Back to hub
-        </button>
-      </header>
+      <AppNav />
 
-      <main className={styles.main}>
+      <main className={styles.main} style={{ paddingBottom: 110 }}>
         <div className={styles.welcome}>
           <h1>Edit Preferences</h1>
           <p>Update your picks. We'll refresh your combos when you save.</p>
@@ -202,7 +198,7 @@ export default function Settings({ session }) {
         {/* Sticky save bar */}
         <div style={{
           position: 'fixed',
-          bottom: 0,
+          bottom: 'var(--bottom-nav-h, 0px)',
           left: 0,
           right: 0,
           background: 'var(--bg)',
@@ -214,7 +210,7 @@ export default function Settings({ session }) {
           zIndex: 100,
         }}>
           <button
-            onClick={() => navigate('/hub')}
+            onClick={() => navigate('/trips')}
             disabled={saving || rebuilding}
             style={{
               background: 'transparent',

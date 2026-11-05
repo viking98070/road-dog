@@ -26,3 +26,13 @@ button { cursor: pointer; font-family: var(--body); }
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+/* Bottom tab bar on phones (see components/AppNav). --bottom-nav-h lets
+   fixed elements, like the My Picks save bar, sit just above it. */
+:root { --bottom-nav-h: 0px; }
+@media (max-width: 640px) {
+  body.has-bottom-nav {
+    --bottom-nav-h: calc(60px + env(safe-area-inset-bottom));
+    padding-bottom: var(--bottom-nav-h);
+  }
+}
