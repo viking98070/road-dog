@@ -1,0 +1,6 @@
+{
+  "redirects": [
+    { "source": "/x/:post", "destination": "/?utm_source=x&utm_medium=social&utm_campaign=:post", "permanent": false },
+    { "source": "/ig/:post", "destination": "/?utm_source=instagram&utm_medium=social&utm_campaign=:post", "permanent": false }
+  ]
+}
