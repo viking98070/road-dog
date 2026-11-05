@@ -52,14 +52,14 @@ export default function Home() {
           Follow your teams and artists. Road Dog finds the weekends when
           everything lines up — and builds the trip around it.
         </p>
-        <div className={styles.pills}>
-          <span>🏈 Away games & must-see events</span>
-          <span>🎵 Live shows</span>
-          <span>🎤 Comedy</span>
-          <span>✈️ Trip planning</span>
-        </div>
+        <ul className={styles.features} aria-label="What Road Dog covers">
+          <li>🏈 Away games</li>
+          <li>🎵 Live shows</li>
+          <li>🎤 Comedy</li>
+          <li>✈️ Trip planning</li>
+        </ul>
         <button className={styles.cta} onClick={() => navigate('/login')}>
-          Get started
+          Find my trips
         </button>
         <div style={{ marginTop: 16, fontSize: 13, color: 'var(--text3)' }}>
           Already have an account?{' '}
@@ -69,6 +69,34 @@ export default function Home() {
           >
             Sign in
           </span>
+        </div>
+
+        <div className={styles.sample} aria-label="Example trip">
+          <div className={styles.sampleLabel}>Example trip</div>
+          <div className={styles.sampleCard}>
+            <div className={styles.sampleTop}>
+              <div>
+                <div className={styles.sampleCity}>Dallas, TX</div>
+                <div className={styles.sampleDates}>Fri – Sun · 3 days</div>
+              </div>
+              <span className={styles.sampleBadge}>🌭 Hot Dog</span>
+            </div>
+            <div className={styles.sampleEvent}>
+              <span className={styles.sampleDay}>Fri</span>
+              <span className={styles.sampleTag} style={{ background: '#0033A0' }}>NHL</span>
+              <span>Seattle Kraken @ Dallas Stars</span>
+            </div>
+            <div className={styles.sampleEvent}>
+              <span className={styles.sampleDay}>Sat</span>
+              <span className={styles.sampleTag} style={{ background: '#7B2D8B' }}>Music</span>
+              <span>Luke Combs</span>
+            </div>
+            <div className={styles.sampleEvent}>
+              <span className={styles.sampleDay}>Sun</span>
+              <span className={styles.sampleTag} style={{ background: '#013369' }}>NFL</span>
+              <span>Seattle Seahawks @ Dallas Cowboys</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
