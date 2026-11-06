@@ -60,6 +60,8 @@ export default function App() {
       .eq('id', userId)
       .single()
     setProfile(data)
+    // #36: record that this user opened the app (the database writes at most once an hour).
+    supabase.rpc('touch_last_seen').then(() => {}, () => {})
   }
   // Onboarding works with or without an account (it creates a guest account at
   // the end), so never swap it out for the loading screen mid-flow.
@@ -73,7 +75,8 @@ export default function App() {
   const isGuest = !!session?.user?.is_anonymous
   // Force not-yet-onboarded users into onboarding regardless of where they land
   function gateForOnboarding(component) {
-    if (!session) return <Navigate to="/" />
+    // Keep ?utm_… on the URL so analytics still sees where a signed-out visitor came from.
+    if (!session) return <Navigate to={'/' + window.location.search} />
     if (!hasOnboarded) return <Navigate to="/start" />
     return component
   }
