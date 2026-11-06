@@ -40,9 +40,9 @@
 .sub {
   font-size: 16px;
   color: var(--text2);
-  line-height: 1.7;
-  margin-bottom: 32px;
-  max-width: 400px;
+  line-height: 1.55;
+  margin-bottom: 26px;
+  max-width: 360px;
   margin-left: auto;
   margin-right: auto;
 }
@@ -79,7 +79,7 @@
 .cta { cursor: pointer; }
 
 /* Static example trip, styled like a real trip card. */
-.sample { margin-top: 40px; text-align: left; }
+.sample { margin-top: 28px; text-align: left; }
 .sampleLabel {
   font-family: var(--head); font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;
   color: var(--text3); margin-bottom: 8px; text-align: center;

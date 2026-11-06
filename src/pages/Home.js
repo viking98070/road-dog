@@ -44,20 +44,13 @@ export default function Home() {
         </button>
       </header>
       <div className={styles.hero}>
-        <div className={styles.eyebrow}>Road trips for sports &amp; music fans</div>
+        <div className={styles.eyebrow}>Sports &amp; music road trips</div>
         <h1 className={styles.headline}>
           Your game.<br /><span>Their city.</span>
         </h1>
         <p className={styles.sub}>
-          Follow your teams and artists. Road Dog finds the weekends when
-          everything lines up — and builds the trip around it.
+          Pick your teams and artists. We find the weekends they land in the same city.
         </p>
-        <ul className={styles.features} aria-label="What Road Dog covers">
-          <li>🏈 Away games</li>
-          <li>🎵 Live shows</li>
-          <li>🎤 Comedy</li>
-          <li>✈️ Trip planning</li>
-        </ul>
         <button className={styles.cta} onClick={() => navigate('/start')}>
           Find my trips
         </button>
