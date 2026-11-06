@@ -80,7 +80,7 @@ export default function SaveTrips({ source = 'payoff', compact = false, onSaved 
         <p style={head}>✉️ Check your email</p>
         <p style={{ ...sub, marginBottom: 0 }}>
           We sent a link to <strong style={{ color: 'var(--text)' }}>{email.trim()}</strong>. Tap it to
-          save your trips — after that we'll email you when new ones line up.
+          save your picks and turn on trip alerts.
         </p>
       </div>
     )
@@ -122,11 +122,11 @@ export default function SaveTrips({ source = 'payoff', compact = false, onSaved 
 
   return (
     <form style={box} onSubmit={submit}>
-      <p style={head}>{compact ? 'Your trips aren’t saved yet' : 'Save your trips'}</p>
+      <p style={head}>{compact ? 'Your picks aren’t saved yet' : 'Get alerts for new trips'}</p>
       <p style={sub}>
         {compact
-          ? 'Add your email to keep your picks and get an alert when new trips line up.'
-          : 'Add your email to keep your picks and get an alert when your teams and artists line up in the same city. No password needed.'}
+          ? 'Add your email to save your teams and artists, and we’ll let you know when new trips line up as schedules and tour dates come out.'
+          : 'Schedules and tour dates come out all year. Save your teams and artists, and we’ll email you the moment a new trip lines up. No password needed.'}
       </p>
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
         <input
@@ -139,12 +139,12 @@ export default function SaveTrips({ source = 'payoff', compact = false, onSaved 
           style={input}
         />
         <button type="submit" style={btn} disabled={state === 'sending'}>
-          {state === 'sending' ? 'Saving…' : 'Save my trips'}
+          {state === 'sending' ? 'Saving…' : 'Get trip alerts'}
         </button>
       </div>
       {error && <p style={{ color: '#f87171', fontSize: 13, margin: '10px 0 0' }}>{error}</p>}
       <p style={{ fontSize: 11.5, color: 'var(--text3)', margin: '10px 0 0' }}>
-        By saving you agree to our <a href="/terms" style={{ color: 'var(--text2)' }}>Terms</a> and{' '}
+        By continuing you agree to our <a href="/terms" style={{ color: 'var(--text2)' }}>Terms</a> and{' '}
         <a href="/privacy" style={{ color: 'var(--text2)' }}>Privacy Policy</a>.
       </p>
     </form>
