@@ -236,7 +236,7 @@ export default function ComboDetail({ combo, onBack }) {
     const ordered = [...nfl, ...rest]
     const lines = ordered.map(g => `${iconFor(g.primary)} ${titleFor(g.primary)}`)
     const body = lines.length ? '\n' + lines.join('\n') : ''
-    return `🌭 Found this trip on Road Dog:\n\n${city} · ${dates}${body}\n\nStack multiple games + shows into one trip → https://roaddogapp.com`
+    return `🌭 Found this trip on Road Dog:\n\n${city} · ${dates}${body}\n\nStack multiple games + shows into one trip → https://roaddogapp.com/?utm_source=share&utm_medium=friend&utm_campaign=trip-share`
   }
 
   function prefersNativeShare() {

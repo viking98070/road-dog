@@ -328,6 +328,11 @@ export default function Dashboard({ session }) {
         <div className={styles.welcome}>
           <h1>Trips</h1>
           <p>Away games and shows that line up in the same city.</p>
+          {combos.some(c => (c.score ?? 0) >= 4) && (
+            <p style={{ fontSize: 13, color: 'var(--text3)', marginTop: 6 }}>
+              <span style={{ color: '#FB923C', fontWeight: 700 }}>🌭 Hot Dog</span> = one of your best trips: your events packed close together in one city.
+            </p>
+          )}
         </div>
 
         {isGuest && !loading && (
