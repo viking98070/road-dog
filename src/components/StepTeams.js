@@ -3,16 +3,6 @@ import styles from './Step.module.css'
 
 const TEAM_SPORTS = ['nfl', 'cfb', 'mlb', 'nba', 'nhl', 'mcbb', 'wcbb', 'mls', 'nwsl', 'wnba']
 
-// One-tap picks shown above "Browse by league" during onboarding, so most
-// people find their team without searching. Football-heavy on purpose (it's
-// what Road Dog promotes in the fall). [league, short name]
-const POPULAR = [
-  ['nfl', 'Cowboys'], ['nfl', 'Steelers'], ['nfl', 'Eagles'], ['nfl', 'Chiefs'],
-  ['nfl', 'Packers'], ['nfl', 'Bears'], ['nfl', '49ers'], ['nfl', 'Bills'],
-  ['cfb', 'Alabama'], ['cfb', 'Ohio State'], ['cfb', 'Michigan'], ['cfb', 'Texas'],
-  ['cfb', 'Georgia'], ['cfb', 'Notre Dame'],
-  ['nba', 'Lakers'], ['nba', 'Warriors'], ['mlb', 'Yankees'], ['mlb', 'Dodgers'],
-]
 
 const TEAMS = {
   nfl: [
@@ -398,7 +388,7 @@ function getTricode(league, team, isCollege) {
   return override || TEAM_TRICODES[team.short] || team.short.split(' ').map(w => w[0]).join('').slice(0, 3).toUpperCase()
 }
 
-export default function StepTeams({ selected, setSelected, onBack, onNext, onSkip, stepNumber, totalSteps, hideFooter, showPopular }) {
+export default function StepTeams({ selected, setSelected, onBack, onNext, onSkip, stepNumber, totalSteps, hideFooter }) {
   const [search, setSearch] = useState('')
   const searchRef = useRef(null)
   const [expandedLeague, setExpandedLeague] = useState(null)
@@ -591,54 +581,12 @@ export default function StepTeams({ selected, setSelected, onBack, onNext, onSki
         </div>
       )}
 
-      {/* Popular one-tap picks (onboarding only) */}
-      {showPopular && !search && (
-        <div style={{ marginBottom: 14 }}>
-          <div style={{
-            fontSize: 11, color: 'var(--text3)', textTransform: 'uppercase',
-            letterSpacing: 0.5, fontFamily: 'var(--head)', marginBottom: 8,
-          }}>
-            Popular
-          </div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-            {POPULAR.map(([league, short]) => {
-              const team = (TEAMS[league] || []).find(t => t.short === short)
-              if (!team) return null
-              const isCollege = ['cfb', 'mcbb', 'wcbb'].includes(league)
-              const sel = isSelected(league, team)
-              return (
-                <button
-                  key={`${league}:${short}`}
-                  type="button"
-                  onClick={() => toggle(league, team)}
-                  style={{
-                    display: 'inline-flex', alignItems: 'center', gap: 7,
-                    padding: '5px 12px 5px 5px', borderRadius: 999, cursor: 'pointer',
-                    background: sel ? '#1f0f00' : 'var(--surface)',
-                    border: `1px solid ${sel ? 'var(--orange)' : 'var(--border)'}`,
-                    color: 'var(--text)', fontSize: 13.5, fontWeight: 600, fontFamily: 'var(--body)',
-                  }}
-                >
-                  <span style={{
-                    width: 24, height: 24, borderRadius: '50%', background: getColor(league, team, isCollege),
-                    display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                    fontFamily: 'var(--head)', fontSize: 8.5, fontWeight: 700, color: '#fff', flexShrink: 0,
-                  }}>{getTricode(league, team, isCollege)}</span>
-                  {short}
-                  {sel && <span style={{ color: 'var(--orange)', fontWeight: 700 }}>✓</span>}
-                </button>
-              )
-            })}
-          </div>
-        </div>
-      )}
-
       {/* Browse by league */}
       <div style={{
         fontSize: 11, color: 'var(--text3)', textTransform: 'uppercase',
         letterSpacing: 0.5, fontFamily: 'var(--head)', marginBottom: 8, marginTop: 8,
       }}>
-        {showPopular ? 'Or browse by league' : 'Browse by league'}
+        Browse by league
       </div>
 
       <div style={{ overflowY: 'auto', flex: 1, paddingBottom: 16 }}>

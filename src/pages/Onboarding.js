@@ -63,30 +63,25 @@ function isMyTeamEvent(e, teams) {
   ))
 }
 
-// The 3 trips to show on the results screen: start at least a week out (so
-// they're plannable), different cities, and — if they picked teams — at
-// least one with their team in it, football first. Falls back gracefully.
+// The 3 trips to show on the results screen: the highest-scoring trips that
+// start at least a week out (so they're plannable). Same-city trips are fine —
+// several of your teams in one city is exactly what a great trip looks like.
+// If they picked teams but none of the 3 includes one, the best trip that does
+// takes the last spot (football first).
 function pickTop(combos, teams) {
   const soon = addDays(todayStr(), 7)
   let pool = combos.filter(c => c.start_date >= soon)
   if (pool.length < 3) pool = combos
-  const chosen = []
-  const cities = new Set()
-  if (teams.length) {
-    const hasMine = football => c => (c.events || []).some(e => isMyTeamEvent(e, teams) && (!football || ['nfl', 'cfb'].includes(e.league_key)))
-    const first = pool.find(hasMine(true)) || pool.find(hasMine(false))
-    if (first) { chosen.push(first); cities.add(cityOf(first)) }
+  const top = pool.slice(0, 3)
+  if (teams.length && top.length === 3) {
+    const mine = c => (c.events || []).some(e => isMyTeamEvent(e, teams))
+    if (!top.some(mine)) {
+      const fb = c => (c.events || []).some(e => isMyTeamEvent(e, teams) && ['nfl', 'cfb'].includes(e.league_key))
+      const swap = pool.find(fb) || pool.find(mine)
+      if (swap) top[2] = swap
+    }
   }
-  for (const c of pool) {
-    if (chosen.length >= 3) break
-    if (chosen.includes(c) || cities.has(cityOf(c))) continue
-    chosen.push(c); cities.add(cityOf(c))
-  }
-  for (const c of pool) {
-    if (chosen.length >= 3) break
-    if (!chosen.includes(c)) chosen.push(c)
-  }
-  return chosen.sort((a, b) => (b.score ?? 0) - (a.score ?? 0) || a.start_date.localeCompare(b.start_date))
+  return top
 }
 
 function UpcomingList({ events }) {
@@ -373,7 +368,6 @@ export default function Onboarding({ session }) {
 
       {step === 1 && (
         <StepTeams
-          showPopular
           stepNumber={1}
           totalSteps={2}
           selected={selectedTeams}

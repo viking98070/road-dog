@@ -21,9 +21,8 @@ const GENRES = [
 const NAMED_GENRES = GENRES.map(g => g.match).filter(m => m && m !== '__other__')
 
 export default function StepShows({ selected, setSelected, onBack, onFinish, saving, hideFooter, requireOne, stepNumber, totalSteps }) {
-  // Opens on Music (top touring acts) — Fan favorites reflects a small user
-  // base for now, so it's a tab, not the first thing a stranger sees.
-  const [activeTab, setActiveTab] = useState('Music')
+  // Opens on "Fan favorites" when there are enough of them (see below).
+  const [activeTab, setActiveTab] = useState('Fans')
   const [activeGenre, setActiveGenre] = useState('All')
   const [query, setQuery] = useState('')
   const [searchResults, setSearchResults] = useState([])
@@ -306,6 +305,15 @@ export default function StepShows({ selected, setSelected, onBack, onFinish, sav
 
       {/* Fan favorites / Music / Comedy tabs */}
       <div className={styles.tabs} style={{ overflowX: 'auto', flexWrap: 'nowrap' }}>
+        {showFansTab && (
+          <div
+            className={`${styles.tab} ${tab === 'Fans' ? styles.tabActive : ''}`}
+            onClick={() => setActiveTab('Fans')}
+            style={{ whiteSpace: 'nowrap' }}
+          >
+            ⭐ Fan favorites
+          </div>
+        )}
         <div
           className={`${styles.tab} ${tab === 'Music' ? styles.tabActive : ''}`}
           onClick={() => setActiveTab('Music')}
@@ -320,15 +328,6 @@ export default function StepShows({ selected, setSelected, onBack, onFinish, sav
         >
           😂 Comedy
         </div>
-        {showFansTab && (
-          <div
-            className={`${styles.tab} ${tab === 'Fans' ? styles.tabActive : ''}`}
-            onClick={() => setActiveTab('Fans')}
-            style={{ whiteSpace: 'nowrap' }}
-          >
-            ⭐ Fan favorites
-          </div>
-        )}
       </div>
 
       {tab === 'Music' && (
