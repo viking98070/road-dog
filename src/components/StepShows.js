@@ -36,7 +36,10 @@ export default function StepShows({ selected, setSelected, onBack, onFinish, sav
   useEffect(() => {
     supabase
       .from('popular_artists')
-      .select('attraction_id, name, segment, genre, image, upcoming_events_count')
+      .select('attraction_id, name, segment, genre, image, upcoming_events_count, popularity_rank')
+      // Most popular touring acts first (set by the weekly refresh; see
+      // populate-popular-artists). Older rows without a rank fall back to show count.
+      .order('popularity_rank', { ascending: true, nullsFirst: false })
       .order('upcoming_events_count', { ascending: false })
       .then(({ data, error }) => {
         if (!error && data) setPopular(data)
