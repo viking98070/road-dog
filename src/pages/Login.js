@@ -31,7 +31,7 @@ export default function Login() {
     resetMessages()
     const { error } = await supabase.auth.signInWithOtp({
       email,
-      options: { emailRedirectTo: window.location.origin + '/hub' }
+      options: { emailRedirectTo: window.location.origin + '/trips' }
     })
     if (error) setError(error.message)
     else setMagicSent(true)
@@ -63,7 +63,7 @@ export default function Login() {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
-      options: { emailRedirectTo: window.location.origin + '/hub' }
+      options: { emailRedirectTo: window.location.origin + '/trips' }
     })
     if (error) {
       setError(error.message)
@@ -264,6 +264,11 @@ export default function Login() {
             </div>
           </>
         )}
+
+        <p style={{ textAlign: 'center', fontSize: 13, color: 'var(--text3)', margin: '18px 0 0' }}>
+          New to Road Dog?{' '}
+          <Link to="/start" style={{ color: 'var(--orange)', fontWeight: 600 }}>Pick your teams first →</Link>
+        </p>
 
         <p className={styles.legal}>
           By continuing you agree to our{' '}

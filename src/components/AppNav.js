@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import styles from './AppNav.module.css'
@@ -27,6 +27,17 @@ export default function AppNav() {
     return () => document.body.classList.remove('has-bottom-nav')
   }, [])
 
+  // Guests (picked teams, no email yet) get "Sign in" instead of "Sign out" —
+  // signing a guest out would throw away their picks.
+  const [isGuest, setIsGuest] = useState(false)
+  useEffect(() => {
+    let alive = true
+    supabase.auth.getSession().then(({ data }) => {
+      if (alive) setIsGuest(!!data?.session?.user?.is_anonymous)
+    })
+    return () => { alive = false }
+  }, [])
+
   const isActive = path => pathname === path || pathname.startsWith(path + '/')
 
   async function signOut() {
@@ -53,7 +64,9 @@ export default function AppNav() {
           ))}
         </nav>
 
-        <button className={styles.signOut} onClick={signOut}>Sign out</button>
+        {isGuest
+          ? <button className={styles.signOut} onClick={() => navigate('/login')}>Sign in</button>
+          : <button className={styles.signOut} onClick={signOut}>Sign out</button>}
       </header>
 
       <nav className={styles.bottom} aria-label="Main">

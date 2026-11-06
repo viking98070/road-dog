@@ -10,6 +10,9 @@ import Settings from './pages/Settings'
 import WhosPlaying from './pages/WhosPlaying'
 import Legal from './pages/Legal'
 import ResetPassword from './pages/ResetPassword'
+import { captureUtm } from './lib/track'
+
+captureUtm()
 function LoadingScreen() {
   return (
     <div
@@ -53,26 +56,35 @@ export default function App() {
   async function loadProfile(userId) {
     const { data } = await supabase
       .from('users')
-      .select('home_city')
+      .select('home_city, onboarded_at')
       .eq('id', userId)
       .single()
     setProfile(data)
   }
+  // Onboarding works with or without an account (it creates a guest account at
+  // the end), so never swap it out for the loading screen mid-flow.
+  const path = window.location.pathname
+  const onOnboarding = path === '/start' || path === '/onboarding'
   if (session === undefined) return <LoadingScreen />
-  if (session && profile === null) return <LoadingScreen />
-  const hasOnboarded = profile?.home_city
+  if (session && profile === null && !onOnboarding) return <LoadingScreen />
+  // onboarded_at is the real flag; home_city = 'set' covers accounts from before it existed.
+  const hasOnboarded = !!(profile?.onboarded_at || profile?.home_city)
+  // Guests: picked teams without an account yet (Supabase anonymous sign-in).
+  const isGuest = !!session?.user?.is_anonymous
   // Force not-yet-onboarded users into onboarding regardless of where they land
   function gateForOnboarding(component) {
     if (!session) return <Navigate to="/" />
-    if (!hasOnboarded) return <Navigate to="/onboarding" />
+    if (!hasOnboarded) return <Navigate to="/start" />
     return component
   }
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={session ? <Navigate to={hasOnboarded ? '/trips' : '/onboarding'} /> : <Home />} />
-        <Route path="/login" element={session ? <Navigate to={hasOnboarded ? '/trips' : '/onboarding'} /> : <Login />} />
-        <Route path="/onboarding" element={session ? <Onboarding session={session} /> : <Navigate to="/" />} />
+        <Route path="/" element={session ? <Navigate to={hasOnboarded ? '/trips' : '/start'} /> : <Home />} />
+        {/* Guests can still reach Login to get into an existing account. */}
+        <Route path="/login" element={session && !isGuest ? <Navigate to={hasOnboarded ? '/trips' : '/start'} /> : <Login />} />
+        <Route path="/start" element={<Onboarding session={session} />} />
+        <Route path="/onboarding" element={<Onboarding session={session} />} />
         <Route path="/hub" element={<Navigate to="/trips" replace />} />
         <Route path="/trips" element={gateForOnboarding(<Dashboard session={session} />)} />
         <Route path="/combos" element={<Navigate to="/trips" replace />} />

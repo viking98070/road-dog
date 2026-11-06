@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import SaveTrips from '../components/SaveTrips'
 import AppNav from '../components/AppNav'
 import { supabase } from '../lib/supabase'
 import ComboDetail from './ComboDetail'
@@ -135,6 +136,20 @@ export default function Dashboard({ session }) {
   const [isWelcome, setIsWelcome] = useState(() => {
     try { return new URLSearchParams(window.location.search).get('welcome') === '1' } catch (_) { return false }
   })
+  // Guest = picked teams but hasn't added an email yet. pendingEmail = they
+  // entered one but haven't tapped the confirmation link.
+  const isGuest = !!session?.user?.is_anonymous
+  const [pendingEmail, setPendingEmail] = useState(session?.user?.new_email || '')
+  const [justSaved] = useState(() => {
+    try { return new URLSearchParams(window.location.search).get('saved') === '1' } catch (_) { return false }
+  })
+  const [savedDismissed, setSavedDismissed] = useState(false)
+  useEffect(() => {
+    if (justSaved) {
+      try { window.history.replaceState(null, '', window.location.pathname) } catch (_) { /* ignore */ }
+    }
+  }, [justSaved])
+
   useEffect(() => {
     if (isWelcome) {
       try { window.history.replaceState(null, '', window.location.pathname) } catch (_) { /* ignore */ }
@@ -304,6 +319,48 @@ export default function Dashboard({ session }) {
           <h1>Trips</h1>
           <p>Away games and shows that line up in the same city.</p>
         </div>
+
+        {isGuest && !loading && (
+          <div style={{ marginBottom: 20 }}>
+            {pendingEmail ? (
+              <div style={{
+                background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 14,
+                padding: '14px 16px', fontSize: 13.5, color: 'var(--text2)', lineHeight: 1.45,
+              }}>
+                <strong style={{ color: 'var(--text)' }}>✉️ Almost saved.</strong> Tap the link we sent to{' '}
+                <strong style={{ color: 'var(--text)' }}>{pendingEmail}</strong> to keep your trips and turn on alerts.{' '}
+                <button
+                  onClick={() => setPendingEmail('')}
+                  style={{ background: 'none', border: 'none', color: 'var(--orange)', fontWeight: 600, cursor: 'pointer', padding: 0, fontSize: 13.5 }}
+                >
+                  Use a different email
+                </button>
+              </div>
+            ) : (
+              <SaveTrips source="banner" compact onSaved={setPendingEmail} />
+            )}
+          </div>
+        )}
+
+        {justSaved && !isGuest && !savedDismissed && !loading && (
+          <div style={{
+            display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12,
+            background: 'rgba(249,115,22,0.10)', border: '1px solid rgba(249,115,22,0.45)',
+            borderRadius: 12, padding: '14px 16px', marginBottom: 20,
+          }}>
+            <div>
+              <div style={{ fontFamily: 'var(--head)', fontSize: 18, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5, color: 'var(--text)' }}>
+                Your trips are saved 🌭
+              </div>
+              <div style={{ fontSize: 13, color: 'var(--text2)', marginTop: 4 }}>
+                We'll email you when new ones line up. Sign in any time with a link sent to your email.
+              </div>
+            </div>
+            <button onClick={() => setSavedDismissed(true)} aria-label="Dismiss" style={{
+              background: 'transparent', border: 'none', color: 'var(--text3)', fontSize: 20, lineHeight: 1, cursor: 'pointer', padding: 2, flexShrink: 0,
+            }}>×</button>
+          </div>
+        )}
 
         {isWelcome && !loading && (
           <div style={{

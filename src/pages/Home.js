@@ -58,10 +58,13 @@ export default function Home() {
           <li>🎤 Comedy</li>
           <li>✈️ Trip planning</li>
         </ul>
-        <button className={styles.cta} onClick={() => navigate('/login')}>
+        <button className={styles.cta} onClick={() => navigate('/start')}>
           Find my trips
         </button>
-        <div style={{ marginTop: 16, fontSize: 13, color: 'var(--text3)' }}>
+        <div style={{ marginTop: 10, fontSize: 13, color: 'var(--text3)' }}>
+          Free · no sign-up needed to look
+        </div>
+        <div style={{ marginTop: 8, fontSize: 13, color: 'var(--text3)' }}>
           Already have an account?{' '}
           <span
             onClick={() => navigate('/login')}
