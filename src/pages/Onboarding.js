@@ -45,15 +45,12 @@ function cityOf(c) {
   return `${uniq[0]}, ${uniq[1]} +${uniq.length - 2} more`
 }
 
-function TripCard({ combo, blurred }) {
+function TripCard({ combo }) {
   return (
     <div
-      aria-hidden={blurred || undefined}
       style={{
-        background: 'var(--surface)', border: `1px solid ${blurred ? 'var(--border)' : 'rgba(249,115,22,0.55)'}`,
+        background: 'var(--surface)', border: '1px solid var(--border)',
         borderRadius: 14, padding: '16px 16px 12px', marginBottom: 10,
-        filter: blurred ? 'blur(5px)' : 'none', opacity: blurred ? 0.55 : 1,
-        userSelect: blurred ? 'none' : 'auto', pointerEvents: blurred ? 'none' : 'auto',
       }}
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, alignItems: 'flex-start' }}>
@@ -87,8 +84,7 @@ function TripCard({ combo, blurred }) {
 }
 
 function Payoff({ isGuest, combos }) {
-  const best = combos[0]
-  const rest = combos.slice(1, 3)
+  const top = combos.slice(0, 3)
   const n = combos.length
 
   function goToTrips(skipped) {
@@ -103,22 +99,14 @@ function Payoff({ isGuest, combos }) {
       </h1>
       <p style={{ fontSize: 14.5, color: 'var(--text2)', margin: '0 0 20px', lineHeight: 1.45 }}>
         {n > 0
-          ? (n === 1 ? 'Here it is:' : 'Here’s the best one:')
+          ? (n === 1 ? 'Here it is:' : n <= 3 ? 'Here they are:' : 'Here are your top 3:')
           : 'Nothing lines up yet. Road Dog checks every day and finds new trips as schedules come out.'}
       </p>
 
-      {best && <TripCard combo={best} />}
-      {rest.length > 0 && (
-        <div style={{ position: 'relative' }}>
-          {rest.map(c => <TripCard key={c.id} combo={c} blurred />)}
-          {n > 1 && (
-            <div style={{
-              position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontFamily: 'var(--head)', fontWeight: 700, fontSize: 15, letterSpacing: 0.5, textTransform: 'uppercase', color: 'var(--text)',
-            }}>
-              + {n - 1} more {n - 1 === 1 ? 'trip' : 'trips'}
-            </div>
-          )}
+      {top.map(c => <TripCard key={c.id} combo={c} />)}
+      {n > top.length && (
+        <div style={{ textAlign: 'center', fontSize: 13.5, color: 'var(--text2)', margin: '4px 0 0' }}>
+          + {n - top.length} more {n - top.length === 1 ? 'trip' : 'trips'}
         </div>
       )}
 
