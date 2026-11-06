@@ -144,7 +144,7 @@ export default function StepShows({ selected, setSelected, onBack, onFinish, sav
           </div>
         )}
         <h1 className={styles.title}>Shows</h1>
-        <p className={styles.sub}>Search for artists or comedians, or pick from popular options below.</p>
+        <p className={styles.sub}>Search any artist or comedian, or pick from who’s on tour below.</p>
       </div>
 
       {/* Search box */}
@@ -310,7 +310,7 @@ export default function StepShows({ selected, setSelected, onBack, onFinish, sav
         marginTop: 8,
         fontFamily: 'var(--head)',
       }}>
-        Popular right now
+        {tab === 'Fans' ? 'Popular on Road Dog' : 'On tour now'}
       </div>
 
       {/* Fan favorites / Music / Comedy tabs */}
