@@ -45,11 +45,79 @@ function cityOf(c) {
   return `${uniq[0]}, ${uniq[1]} +${uniq.length - 2} more`
 }
 
+function addDays(dateStr, n) {
+  const d = new Date(dateStr + 'T12:00:00')
+  d.setDate(d.getDate() + n)
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}
+const normSchool = x => (x || '').toLowerCase().replace(/\bst\.?(\s|$)/g, 'state$1').trim()
+const COLLEGE = ['cfb', 'mcbb', 'wcbb']
+
+// Is this event one of the teams the person just picked?
+function isMyTeamEvent(e, teams) {
+  if (e.type !== 'sport') return false
+  return teams.some(t => t.league === e.league_key && (
+    COLLEGE.includes(t.league)
+      ? normSchool(e.away_school) === normSchool(t.name) || normSchool(e.home_school) === normSchool(t.name)
+      : e.away_team === t.name || e.home_team === t.name
+  ))
+}
+
+// The 3 trips to show on the results screen: start at least a week out (so
+// they're plannable), different cities, and — if they picked teams — at
+// least one with their team in it, football first. Falls back gracefully.
+function pickTop(combos, teams) {
+  const soon = addDays(todayStr(), 7)
+  let pool = combos.filter(c => c.start_date >= soon)
+  if (pool.length < 3) pool = combos
+  const chosen = []
+  const cities = new Set()
+  if (teams.length) {
+    const hasMine = football => c => (c.events || []).some(e => isMyTeamEvent(e, teams) && (!football || ['nfl', 'cfb'].includes(e.league_key)))
+    const first = pool.find(hasMine(true)) || pool.find(hasMine(false))
+    if (first) { chosen.push(first); cities.add(cityOf(first)) }
+  }
+  for (const c of pool) {
+    if (chosen.length >= 3) break
+    if (chosen.includes(c) || cities.has(cityOf(c))) continue
+    chosen.push(c); cities.add(cityOf(c))
+  }
+  for (const c of pool) {
+    if (chosen.length >= 3) break
+    if (!chosen.includes(c)) chosen.push(c)
+  }
+  return chosen.sort((a, b) => (b.score ?? 0) - (a.score ?? 0) || a.start_date.localeCompare(b.start_date))
+}
+
+function UpcomingList({ events }) {
+  return (
+    <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 14, padding: '6px 16px' }}>
+      {events.map((e, i) => {
+        const t = tag(e)
+        return (
+          <div key={e.id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 0', borderTop: i ? '1px solid var(--border)' : 'none', fontSize: 13.5, color: 'var(--text)' }}>
+            <span style={{ width: 82, flexShrink: 0, color: 'var(--text3)', fontSize: 12 }}>{fmtDay(e.event_date)}</span>
+            <span style={{ background: t.color, color: '#fff', fontSize: 10, fontWeight: 700, padding: '2px 6px', borderRadius: 4, flexShrink: 0 }}>{t.label}</span>
+            <span style={{ minWidth: 0, flex: 1 }}>
+              <span style={{ display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{describe(e)}</span>
+              {e.city && <span style={{ display: 'block', fontSize: 12, color: 'var(--text3)' }}>{e.city}{e.state ? `, ${e.state}` : ''}</span>}
+            </span>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
 function TripCard({ combo }) {
   return (
     <div
+      role="button"
+      tabIndex={0}
+      onClick={() => { window.location.href = `/trips?trip=${combo.id}` }}
+      onKeyDown={e => { if (e.key === 'Enter') window.location.href = `/trips?trip=${combo.id}` }}
       style={{
-        background: 'var(--surface)', border: '1px solid var(--border)',
+        background: 'var(--surface)', border: '1px solid var(--border)', cursor: 'pointer',
         borderRadius: 14, padding: '16px 16px 12px', marginBottom: 10,
       }}
     >
@@ -79,12 +147,12 @@ function TripCard({ combo }) {
           )
         })}
       </div>
+      <div style={{ textAlign: 'right', fontSize: 12.5, color: 'var(--orange)', fontWeight: 600, marginTop: 6 }}>Details →</div>
     </div>
   )
 }
 
-function Payoff({ isGuest, combos }) {
-  const top = combos.slice(0, 3)
+function Payoff({ isGuest, combos, top, upcoming, hasTeams, hasShows, onAddTeams, onAddShows }) {
   const n = combos.length
 
   function goToTrips(skipped) {
@@ -95,13 +163,41 @@ function Payoff({ isGuest, combos }) {
   return (
     <div style={{ maxWidth: 640, margin: '0 auto', width: '100%', padding: '28px 20px 48px' }}>
       <h1 style={{ fontFamily: 'var(--head)', fontSize: 30, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, margin: '0 0 6px', color: 'var(--text)' }}>
-        {n > 0 ? `We found ${n} ${n === 1 ? 'trip' : 'trips'} 🌭` : 'You’re all set 🌭'}
+        {n > 0 ? `We found ${n} ${n === 1 ? 'trip' : 'trips'} 🌭` : 'Here’s what’s coming up 🌭'}
       </h1>
       <p style={{ fontSize: 14.5, color: 'var(--text2)', margin: '0 0 20px', lineHeight: 1.45 }}>
         {n > 0
           ? (n === 1 ? 'Here it is:' : n <= 3 ? 'Here they are:' : 'Here are your top 3:')
-          : 'Nothing lines up yet. Road Dog checks every day and finds new trips as schedules come out.'}
+          : upcoming.length
+            ? 'None of your picks share a city yet, so there’s no trip — but here’s what’s next. Trips show up the moment two of them line up.'
+            : 'Nothing on the calendar yet for your picks. Road Dog checks every day and finds trips as schedules and tour dates come out.'}
       </p>
+
+      {n === 0 && upcoming.length > 0 && <UpcomingList events={upcoming} />}
+
+      {n === 0 && (
+        <div style={{
+          marginTop: 14, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap',
+          background: 'rgba(249,115,22,0.10)', border: '1px solid rgba(249,115,22,0.45)', borderRadius: 12, padding: '12px 14px',
+        }}>
+          <div style={{ fontSize: 14, color: 'var(--text)', lineHeight: 1.4, flex: '1 1 220px' }}>
+            {!hasTeams
+              ? '🏈 Add a team or two — games plus shows is where trips line up.'
+              : !hasShows
+                ? '🎵 Add an artist or comedian to find more trips around your games.'
+                : '➕ Add a few more teams or artists to find more trips.'}
+          </div>
+          <button
+            onClick={!hasTeams || hasShows ? onAddTeams : onAddShows}
+            style={{
+              background: 'var(--orange)', color: '#0F0F0F', border: 'none', borderRadius: 10, padding: '10px 16px',
+              fontFamily: 'var(--head)', fontWeight: 700, fontSize: 14, letterSpacing: 0.3, cursor: 'pointer', whiteSpace: 'nowrap',
+            }}
+          >
+            {!hasTeams ? 'Add teams →' : !hasShows ? 'Add artists →' : 'Add more →'}
+          </button>
+        </div>
+      )}
 
       {top.map(c => <TripCard key={c.id} combo={c} />)}
       {n > top.length && (
@@ -212,7 +308,10 @@ export default function Onboarding({ session }) {
     }
 
     // Load what we found for the payoff screen.
+    const EVENT_COLS = 'id, away_team, home_team, away_school, home_school, league_key, artist_name, type, event_date, parent_event, neutral_site, city, state'
     let combos = []
+    let top = []
+    let upcoming = []
     const { data: comboData } = await supabase
       .from('trip_combos')
       .select('id, city, cities, start_date, end_date, score, event_ids')
@@ -221,22 +320,38 @@ export default function Onboarding({ session }) {
       .order('score', { ascending: false })
       .order('start_date', { ascending: true })
     if (comboData && comboData.length) {
-      const ids = [...new Set(comboData.slice(0, 3).flatMap(c => c.event_ids || []))]
-      const { data: evs } = await supabase
-        .from('events')
-        .select('id, away_team, home_team, league_key, artist_name, type, event_date, parent_event, neutral_site')
-        .in('id', ids)
+      // Events for the best ~40 trips are enough to choose and draw the top 3.
+      const ids = [...new Set(comboData.slice(0, 40).flatMap(c => c.event_ids || []))].slice(0, 300)
+      const { data: evs } = await supabase.from('events').select(EVENT_COLS).in('id', ids)
       const byId = {}
       for (const e of evs || []) byId[e.id] = e
-      combos = comboData.map((c, i) => ({
+      combos = comboData.map(c => ({
         ...c,
-        events: i < 3 ? (c.event_ids || []).map(id => byId[id]).filter(Boolean).sort((a, b) => a.event_date.localeCompare(b.event_date)) : [],
+        events: (c.event_ids || []).map(id => byId[id]).filter(Boolean).sort((a, b) => a.event_date.localeCompare(b.event_date)),
       }))
+      top = pickTop(combos.filter(c => c.events.length), selectedTeams)
+    } else {
+      // No trips: show their artists' next shows and their teams' next road games instead.
+      const today = todayStr()
+      const showNames = allShows.map(x => (typeof x === 'string' ? x : x.name)).filter(Boolean)
+      const pro = selectedTeams.filter(t => !COLLEGE.includes(t.league)).map(t => t.name)
+      const schools = selectedTeams.filter(t => COLLEGE.includes(t.league))
+        .flatMap(t => [t.name, t.name.replace(/ St\.$/, ' State')])
+      const queries = []
+      if (showNames.length) queries.push(supabase.from('events').select(EVENT_COLS).in('artist_name', showNames).gte('event_date', today).order('event_date').limit(8))
+      if (pro.length) queries.push(supabase.from('events').select(EVENT_COLS).in('away_team', pro).gte('event_date', today).order('event_date').limit(8))
+      if (schools.length) queries.push(supabase.from('events').select(EVENT_COLS).in('away_school', schools).gte('event_date', today).order('event_date').limit(8))
+      const results = await Promise.all(queries)
+      const seen = new Set()
+      upcoming = results.flatMap(r => r.data || [])
+        .filter(e => !seen.has(e.id) && seen.add(e.id))
+        .sort((a, b) => a.event_date.localeCompare(b.event_date))
+        .slice(0, 6)
     }
 
     trackStep('saw_trips', { trips: combos.length })
     setSaving(false)
-    setResult({ isGuest: !!user.is_anonymous, combos })
+    setResult({ isGuest: !!user.is_anonymous, combos, top, upcoming })
     setStep(3)
   }
 
@@ -244,17 +359,21 @@ export default function Onboarding({ session }) {
     <div className={styles.page}>
       <div className={styles.header}>
         <a href="/" className={styles.logo} style={{ textDecoration: 'none' }}>Road<span>Dog</span></a>
-        <div className={styles.steps}>
-          <div className={`${styles.step} ${step >= 1 ? styles.active : ''}`}>1</div>
-          <div className={styles.stepLine} />
-          <div className={`${styles.step} ${step >= 2 ? styles.active : ''}`}>2</div>
-          <div className={styles.stepLine} />
-          <div className={`${styles.step} ${step >= 3 ? styles.active : ''}`}>✓</div>
+        <div className={styles.steps} aria-label="Progress">
+          {['Teams', 'Shows', 'Trips'].map((label, i) => (
+            <React.Fragment key={label}>
+              {i > 0 && <div className={styles.stepLine} />}
+              <div className={`${styles.stepLabel} ${step === i + 1 ? styles.labelCurrent : step > i + 1 ? styles.labelDone : ''}`}>
+                {step > i + 1 ? '✓ ' : ''}{label}
+              </div>
+            </React.Fragment>
+          ))}
         </div>
       </div>
 
       {step === 1 && (
         <StepTeams
+          showPopular
           stepNumber={1}
           totalSteps={2}
           selected={selectedTeams}
@@ -285,7 +404,18 @@ export default function Onboarding({ session }) {
           />
         </>
       )}
-      {step === 3 && result && <Payoff isGuest={result.isGuest} combos={result.combos} />}
+      {step === 3 && result && (
+        <Payoff
+          isGuest={result.isGuest}
+          combos={result.combos}
+          top={result.top}
+          upcoming={result.upcoming}
+          hasTeams={selectedTeams.length > 0}
+          hasShows={selectedShows.length > 0}
+          onAddTeams={() => setStep(1)}
+          onAddShows={() => setStep(2)}
+        />
+      )}
     </div>
   )
 }

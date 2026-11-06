@@ -21,8 +21,9 @@ const GENRES = [
 const NAMED_GENRES = GENRES.map(g => g.match).filter(m => m && m !== '__other__')
 
 export default function StepShows({ selected, setSelected, onBack, onFinish, saving, hideFooter, requireOne, stepNumber, totalSteps }) {
-  // Opens on "Fan favorites" when there are enough of them (see below).
-  const [activeTab, setActiveTab] = useState('Fans')
+  // Opens on Music (top touring acts) — Fan favorites reflects a small user
+  // base for now, so it's a tab, not the first thing a stranger sees.
+  const [activeTab, setActiveTab] = useState('Music')
   const [activeGenre, setActiveGenre] = useState('All')
   const [query, setQuery] = useState('')
   const [searchResults, setSearchResults] = useState([])
@@ -305,15 +306,6 @@ export default function StepShows({ selected, setSelected, onBack, onFinish, sav
 
       {/* Fan favorites / Music / Comedy tabs */}
       <div className={styles.tabs} style={{ overflowX: 'auto', flexWrap: 'nowrap' }}>
-        {showFansTab && (
-          <div
-            className={`${styles.tab} ${tab === 'Fans' ? styles.tabActive : ''}`}
-            onClick={() => setActiveTab('Fans')}
-            style={{ whiteSpace: 'nowrap' }}
-          >
-            ⭐ Fan favorites
-          </div>
-        )}
         <div
           className={`${styles.tab} ${tab === 'Music' ? styles.tabActive : ''}`}
           onClick={() => setActiveTab('Music')}
@@ -328,6 +320,15 @@ export default function StepShows({ selected, setSelected, onBack, onFinish, sav
         >
           😂 Comedy
         </div>
+        {showFansTab && (
+          <div
+            className={`${styles.tab} ${tab === 'Fans' ? styles.tabActive : ''}`}
+            onClick={() => setActiveTab('Fans')}
+            style={{ whiteSpace: 'nowrap' }}
+          >
+            ⭐ Fan favorites
+          </div>
+        )}
       </div>
 
       {tab === 'Music' && (
@@ -374,9 +375,12 @@ export default function StepShows({ selected, setSelected, onBack, onFinish, sav
                 >
                   <span>
                     {item.artist_name}
-                    <span style={{ color: 'var(--text3)', fontSize: 11, marginLeft: 8 }}>
-                      {item.fans} fans
-                    </span>
+                    {/* Counts only once they're big enough to impress a stranger. */}
+                    {item.fans >= 100 && (
+                      <span style={{ color: 'var(--text3)', fontSize: 11, marginLeft: 8 }}>
+                        {item.fans} fans
+                      </span>
+                    )}
                   </span>
                   <div className={`${styles.showCheck} ${sel ? styles.checked : ''}`}>
                     {sel && '✓'}
@@ -419,9 +423,9 @@ export default function StepShows({ selected, setSelected, onBack, onFinish, sav
 
       {!hideFooter && (
         <div className={styles.footer}>
-          <button className={styles.backBtn} onClick={onBack}>← Back</button>
+          <button className={styles.backBtn} onClick={onBack} aria-label="Back">←<span className={styles.backWord}> Back</span></button>
           {requireOne && nothingPicked
-            ? <div className={styles.count} style={{ textAlign: 'center' }}>Pick at least one artist</div>
+            ? <div className={styles.count} style={{ textAlign: 'center' }}>Pick an artist</div>
             : <div className={styles.count}><b>{selected.length}</b> selected</div>}
           <button
             className={styles.nextBtn}
@@ -432,7 +436,7 @@ export default function StepShows({ selected, setSelected, onBack, onFinish, sav
               ? 'Building your trips…'
               : nothingPicked && !requireOne
                 ? 'Skip — show my trips →'
-                : 'Start your engines!'}
+                : 'Find my trips →'}
           </button>
         </div>
       )}

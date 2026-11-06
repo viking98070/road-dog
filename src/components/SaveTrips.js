@@ -17,6 +17,8 @@ export default function SaveTrips({ source = 'payoff', compact = false, onSaved 
   const [state, setState] = useState('form') // form | sending | sent | exists | linkSent
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
+  // Compact (Trips page): start as a one-line bar so trips stay above the fold.
+  const [open, setOpen] = useState(!compact)
 
   async function submit(e) {
     e.preventDefault()
@@ -116,6 +118,20 @@ export default function SaveTrips({ source = 'payoff', compact = false, onSaved 
             </div>
           </>
         )}
+      </div>
+    )
+  }
+
+  if (!open) {
+    return (
+      <div style={{ ...box, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, padding: '12px 14px' }}>
+        <div style={{ fontSize: 14, color: 'var(--text)', lineHeight: 1.35 }}>
+          <strong>🔔 Get alerts for new trips</strong>
+          <span style={{ display: 'block', fontSize: 12.5, color: 'var(--text2)' }}>Your picks aren’t saved yet</span>
+        </div>
+        <button type="button" style={{ ...btn, padding: '10px 14px', fontSize: 14 }} onClick={() => setOpen(true)}>
+          Turn on
+        </button>
       </div>
     )
   }

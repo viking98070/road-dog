@@ -193,6 +193,16 @@ export default function Dashboard({ session }) {
 
     setCombos(combosWithEvents)
 
+    // Opened from the results screen (/trips?trip=<id>): go straight to that trip.
+    try {
+      const want = new URLSearchParams(window.location.search).get('trip')
+      if (want) {
+        const hit = combosWithEvents.find(c => String(c.id) === want)
+        if (hit) setSelected(hit)
+        window.history.replaceState(null, '', window.location.pathname)
+      }
+    } catch (_) { /* ignore */ }
+
     // Open on a tab that actually has trips. A fan who follows only artists
     // has nothing under the default Sports + Shows tab, and landing on an
     // empty tab looks like the app found nothing.

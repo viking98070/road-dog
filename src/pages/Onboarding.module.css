@@ -56,3 +56,22 @@
   height: 1px;
   background: var(--border);
 }
+
+.stepLabel {
+  font-family: var(--head);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--text3);
+  white-space: nowrap;
+}
+.labelCurrent { color: var(--orange); }
+.labelDone { color: var(--text2); }
+
+@media (max-width: 420px) {
+  .header { padding: 16px 16px; }
+  .steps { gap: 6px; }
+  .stepLine { width: 10px; }
+  .stepLabel { font-size: 11px; letter-spacing: 0.3px; }
+}

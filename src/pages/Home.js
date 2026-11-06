@@ -44,7 +44,7 @@ export default function Home() {
         </button>
       </header>
       <div className={styles.hero}>
-        <div className={styles.eyebrow}>Introducing Road Dog</div>
+        <div className={styles.eyebrow}>Road trips for sports &amp; music fans</div>
         <h1 className={styles.headline}>
           Your game.<br /><span>Their city.</span>
         </h1>
@@ -64,19 +64,17 @@ export default function Home() {
         <div style={{ marginTop: 10, fontSize: 13, color: 'var(--text3)' }}>
           Free · no sign-up needed to look
         </div>
-        <div style={{ marginTop: 8, fontSize: 13, color: 'var(--text3)' }}>
-          Already have an account?{' '}
-          <span
-            onClick={() => navigate('/login')}
-            style={{ color: 'var(--orange)', fontWeight: 600, cursor: 'pointer' }}
-          >
-            Sign in
-          </span>
-        </div>
 
         <div className={styles.sample} aria-label="Example trip">
           <div className={styles.sampleLabel}>Example trip</div>
-          <div className={styles.sampleCard}>
+          <div
+            className={styles.sampleCard}
+            role="button"
+            tabIndex={0}
+            onClick={() => navigate('/start')}
+            onKeyDown={e => { if (e.key === 'Enter') navigate('/start') }}
+            style={{ cursor: 'pointer' }}
+          >
             <div className={styles.sampleTop}>
               <div>
                 <div className={styles.sampleCity}>Dallas, TX</div>
@@ -99,6 +97,9 @@ export default function Home() {
               <span className={styles.sampleTag} style={{ background: '#013369' }}>NFL</span>
               <span>Seattle Seahawks @ Dallas Cowboys</span>
             </div>
+          </div>
+          <div style={{ marginTop: 10, fontSize: 13, color: 'var(--text3)' }}>
+            Pick your teams to see yours →
           </div>
         </div>
       </div>
