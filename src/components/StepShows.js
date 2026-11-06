@@ -115,6 +115,13 @@ export default function StepShows({ selected, setSelected, onBack, onFinish, sav
         : p.genre === genre.match
     )
   }
+  // "All" mixes genres: popularity_rank is per genre, so a #1 jazz act would
+  // otherwise sit next to the #1 rock act. Weight the big genres up.
+  if (tab === 'Music' && !genre.match) {
+    const W = { Rock: 1, Pop: 1, Country: 1, 'Hip-Hop/Rap': 1, 'R&B': 1.5, Metal: 1.5 }
+    const key = p => (p.popularity_rank ?? 999) * (W[p.genre] || 3)
+    filteredPopular = [...filteredPopular].sort((a, b) => key(a) - key(b))
+  }
   // Only show genre chips that actually have artists in them.
   const musicPopular = popular.filter(p => p.segment === 'Music')
   const visibleGenres = GENRES.filter(g =>
