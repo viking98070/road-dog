@@ -5,6 +5,7 @@ import { supabase } from '../lib/supabase'
 import ComboDetail from './ComboDetail'
 import styles from './Dashboard.module.css'
 import { isSpring, SPRING_COLOR, SPRING_LABEL } from '../lib/spring'
+import { isFestival, FESTIVAL_COLOR } from '../lib/festival'
 
 const TABS = [
   { key: 'sports_plus_shows', label: 'Sports + Shows' },
@@ -274,6 +275,7 @@ export default function Dashboard({ session }) {
   function categoryColor(event) {
     if (event.league_key === 'marquee') return '#B8860B'
     if (isSpring(event)) return SPRING_COLOR
+    if (isFestival(event)) return FESTIVAL_COLOR
     if (event.type === 'music') return '#7B2D8B'
     if (event.type === 'comedy') return '#F4911E'
     const colors = {

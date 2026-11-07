@@ -6,6 +6,7 @@ import StepShows from '../components/StepShows'
 import SaveTrips from '../components/SaveTrips'
 import styles from './Onboarding.module.css'
 import { isSpring, SPRING_COLOR, SPRING_LABEL } from '../lib/spring'
+import { isFestival, FESTIVAL_COLOR } from '../lib/festival'
 
 // Onboarding (#21): pick first, sign up last.
 //   1. Teams  →  2. Shows (optional)  →  3. "We found N trips" + save with email
@@ -22,7 +23,7 @@ const LEAGUE_LABEL = { nfl: 'NFL', mlb: 'MLB', nba: 'NBA', nhl: 'NHL', wnba: 'WN
 const LEAGUE_COLOR = { nfl: '#013369', mlb: '#002D72', nba: '#C9082A', nhl: '#0033A0', wnba: '#C9082A', mls: '#002F6C', nwsl: '#7B2D8B', cfb: '#BF5700', mcbb: '#0033A0', wcbb: '#0033A0', marquee: '#B8860B' }
 
 function tag(e) {
-  if (e.type === 'music') return { label: e.parent_event ? 'FESTIVAL' : 'MUSIC', color: '#7B2D8B' }
+  if (e.type === 'music') return isFestival(e) ? { label: 'FESTIVAL', color: FESTIVAL_COLOR } : { label: 'MUSIC', color: '#7B2D8B' }
   if (e.type === 'comedy') return { label: 'COMEDY', color: '#F4911E' }
   if (isSpring(e)) return { label: SPRING_LABEL, color: SPRING_COLOR }
   return { label: LEAGUE_LABEL[e.league_key] || 'EVENT', color: LEAGUE_COLOR[e.league_key] || '#444' }

@@ -3,6 +3,7 @@ import { supabase } from '../lib/supabase'
 import styles from './ComboDetail.module.css'
 import AppNav from '../components/AppNav'
 import { isSpring, SPRING_COLOR, SPRING_LABEL, springMoreText } from '../lib/spring'
+import { isFestival, FESTIVAL_COLOR } from '../lib/festival'
 
 const METRO_CLUSTERS = {
   'New York, NY': ['Bronx, NY', 'Brooklyn, NY', 'Queens, NY', 'Staten Island, NY', 'Newark, NJ', 'East Rutherford, NJ', 'Elmont, NY', 'Uniondale, NY'],
@@ -105,6 +106,7 @@ export default function ComboDetail({ combo, onBack }) {
   function categoryColor(event) {
     if (event.league_key === 'marquee') return '#B8860B'
     if (isSpring(event)) return SPRING_COLOR
+    if (isFestival(event)) return FESTIVAL_COLOR
     if (event.type === 'music') return '#7B2D8B'
     if (event.type === 'comedy') return '#F4911E'
     const colors = {

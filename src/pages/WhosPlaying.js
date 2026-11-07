@@ -6,6 +6,7 @@ import 'react-datepicker/dist/react-datepicker.css'
 import styles from './Dashboard.module.css'
 import AppNav from '../components/AppNav'
 import { isSpring, SPRING_COLOR, SPRING_LABEL } from '../lib/spring'
+import { isFestival, FESTIVAL_COLOR } from '../lib/festival'
 
 // Where the "Follow my teams" button goes: the team picker on My Picks.
 const FOLLOW_TEAMS_PATH = '/settings'
@@ -132,7 +133,8 @@ function weight(e) {
 function categoryColor(e) {
   if (e.league_key === 'marquee') return '#B8860B'
   if (isSpring(e)) return SPRING_COLOR
-  if (e.parent_event || e.type === 'music') return '#7B2D8B'
+  if (isFestival(e)) return FESTIVAL_COLOR
+  if (e.type === 'music') return '#7B2D8B'
   if (e.type === 'comedy') return '#BE185D'
   const c = {
     nfl: '#1D4ED8', mlb: '#B91C1C', nba: '#C2410C', nhl: '#0E7490', wnba: '#C2410C',
