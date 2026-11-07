@@ -23,5 +23,12 @@
       ],
       "destination": "/api/trip-preview?code=:code"
     }
-  ]
+  ],
+  "functions": {
+    "api/trip-image.mjs": {
+      "includeFiles": "api/_fonts/**",
+      "memory": 1024,
+      "maxDuration": 15
+    }
+  }
 }

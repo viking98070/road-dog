@@ -5,6 +5,7 @@ import AppNav from '../components/AppNav'
 import { isSpring, SPRING_COLOR, SPRING_LABEL, springMoreText } from '../lib/spring'
 import { isFestival, FESTIVAL_COLOR } from '../lib/festival'
 import { legMiles } from '../lib/distance'
+import ShareImage from '../components/ShareImage'
 import { useNavigate } from 'react-router-dom'
 
 const METRO_CLUSTERS = {
@@ -89,6 +90,7 @@ export default function ComboDetail({ combo, onBack, preloadedEvents, publicView
   const [events, setEvents] = useState(preloadedEvents || [])
   const [loading, setLoading] = useState(!preloadedEvents)
   const [shared, setShared] = useState(false)
+  const [imageOpen, setImageOpen] = useState(false)
   // Code of this trip's public page (/trip/<code>), made as soon as the trip
   // opens so the share sheet can open instantly when the button is tapped
   // (phones only allow it straight from the tap).
@@ -316,6 +318,7 @@ export default function ComboDetail({ combo, onBack, preloadedEvents, publicView
           <button className={styles.publicCta} onClick={findMyTrips}>Find my trips</button>
         </header>
       ) : <AppNav />}
+      {imageOpen && shareCode && <ShareImage code={shareCode} onClose={() => setImageOpen(false)} />}
       <div className={styles.hero}>
         <div className={styles.column}>
           {publicView
@@ -323,12 +326,19 @@ export default function ComboDetail({ combo, onBack, preloadedEvents, publicView
             : <button className={styles.back} onClick={onBack}>← All trips</button>}
           <div className={styles.heroTop}>
             <div className={styles.heroCity}>{displayCity(combo)}</div>
-            <button
-              onClick={handleShare}
-              className={`${styles.share} ${shared ? styles.shareDone : ''}`}
-            >
-              {shared ? 'Copied ✓' : '🔗 Share trip'}
-            </button>
+            <div className={styles.shareCol}>
+              <button
+                onClick={handleShare}
+                className={`${styles.share} ${shared ? styles.shareDone : ''}`}
+              >
+                {shared ? 'Copied ✓' : '🔗 Share trip'}
+              </button>
+              {shareCode && (
+                <button onClick={() => setImageOpen(true)} className={`${styles.share} ${styles.shareImage}`}>
+                  📸 Share image
+                </button>
+              )}
+            </div>
           </div>
           <div className={styles.heroDates}>{fmtRange(combo.start_date, combo.end_date)}</div>
           {combo.score >= 4 && (

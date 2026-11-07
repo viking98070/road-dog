@@ -74,3 +74,10 @@
 .publicNudgeTitle { font-family: var(--head); font-size: 22px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
 .publicNudgeText { font-size: 14px; color: var(--text2); margin-bottom: 16px; }
 .publicNudgeBtn { background: var(--orange); color: #0F0F0F; border: none; border-radius: 10px; padding: 12px 28px; font-family: var(--head); font-size: 16px; font-weight: 700; cursor: pointer; }
+
+/* Share trip + Share image, stacked on the right of the city name. */
+.shareCol { display: flex; flex-direction: column; align-items: stretch; gap: 8px; flex-shrink: 0; }
+.shareCol .share { margin-top: 0; justify-content: center; }
+.shareCol .share:first-child { margin-top: 6px; }
+.shareImage { background: transparent; color: var(--text2); border-color: var(--border); }
+.shareImage:hover { background: rgba(255,255,255,0.05); color: var(--text); }

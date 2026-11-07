@@ -7,6 +7,8 @@
 
 const SITE = 'https://roaddogapp.com'
 const IMAGE = SITE + '/og-image.png'
+// Per-trip picture of the trip (api/trip-image.mjs); generic image if the trip isn't found.
+const tripImage = code => `${SITE}/api/trip-image?code=${code}&format=og`
 
 function esc(s) {
   return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
@@ -54,7 +56,7 @@ function describe(trip) {
   return { title, description }
 }
 
-function page({ title, description, url }) {
+function page({ title, description, url, image = IMAGE }) {
   return `<!doctype html><html lang="en"><head><meta charset="utf-8" />
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(description)}" />
@@ -63,13 +65,13 @@ function page({ title, description, url }) {
 <meta property="og:url" content="${esc(url)}" />
 <meta property="og:title" content="${esc(title)}" />
 <meta property="og:description" content="${esc(description)}" />
-<meta property="og:image" content="${IMAGE}" />
+<meta property="og:image" content="${esc(image)}" />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="${esc(title)}" />
 <meta name="twitter:description" content="${esc(description)}" />
-<meta name="twitter:image" content="${IMAGE}" />
+<meta name="twitter:image" content="${esc(image)}" />
 </head><body><a href="${esc(url)}">${esc(title)}</a></body></html>`
 }
 
@@ -87,7 +89,7 @@ module.exports = async function handler(req, res) {
         body: JSON.stringify({ p_code: code, p_count_view: false }),
       })
       const trip = r.ok ? await r.json() : null
-      if (trip && trip.start_date) meta = { ...describe(trip), url }
+      if (trip && trip.start_date) meta = { ...describe(trip), url, image: tripImage(code) }
     }
   } catch (_) { /* fall back to the generic Road Dog preview */ }
   res.setHeader('Content-Type', 'text/html; charset=utf-8')
