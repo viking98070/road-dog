@@ -5,6 +5,7 @@ import StepTeams from '../components/StepTeams'
 import StepShows from '../components/StepShows'
 import SaveTrips from '../components/SaveTrips'
 import styles from './Onboarding.module.css'
+import { isSpring, SPRING_COLOR, SPRING_LABEL } from '../lib/spring'
 
 // Onboarding (#21): pick first, sign up last.
 //   1. Teams  →  2. Shows (optional)  →  3. "We found N trips" + save with email
@@ -23,6 +24,7 @@ const LEAGUE_COLOR = { nfl: '#013369', mlb: '#002D72', nba: '#C9082A', nhl: '#00
 function tag(e) {
   if (e.type === 'music') return { label: e.parent_event ? 'FESTIVAL' : 'MUSIC', color: '#7B2D8B' }
   if (e.type === 'comedy') return { label: 'COMEDY', color: '#F4911E' }
+  if (isSpring(e)) return { label: SPRING_LABEL, color: SPRING_COLOR }
   return { label: LEAGUE_LABEL[e.league_key] || 'EVENT', color: LEAGUE_COLOR[e.league_key] || '#444' }
 }
 function describe(e) {
@@ -303,7 +305,7 @@ export default function Onboarding({ session }) {
     }
 
     // Load what we found for the payoff screen.
-    const EVENT_COLS = 'id, away_team, home_team, away_school, home_school, league_key, artist_name, type, event_date, parent_event, neutral_site, city, state'
+    const EVENT_COLS = 'id, away_team, home_team, away_school, home_school, league_key, artist_name, type, event_date, parent_event, neutral_site, city, state, season_type'
     let combos = []
     let top = []
     let upcoming = []

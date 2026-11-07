@@ -4,6 +4,7 @@ import AppNav from '../components/AppNav'
 import { supabase } from '../lib/supabase'
 import ComboDetail from './ComboDetail'
 import styles from './Dashboard.module.css'
+import { isSpring, SPRING_COLOR, SPRING_LABEL } from '../lib/spring'
 
 const TABS = [
   { key: 'sports_plus_shows', label: 'Sports + Shows' },
@@ -180,7 +181,7 @@ export default function Dashboard({ session }) {
     const allIds = [...new Set(comboData.flatMap(c => c.event_ids || []))]
     const { data: eventData } = await supabase
       .from('events')
-      .select('id, away_team, home_team, league_key, artist_name, type, event_date, parent_event, lineup, neutral_site')
+      .select('id, away_team, home_team, league_key, artist_name, type, event_date, parent_event, lineup, neutral_site, season_type')
       .in('id', allIds)
 
     const eventMap = {}
@@ -272,6 +273,7 @@ export default function Dashboard({ session }) {
 
   function categoryColor(event) {
     if (event.league_key === 'marquee') return '#B8860B'
+    if (isSpring(event)) return SPRING_COLOR
     if (event.type === 'music') return '#7B2D8B'
     if (event.type === 'comedy') return '#F4911E'
     const colors = {
@@ -284,6 +286,7 @@ export default function Dashboard({ session }) {
 
   function categoryLabel(event) {
     if (event.league_key === 'marquee') return 'MARQUEE'
+    if (isSpring(event)) return SPRING_LABEL
     if (event.parent_event) return 'FESTIVAL'
     if (event.type === 'music') return 'MUSIC'
     if (event.type === 'comedy') return 'COMEDY'

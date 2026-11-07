@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import styles from './ComboDetail.module.css'
 import AppNav from '../components/AppNav'
+import { isSpring, SPRING_COLOR, SPRING_LABEL, springMoreText } from '../lib/spring'
 
 const METRO_CLUSTERS = {
   'New York, NY': ['Bronx, NY', 'Brooklyn, NY', 'Queens, NY', 'Staten Island, NY', 'Newark, NJ', 'East Rutherford, NJ', 'Elmont, NY', 'Uniondale, NY'],
@@ -101,6 +102,7 @@ export default function ComboDetail({ combo, onBack }) {
 
   function categoryColor(event) {
     if (event.league_key === 'marquee') return '#B8860B'
+    if (isSpring(event)) return SPRING_COLOR
     if (event.type === 'music') return '#7B2D8B'
     if (event.type === 'comedy') return '#F4911E'
     const colors = {
@@ -113,6 +115,7 @@ export default function ComboDetail({ combo, onBack }) {
 
   function categoryLabel(event) {
     if (event.league_key === 'marquee') return 'MARQUEE'
+    if (isSpring(event)) return SPRING_LABEL
     if (event.parent_event) return 'FESTIVAL'
     if (event.type === 'music') return 'MUSIC'
     if (event.type === 'comedy') return 'COMEDY'
@@ -306,7 +309,7 @@ export default function ComboDetail({ combo, onBack }) {
               const location = eventLocation(event)
               return (
                 <div key={event.id} className={styles.eventCard}>
-                  <div className={styles.eventLeague} style={{ background: categoryColor(event), minWidth: 64, boxSizing: 'border-box', textAlign: 'center', whiteSpace: 'nowrap', flexShrink: 0 }}>{categoryLabel(event)}</div>
+                  <div className={styles.eventLeague} style={{ background: categoryColor(event), minWidth: 64, boxSizing: 'border-box', textAlign: 'center', whiteSpace: isSpring(event) ? 'normal' : 'nowrap', maxWidth: isSpring(event) ? 76 : undefined, lineHeight: isSpring(event) ? 1.25 : undefined, flexShrink: 0 }}>{categoryLabel(event)}</div>
                   <div className={styles.eventInfo}>
                     <div className={styles.eventName}>
                       {eventTitle(event)}
@@ -339,6 +342,11 @@ export default function ComboDetail({ combo, onBack }) {
                 </div>
               )
             })}
+            {springMoreText(combo.spring_more) && (
+              <div style={{ fontSize: 13, color: 'var(--text2)', padding: '2px 4px' }}>
+                ⚾ {springMoreText(combo.spring_more)}
+              </div>
+            )}
           </div>
         )}
         <div className={styles.sectionTitle} style={{marginTop:28}}>Plan your trip</div>
