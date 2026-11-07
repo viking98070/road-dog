@@ -334,7 +334,7 @@ export default function ComboDetail({ combo, onBack, preloadedEvents, publicView
                 {shared ? 'Copied ✓' : '🔗 Share trip'}
               </button>
               {shareCode && (
-                <button onClick={() => setImageOpen(true)} className={`${styles.share} ${styles.shareImage}`}>
+                <button onClick={() => setImageOpen(true)} className={styles.share}>
                   📸 Share image
                 </button>
               )}
