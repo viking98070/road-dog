@@ -65,6 +65,12 @@ function rowDate(g) {
   return day(g.first.event_date, true)
 }
 
+// "SAP Center at San Jose" already says San Jose — don't repeat the city.
+function venueLine(e) {
+  const v = e.venue || '', c = e.city || ''
+  return c && !v.toLowerCase().includes(c.toLowerCase()) ? [v, c].filter(Boolean).join(' · ') : v
+}
+
 function legMiles(a, b) {
   if ([a?.latitude, a?.longitude, b?.latitude, b?.longitude].some(v => v == null)) return null
   const R = 3959, r = d => d * Math.PI / 180
@@ -121,7 +127,7 @@ export function tripCard(trip, formatName = 'og') {
     const isGradient = String(bg).startsWith('linear')
     rows.push(h('div', {
       alignItems: 'center', gap: Math.round(f.row * 0.6), background: '#1C1C1C', border: '2px solid #2A2A2A',
-      borderRadius: Math.round(f.row * 0.45), padding: `${Math.round(f.row * 0.55)}px ${Math.round(f.row * 0.7)}px`,
+      borderRadius: Math.round(f.row * 0.45), padding: `${Math.round(f.row * (tall ? 0.75 : 0.55))}px ${Math.round(f.row * 0.7)}px`,
     }, [
       text(label, {
         ...(isGradient ? { backgroundImage: bg } : { background: bg }),
@@ -132,7 +138,7 @@ export function tripCard(trip, formatName = 'og') {
         text(titleOf(g.first) + (g.count > 1 ? `  ×${g.count}` : ''), tall
           ? { color: TEXT, fontWeight: 700, fontSize: f.row, lineHeight: 1.15 }
           : { color: TEXT, fontWeight: 700, fontSize: f.row, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }),
-        text([g.first.venue, g.first.city].filter(Boolean).join(' · '), tall
+        text(venueLine(g.first), tall
           ? { color: TEXT3, fontSize: Math.round(f.row * 0.62), marginTop: 4, lineHeight: 1.2 }
           : { color: TEXT3, fontSize: Math.round(f.row * 0.62), marginTop: 4, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }),
       ]),
@@ -167,7 +173,7 @@ export function tripCard(trip, formatName = 'og') {
       text(range(trip.start_date, trip.end_date), { color: ORANGE, fontWeight: 700, fontSize: f.dates }),
       ...(hotDog && formatName !== 'og' ? [hotDog] : []),
     ]),
-    h('div', { width: '100%', flexDirection: 'column', gap: Math.round(f.row * 0.36), marginTop: Math.round(f.dates * (formatName === 'og' ? 0.8 : 1.4)) }, rows),
+    h('div', { width: '100%', flexDirection: 'column', gap: Math.round(f.row * (tall ? 0.7 : 0.36)), marginTop: Math.round(f.dates * (formatName === 'og' ? 0.8 : 1.4)) }, rows),
     h('div', { flexGrow: 1 }, []),
     footer,
   ])])
