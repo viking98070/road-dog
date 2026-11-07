@@ -359,7 +359,7 @@ export default function ComboDetail({ combo, onBack, preloadedEvents, publicView
                 {miles && (
                   <div className={styles.leg}>
                     <span className={styles.legLine} />
-                    🚗 ~{miles} mi{event.city ? ` to ${event.city}` : ''}
+                    <span className={styles.legChip}>🚗 ~{miles} mi{event.city ? ` to ${event.city}` : ''}</span>
                     <span className={styles.legLine} />
                   </div>
                 )}
