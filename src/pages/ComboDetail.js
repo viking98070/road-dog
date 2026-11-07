@@ -69,7 +69,9 @@ function ticketUrl(event) {
     if (!slug) return base
     return `${base}${slug}-tickets`
   }
-  const name = event.artist_name || event.parent_event || ''
+  // Curated festivals (#37) are split by weekend ("Coachella (Weekend 1)");
+  // SeatGeek knows the festival by its plain name.
+  const name = (event.artist_name || event.parent_event || '').replace(/\s*\((weekend|wknd)[^)]*\)\s*$/i, '')
   const slug = slugify(name)
   return slug ? `${base}${slug}-tickets` : base
 }
@@ -319,7 +321,7 @@ export default function ComboDetail({ combo, onBack }) {
                         </span>
                       )}
                     </div>
-                    {event.parent_event && (
+                    {event.parent_event && event.parent_event !== event.artist_name && (
                       <div style={{ fontSize: 12, color: 'var(--orange)', fontWeight: 600, marginTop: 2 }}>
                         {event.parent_event}
                       </div>
