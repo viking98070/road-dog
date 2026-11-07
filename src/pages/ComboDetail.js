@@ -4,6 +4,8 @@ import styles from './ComboDetail.module.css'
 import AppNav from '../components/AppNav'
 import { isSpring, SPRING_COLOR, SPRING_LABEL, springMoreText } from '../lib/spring'
 import { isFestival, FESTIVAL_COLOR } from '../lib/festival'
+import { legMiles } from '../lib/distance'
+import { useNavigate } from 'react-router-dom'
 
 const METRO_CLUSTERS = {
   'New York, NY': ['Bronx, NY', 'Brooklyn, NY', 'Queens, NY', 'Staten Island, NY', 'Newark, NJ', 'East Rutherford, NJ', 'Elmont, NY', 'Uniondale, NY'],
@@ -77,16 +79,47 @@ function ticketUrl(event) {
   return slug ? `${base}${slug}-tickets` : base
 }
 
-export default function ComboDetail({ combo, onBack }) {
-  const [events, setEvents] = useState([])
-  const [loading, setLoading] = useState(true)
+const SHARE_UTM = 'utm_source=share&utm_medium=friend&utm_campaign=trip-share'
+
+// Trip detail. Also renders the public shared-trip page (#18) with
+// publicView + preloadedEvents: no app nav or back button, a Road Dog bar
+// with "Find my trips", and a sign-up nudge at the bottom.
+export default function ComboDetail({ combo, onBack, preloadedEvents, publicView = false }) {
+  const navigate = useNavigate()
+  const [events, setEvents] = useState(preloadedEvents || [])
+  const [loading, setLoading] = useState(!preloadedEvents)
   const [shared, setShared] = useState(false)
+  // Code of this trip's public page (/trip/<code>), made as soon as the trip
+  // opens so the share sheet can open instantly when the button is tapped
+  // (phones only allow it straight from the tap).
+  const [shareCode, setShareCode] = useState(publicView ? combo.code : null)
 
   useEffect(() => {
+    if (preloadedEvents) { setEvents(preloadedEvents); setLoading(false); return }
     if (!combo.event_ids || combo.event_ids.length === 0) { setLoading(false); return }
     supabase.from('events').select('*').in('id', combo.event_ids).order('event_date')
       .then(({ data }) => { setEvents(data || []); setLoading(false) })
-  }, [combo])
+  }, [combo, preloadedEvents])
+
+  useEffect(() => {
+    if (publicView || !combo.id) return
+    let alive = true
+    supabase.rpc('create_shared_trip', { p_combo_id: combo.id })
+      .then(({ data, error }) => { if (alive && !error && data) setShareCode(data) })
+    return () => { alive = false }
+  }, [combo.id, publicView])
+
+  // "Find my trips" on the public page: strangers start onboarding; people
+  // who already use Road Dog go to their own trips.
+  async function findMyTrips() {
+    const { data } = await supabase.auth.getSession()
+    navigate(data?.session ? '/trips' : '/start')
+  }
+
+  function shareLink() {
+    if (shareCode) return `https://roaddogapp.com/trip/${shareCode}?${SHARE_UTM}`
+    return `https://roaddogapp.com/?${SHARE_UTM}`
+  }
 
   const fmt = d => new Date(d + 'T12:00:00').toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' })
   const fmtRange = (s, e) => (!e || s === e) ? new Date(s + 'T12:00:00').toLocaleDateString('en-US', { month:'short', day:'numeric' }) : `${new Date(s + 'T12:00:00').toLocaleDateString('en-US', { month:'short', day:'numeric' })} – ${new Date(e + 'T12:00:00').toLocaleDateString('en-US', { month:'short', day:'numeric' })}`
@@ -219,7 +252,7 @@ export default function ComboDetail({ combo, onBack }) {
     const cityCount = collapseCities(combo.cities && combo.cities.length > 0 ? combo.cities : [combo.city]).length
     const where = cityCount <= 1 ? 'all in one city' : `across ${cityCount} cities`
     const when = days === 1 ? 'in one day' : `in ${days} days`
-    return `${n} events ${when}, ${where} — one of your best trips.`
+    return publicView ? `${n} events ${when}, ${where}.` : `${n} events ${when}, ${where} — one of your best trips.`
   }
 
   function buildShareText() {
@@ -243,7 +276,7 @@ export default function ComboDetail({ combo, onBack }) {
     const ordered = [...nfl, ...rest]
     const lines = ordered.map(g => `${iconFor(g.primary)} ${titleFor(g.primary)}`)
     const body = lines.length ? '\n' + lines.join('\n') : ''
-    return `🌭 Found this trip on Road Dog:\n\n${city} · ${dates}${body}\n\nStack multiple games + shows into one trip → https://roaddogapp.com/?utm_source=share&utm_medium=friend&utm_campaign=trip-share`
+    return `🌭 Found this trip on Road Dog:\n\n${city} · ${dates}${body}\n\nSee the trip → ${shareLink()}`
   }
 
   function prefersNativeShare() {
@@ -257,6 +290,7 @@ export default function ComboDetail({ combo, onBack }) {
 
   async function handleShare() {
     const text = buildShareText()
+    if (shareCode && !publicView) supabase.rpc('mark_trip_shared', { p_code: shareCode }).then(() => {}, () => {})
     if (prefersNativeShare()) {
       try {
         await navigator.share({ title: 'Road Dog', text })
@@ -276,10 +310,17 @@ export default function ComboDetail({ combo, onBack }) {
 
   return (
     <div className={styles.page}>
-      <AppNav />
+      {publicView ? (
+        <header className={styles.publicBar}>
+          <a href="/" className={styles.publicLogo}>Road<span>Dog</span></a>
+          <button className={styles.publicCta} onClick={findMyTrips}>Find my trips</button>
+        </header>
+      ) : <AppNav />}
       <div className={styles.hero}>
         <div className={styles.column}>
-          <button className={styles.back} onClick={onBack}>← All trips</button>
+          {publicView
+            ? <div className={styles.publicEyebrow}>A trip found on Road Dog</div>
+            : <button className={styles.back} onClick={onBack}>← All trips</button>}
           <div className={styles.heroTop}>
             <div className={styles.heroCity}>{displayCity(combo)}</div>
             <button
@@ -306,13 +347,23 @@ export default function ComboDetail({ combo, onBack }) {
           <p className={styles.empty}>No event details found.</p>
         ) : (
           <div className={styles.eventList}>
-            {groupEvents(events).map(group => {
+            {groupEvents(events).map((group, i, groups) => {
               const event = group.primary
+              const prev = i > 0 ? groups[i - 1].primary : null
+              const miles = prev ? legMiles(prev, event) : null
               const lineup = lineupPreview(event)
               const isMultiNight = group.count > 1
               const location = eventLocation(event)
               return (
-                <div key={event.id} className={styles.eventCard}>
+                <React.Fragment key={event.id}>
+                {miles && (
+                  <div className={styles.leg}>
+                    <span className={styles.legLine} />
+                    🚗 ~{miles} mi{event.city ? ` to ${event.city}` : ''}
+                    <span className={styles.legLine} />
+                  </div>
+                )}
+                <div className={styles.eventCard}>
                   <div className={styles.eventLeague} style={{ background: categoryColor(event), minWidth: 64, boxSizing: 'border-box', textAlign: 'center', whiteSpace: isSpring(event) ? 'normal' : 'nowrap', maxWidth: isSpring(event) ? 76 : undefined, lineHeight: isSpring(event) ? 1.25 : undefined, flexShrink: 0 }}>{categoryLabel(event)}</div>
                   <div className={styles.eventInfo}>
                     <div className={styles.eventName}>
@@ -344,6 +395,7 @@ export default function ComboDetail({ combo, onBack }) {
                         : fmt(event.event_date)}
                   </div>
                 </div>
+                </React.Fragment>
               )
             })}
             {springMoreText(combo.spring_more) && (
@@ -385,6 +437,15 @@ export default function ComboDetail({ combo, onBack }) {
             </div>
           )
         })()}
+        {publicView && (
+          <div className={styles.publicNudge}>
+            <div className={styles.publicNudgeTitle}>Want trips like this for your teams?</div>
+            <div className={styles.publicNudgeText}>
+              Pick your teams and artists. Road Dog finds the weekends they land in the same city.
+            </div>
+            <button className={styles.publicNudgeBtn} onClick={findMyTrips}>Find my trips →</button>
+          </div>
+        )}
       </div>
     </div>
   )

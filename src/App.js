@@ -10,6 +10,7 @@ import Settings from './pages/Settings'
 import WhosPlaying from './pages/WhosPlaying'
 import Legal from './pages/Legal'
 import ResetPassword from './pages/ResetPassword'
+import SharedTrip from './pages/SharedTrip'
 import { captureUtm } from './lib/track'
 
 captureUtm()
@@ -97,6 +98,7 @@ export default function App() {
         <Route path="/privacy" element={<Legal type="privacy" />} />
         <Route path="/terms" element={<Legal type="terms" />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/trip/:code" element={<SharedTrip />} />
       </Routes>
       <Analytics />
     </BrowserRouter>
