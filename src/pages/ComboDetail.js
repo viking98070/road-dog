@@ -5,6 +5,7 @@ import AppNav from '../components/AppNav'
 import { isSpring, SPRING_COLOR, SPRING_LABEL, springMoreText } from '../lib/spring'
 import { isFestival, FESTIVAL_COLOR } from '../lib/festival'
 import { legMiles } from '../lib/distance'
+import { startTimeLabel } from '../lib/startTime'
 import ShareImage from '../components/ShareImage'
 import { useNavigate } from 'react-router-dom'
 
@@ -403,6 +404,9 @@ export default function ComboDetail({ combo, onBack, preloadedEvents, publicView
                       : group.endDate && group.endDate !== event.event_date
                         ? fmtRange(event.event_date, group.endDate)
                         : fmt(event.event_date)}
+                    {!isMultiNight && startTimeLabel(event) && (
+                      <div className={styles.eventTime}>{startTimeLabel(event)}</div>
+                    )}
                   </div>
                 </div>
                 </React.Fragment>

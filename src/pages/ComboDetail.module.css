@@ -79,3 +79,6 @@
 .shareCol { display: flex; flex-direction: column; align-items: stretch; gap: 8px; flex-shrink: 0; }
 .shareCol .share { margin-top: 0; justify-content: center; }
 .shareCol .share:first-child { margin-top: 6px; }
+
+/* #22: game start time under the date (venue local time). */
+.eventTime { font-family: var(--body, inherit); font-size: 12px; font-weight: 600; color: var(--text2); margin-top: 3px; }
