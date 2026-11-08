@@ -212,3 +212,18 @@
     font-size: 16px;
   }
 }
+
+/* #13: driving between a trip's stops, next to the dates. */
+.cardMiles {
+  display: inline-block;
+  margin-left: 10px;
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: #262626;
+  border: 1px solid #3a3a3a;
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  vertical-align: 1px;
+}

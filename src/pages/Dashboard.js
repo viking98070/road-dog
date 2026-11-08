@@ -6,6 +6,7 @@ import ComboDetail from './ComboDetail'
 import styles from './Dashboard.module.css'
 import { isSpring, SPRING_COLOR, SPRING_LABEL } from '../lib/spring'
 import { isFestival, FESTIVAL_COLOR } from '../lib/festival'
+import { tripDrivingMiles } from '../lib/distance'
 
 const TABS = [
   { key: 'sports_plus_shows', label: 'Sports + Shows' },
@@ -182,7 +183,7 @@ export default function Dashboard({ session }) {
     const allIds = [...new Set(comboData.flatMap(c => c.event_ids || []))]
     const { data: eventData } = await supabase
       .from('events')
-      .select('id, away_team, home_team, league_key, artist_name, type, event_date, parent_event, lineup, neutral_site, season_type')
+      .select('id, away_team, home_team, league_key, artist_name, type, event_date, parent_event, lineup, neutral_site, season_type, city, latitude, longitude')
       .in('id', allIds)
 
     const eventMap = {}
@@ -552,6 +553,10 @@ export default function Dashboard({ session }) {
                 </div>
                 <div className={styles.cardDates}>
                   {formatDateRange(combo.start_date, combo.end_date)}
+                  {(() => {
+                    const miles = tripDrivingMiles(combo.events)
+                    return miles ? <span className={styles.cardMiles}>🚗 ~{miles} mi</span> : null
+                  })()}
                 </div>
                 <div className={styles.cardTeams}>
                   {combo.events && (() => {
