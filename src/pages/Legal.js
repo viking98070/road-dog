@@ -4,7 +4,7 @@ import styles from './Legal.module.css'
 
 const PRIVACY_CONTENT = {
   title: 'Privacy Policy',
-  updated: 'August 23, 2026',
+  updated: 'November 7, 2026',
   sections: [
     {
       intro: true,
@@ -17,9 +17,11 @@ This policy is provided for informational purposes and is not a substitute for l
       body: `We collect only the information needed to provide the Service:`,
       list: [
         'Account information: your email address and login credentials, used to create and secure your account.',
+        'Guest use: you can pick teams and artists and see trips without giving an email. We create a temporary guest account to save your picks. If you add an email, the same account becomes permanent; if you don\'t, the guest account and its picks are deleted after 7 days.',
         "Your picks: the sports leagues and teams you follow, artists and shows you're interested in, and your home city. We use this to find and recommend trip combos for you.",
         'Contact information for notifications: your email address and, if you enable them, push notification permissions, used to send you updates about events, trips, and your account.',
         'Usage and analytics data: we use Vercel Web Analytics to understand how the Service is used. This is a privacy-friendly, cookieless tool that collects aggregate information such as page views, the site or link that referred you, your device and browser type, and your approximate (country-level) location. It does not use cookies or persistent identifiers, does not track you across other websites, and is not tied to your account or identity.',
+        'Basic activity data: which steps of the sign-up flow you completed, the post, ad, or email link that brought you to Road Dog (from tags in the link, such as "utm_source"), and when you last opened the app. This may be linked to your account or guest account and is used only to improve Road Dog, never for advertising.',
       ],
       footer: 'We do not use advertising identifiers, sell your information, or track your activity across other websites or apps. We do not maintain a separate marketing email list outside of product notifications.'
     },
@@ -30,6 +32,7 @@ This policy is provided for informational purposes and is not a substitute for l
         'Create and maintain your account',
         'Generate personalized trip combo recommendations based on your picks',
         'Send you notifications about events, trip opportunities, and account-related updates',
+        'Understand which features, posts, and links bring people to Road Dog and where people get stuck, so we can improve the Service',
         'Respond to support requests',
         'Maintain the security and functioning of the Service',
       ]
@@ -43,6 +46,7 @@ We share limited information with third-party services necessary to operate the 
         'Supabase, our database and authentication provider, which stores your account and pick data.',
         'Resend, our email delivery provider, which processes your email address to send you account and notification emails.',
         'Vercel, our website host and analytics provider, which processes technical and aggregate usage data as described in Section 1.',
+        'People you share a trip with: when you tap Share trip, we create a public link to a page showing that trip\'s events, dates, and ticket links. Anyone with the link can view it. The page does not show your name, email, or other picks. We count how many times a trip is shared and viewed.',
         'Ticketmaster, ESPN, and College Football Data, whose APIs we use to source event and game data. These services do not receive your personal account information as part of this data sourcing.',
       ],
       footer: 'We may disclose information if required by law or to protect the rights, safety, or property of Road Dog or others.'
@@ -55,7 +59,7 @@ These third-party sites have their own privacy policies, which we do not control
     },
     {
       heading: '5. Data Retention',
-      body: 'We retain your account information for as long as your account is active. You may request deletion of your account and associated data at any time by contacting us (see Section 9).'
+      body: 'We retain your account information for as long as your account is active. Guest accounts that never add an email are deleted after 7 days. Shared trip pages stop showing trip details once the trip\'s events have passed. You may request deletion of your account and associated data at any time by contacting us (see Section 9).'
     },
     {
       heading: '6. Your Choices',
