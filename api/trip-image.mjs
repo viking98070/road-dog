@@ -35,7 +35,7 @@ async function loadTrip(code) {
 }
 
 export default async function handler(req, res) {
-  const code = String(req.query?.code || '').replace(/[^a-z0-9]/gi, '').slice(0, 32)
+  const code = String(req.query?.code || '').toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 40)
   const format = FORMATS[req.query?.format] ? req.query.format : 'og'
   try {
     const trip = await loadTrip(code)

@@ -26,6 +26,12 @@ export default function SharedTrip() {
 
   const today = new Date().toISOString().slice(0, 10)
   const gone = !trip || !trip.events || trip.events.length === 0 || (trip.end_date && trip.end_date < today)
+  // A social-post link (/x/<post>, /ig/<post>) whose post has no trip page:
+  // go to the home page like these links used to, keeping the UTM tags.
+  if (!trip && /utm_medium=social/.test(window.location.search)) {
+    window.location.replace('/' + window.location.search)
+    return null
+  }
   if (gone) {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 24, textAlign: 'center' }}>

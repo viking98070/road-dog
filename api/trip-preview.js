@@ -76,7 +76,7 @@ function page({ title, description, url, image = IMAGE }) {
 }
 
 module.exports = async function handler(req, res) {
-  const code = String((req.query && req.query.code) || '').replace(/[^a-z0-9]/gi, '').slice(0, 32)
+  const code = String((req.query && req.query.code) || '').toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 40)
   const url = `${SITE}/trip/${code}`
   let meta = { title: 'Road Dog — Your game. Their city.', description: 'Road trips where your teams and favorite artists line up.', url }
   try {
