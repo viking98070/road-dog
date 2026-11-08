@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react'
 import styles from './Step.module.css'
+import { COLLEGE_NICKNAMES, collegeDisplayName } from '../lib/collegeNicknames'
 
 const TEAM_SPORTS = ['nfl', 'cfb', 'mlb', 'nba', 'nhl', 'mcbb', 'wcbb', 'mls', 'nwsl', 'wnba']
 
@@ -366,8 +367,13 @@ const COLLEGE_ABBREVS = {
 // Build a flat list of all teams across leagues for search
 const ALL_TEAMS = []
 for (const leagueKey of TEAM_SPORTS) {
+  const isCollege = ['cfb', 'mcbb', 'wcbb'].includes(leagueKey)
   for (const team of TEAMS[leagueKey] || []) {
-    ALL_TEAMS.push({ ...team, league: leagueKey })
+    // Extra words search matches on: college nicknames ("Longhorns") and abbreviations ("TAMU")
+    const extra = isCollege
+      ? [...(COLLEGE_NICKNAMES[team.short] || []), COLLEGE_ABBREVS[team.short] || '']
+      : []
+    ALL_TEAMS.push({ ...team, league: leagueKey, searchText: [team.short, team.full, ...extra].join(' ').toLowerCase() })
   }
 }
 
@@ -409,8 +415,8 @@ export default function StepTeams({ selected, setSelected, onBack, onNext, onSki
   // Filter search across all teams
   const searchResults = search.trim().length >= 1
     ? ALL_TEAMS.filter(t => {
-        const q = search.toLowerCase()
-        return t.short.toLowerCase().includes(q) || t.full.toLowerCase().includes(q)
+        const q = search.trim().toLowerCase()
+        return t.searchText.includes(q)
       }).slice(0, 30)
     : []
 
@@ -517,7 +523,7 @@ export default function StepTeams({ selected, setSelected, onBack, onNext, onSki
                 }}>{tricode}</div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontSize: 14, color: 'var(--text)', fontWeight: 600 }}>
-                    {isCollege ? team.short : team.full}
+                    {isCollege ? collegeDisplayName(team.short) : team.full}
                   </div>
                   <div style={{ fontSize: 11, color: 'var(--text3)' }}>
                     {LABELS[team.league]}
@@ -631,7 +637,7 @@ export default function StepTeams({ selected, setSelected, onBack, onNext, onSki
                         onClick={() => toggle(leagueKey, team)}
                       >
                         <div className={styles.teamCircle} style={{ background: color }}>{tricode}</div>
-                        <div className={styles.teamName}>{isCollege ? team.short : team.full}</div>
+                        <div className={styles.teamName}>{isCollege ? collegeDisplayName(team.short) : team.full}</div>
                       </div>
                     )
                   })}
