@@ -57,12 +57,6 @@ export default function Home() {
         <div style={{ marginTop: 10, fontSize: 13, color: 'var(--text3)' }}>
           Free · no sign-up needed to look
         </div>
-        <button
-          onClick={() => navigate('/whats-on')}
-          style={{ marginTop: 14, background: 'none', border: 0, padding: 0, color: 'var(--orange)', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: 'var(--body)' }}
-        >
-          Or see everything playing in a city this weekend →
-        </button>
 
         <div className={styles.sample} aria-label="Example trip">
           <div className={styles.sampleLabel}>Example trip</div>
@@ -97,9 +91,12 @@ export default function Home() {
               <span>Seattle Seahawks @ Dallas Cowboys</span>
             </div>
           </div>
-          <div style={{ marginTop: 10, fontSize: 13, color: 'var(--text3)' }}>
-            Pick your teams to see yours →
-          </div>
+          <button
+            onClick={() => navigate('/whats-on')}
+            style={{ display: 'block', marginTop: 10, background: 'none', border: 0, padding: 0, fontSize: 13, color: 'var(--text3)', cursor: 'pointer', fontFamily: 'var(--body)', textAlign: 'left' }}
+          >
+            Or see everything playing in a city this weekend →
+          </button>
         </div>
       </div>
     </div>
