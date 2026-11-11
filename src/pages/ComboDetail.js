@@ -6,6 +6,8 @@ import { isSpring, SPRING_COLOR, SPRING_LABEL, springMoreText } from '../lib/spr
 import { isFestival, FESTIVAL_COLOR } from '../lib/festival'
 import { legMiles } from '../lib/distance'
 import { startTimeLabel } from '../lib/startTime'
+import { nearestAirport, milesBetween } from '../lib/airports'
+import { CITY_COORDS } from '../components/StepCity'
 import ShareImage from '../components/ShareImage'
 import { useNavigate } from 'react-router-dom'
 
@@ -96,6 +98,20 @@ export default function ComboDetail({ combo, onBack, preloadedEvents, publicView
   // opens so the share sheet can open instantly when the button is tapped
   // (phones only allow it straight from the tap).
   const [shareCode, setShareCode] = useState(publicView ? combo.code : null)
+  // Viewer's home city (My Picks) for "Plan your trip" (#17). null = not loaded.
+  const [homeCity, setHomeCity] = useState(null)
+
+  useEffect(() => {
+    if (publicView) return
+    let alive = true
+    supabase.auth.getSession().then(({ data }) => {
+      const uid = data?.session?.user?.id
+      if (!uid) { if (alive) setHomeCity(''); return }
+      supabase.from('users').select('home_city').eq('id', uid).single()
+        .then(({ data: row }) => { if (alive) setHomeCity(row?.home_city || '') })
+    })
+    return () => { alive = false }
+  }, [publicView])
 
   useEffect(() => {
     if (preloadedEvents) { setEvents(preloadedEvents); setLoading(false); return }
@@ -434,21 +450,97 @@ export default function ComboDetail({ combo, onBack, preloadedEvents, publicView
             dt.setDate(dt.getDate() + delta)
             return isoDate(dt)
           }
+          // "Nov 13–16", or "Nov 30–Dec 2" across a month.
+          const shortRange = (a, b) => {
+            const da = new Date(a + 'T12:00:00'), db = new Date(b + 'T12:00:00')
+            const mon = d => d.toLocaleDateString('en-US', { month: 'short' })
+            if (a === b) return `${mon(da)} ${da.getDate()}`
+            return da.getMonth() === db.getMonth()
+              ? `${mon(da)} ${da.getDate()}–${db.getDate()}`
+              : `${mon(da)} ${da.getDate()}–${mon(db)} ${db.getDate()}`
+          }
+          const cityOnly = c => (c || '').split(',')[0]
+
+          // Where the trip starts: first event with coordinates (events are in date order).
+          const firstGeo = events.find(e => e.latitude != null && e.longitude != null)
+          const destCode = firstGeo ? nearestAirport(firstGeo.latitude, firstGeo.longitude) : null
+
+          // Viewer's home ('set' is the old onboarding placeholder, not a city).
+          const homeName = homeCity && homeCity !== 'set' ? homeCity : null
+          const homeCoords = homeName ? CITY_COORDS[homeName] : null
+          const homeCode = homeCoords ? nearestAirport(homeCoords[0], homeCoords[1]) : null
+          const homeMiles = homeCoords && firstGeo
+            ? milesBetween(homeCoords[0], homeCoords[1], firstGeo.latitude, firstGeo.longitude) : null
+          // Close enough to drive (or the same airport): show Drive instead of Flights.
+          const drivable = (homeMiles != null && homeMiles < 250) || (homeCode && homeCode === destCode)
+
+          // Fly in the day before, out the day after; driving, arrive the first day.
           const flyIn = shiftDate(combo.start_date, -1)
           const flyOut = shiftDate(combo.end_date, 1)
-          const flightsQuery = `flights to ${primaryCity} on ${flyIn} through ${flyOut}`
-          const links = [
-            { icon: '✈️', label: 'Flights', sub: 'Google Flights', url: 'https://www.google.com/travel/flights?q=' + encodeURIComponent(flightsQuery) },
-            { icon: '🏨', label: 'Hotels', sub: 'Google Hotels', url: 'https://www.google.com/travel/search?q=' + encodeURIComponent('hotels in ' + primaryCity) },
-          ]
+          const checkIn = drivable ? combo.start_date : flyIn
+          const checkOut = flyOut
+          const nights = Math.round((new Date(checkOut + 'T12:00:00') - new Date(checkIn + 'T12:00:00')) / 86400000)
+
+          // Distinct venues in trip order, for the map and the drive route.
+          const stops = []
+          for (const g of groupEvents(events)) {
+            const e = g.primary
+            const place = [e.venue, eventLocation(e)].filter(Boolean).join(', ')
+            if (place && !stops.includes(place)) stops.push(place)
+          }
+          const dirUrl = (origin, list) => {
+            const dest = list[list.length - 1]
+            const mid = list.slice(0, -1).slice(0, 8)
+            return 'https://www.google.com/maps/dir/?api=1&travelmode=driving'
+              + '&origin=' + encodeURIComponent(origin)
+              + '&destination=' + encodeURIComponent(dest)
+              + (mid.length ? '&waypoints=' + encodeURIComponent(mid.join('|')) : '')
+          }
+
+          const flightsTo = destCode || primaryCity
+          const flightsQuery = (homeCode ? `flights from ${homeCode} to ${flightsTo}` : `flights to ${flightsTo}`)
+            + ` on ${flyIn} through ${flyOut}`
+          const flights = {
+            icon: '✈️', label: 'Flights',
+            sub: (homeCode && destCode ? `${homeCode} → ${destCode}` : `To ${destCode || cityOnly(primaryCity)}`) + ` · ${shortRange(flyIn, flyOut)}`,
+            url: 'https://www.google.com/travel/flights?q=' + encodeURIComponent(flightsQuery),
+          }
+          const roadMiles = homeMiles != null ? Math.max(10, Math.round(homeMiles * 1.15 / 10) * 10) : null
+          const drive = drivable && stops.length > 0 ? {
+            icon: '🚗', label: 'Drive',
+            sub: roadMiles && roadMiles >= 30 ? `~${roadMiles} mi from ${cityOnly(homeName)}` : `From ${cityOnly(homeName)}`,
+            url: dirUrl(homeName, stops),
+          } : null
+          const hotels = {
+            icon: '🏨', label: 'Hotels',
+            sub: `${shortRange(checkIn, checkOut)} · ${nights} night${nights === 1 ? '' : 's'}`,
+            url: 'https://www.google.com/travel/search?q=' + encodeURIComponent(
+              `hotels in ${primaryCity} from ${checkIn} to ${checkOut}`),
+          }
+          const map = stops.length === 0 ? null : stops.length === 1 ? {
+            icon: '📍', label: 'Map', sub: 'The venue',
+            url: 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(stops[0]),
+          } : {
+            icon: '🗺️', label: 'Map', sub: `Route · ${stops.length} stops`,
+            url: dirUrl(stops[0], stops.slice(1)),
+          }
+          const links = [drive || flights, hotels, map].filter(Boolean)
+          const askHome = !publicView && homeCity !== null && !homeCode
           return (
-            <div className={styles.planGrid}>
-              {links.map(link => (<a key={link.label} href={link.url} target="_blank" rel="noreferrer" className={styles.planCard}>
-                  <div className={styles.planIcon}>{link.icon}</div>
-                  <div className={styles.planLabel}>{link.label}</div>
-                  <div className={styles.planSub}>{link.sub}</div>
-                </a>))}
-            </div>
+            <>
+              <div className={styles.planGrid} style={{ gridTemplateColumns: `repeat(${links.length}, 1fr)` }}>
+                {links.map(link => (<a key={link.label} href={link.url} target="_blank" rel="noreferrer" className={styles.planCard}>
+                    <div className={styles.planIcon}>{link.icon}</div>
+                    <div className={styles.planLabel}>{link.label}</div>
+                    <div className={styles.planSub}>{link.sub}</div>
+                  </a>))}
+              </div>
+              {askHome && (
+                <button className={styles.planHint} onClick={() => navigate('/settings')}>
+                  Add your home city in My Picks to see flights from home →
+                </button>
+              )}
+            </>
           )
         })()}
         {publicView && (

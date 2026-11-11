@@ -31,7 +31,8 @@
 .planCard:hover { border-color: var(--orange); }
 .planIcon { font-size: 24px; }
 .planLabel { font-family: var(--head); font-size: 13px; font-weight: 700; color: var(--text); text-transform: uppercase; letter-spacing: 0.5px; text-align: center; }
-.planSub { font-size: 11px; color: var(--text3); }
+.planSub { font-size: 11px; color: var(--text3); text-align: center; line-height: 1.35; }
+.planHint { display: block; margin-top: 10px; background: none; border: none; padding: 0; color: var(--orange); font-size: 12px; font-weight: 600; cursor: pointer; text-align: left; }
 .loading { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 40px; color: var(--text3); font-size: 13px; }
 .spinner { width: 24px; height: 24px; border: 2px solid var(--border); border-top-color: var(--orange); border-radius: 50%; animation: spin 0.8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }

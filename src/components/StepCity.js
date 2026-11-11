@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import styles from './Step.module.css'
 
 // City -> [lat, lng]. Used for search and for "Use my location" (nearest city).
-const CITY_COORDS = {
+export const CITY_COORDS = {
   'Albuquerque, NM': [35.08, -106.65], 'Anaheim, CA': [33.84, -117.91], 'Anchorage, AK': [61.22, -149.9],
   'Arlington, TX': [32.74, -97.11], 'Atlanta, GA': [33.75, -84.39], 'Austin, TX': [30.27, -97.74],
   'Baltimore, MD': [39.29, -76.61], 'Birmingham, AL': [33.52, -86.8], 'Boise, ID': [43.62, -116.2],
