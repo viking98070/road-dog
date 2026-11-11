@@ -29,6 +29,12 @@
 .planGrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
 .planCard { background: var(--surface); border: 0.5px solid var(--border); border-radius: 12px; padding: 16px 12px; display: flex; flex-direction: column; align-items: center; gap: 6px; text-decoration: none; transition: border-color 0.15s; }
 .planCard:hover { border-color: var(--orange); }
+button.planCard { font: inherit; cursor: pointer; width: 100%; }
+.planCardOpen { border-color: var(--orange); }
+.stayList { margin-top: 10px; display: flex; flex-direction: column; gap: 8px; }
+.stayRow { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; background: var(--surface); border: 0.5px solid var(--border); border-radius: 10px; padding: 12px 14px; text-decoration: none; color: var(--text); font-size: 13px; }
+.stayRow:hover { border-color: var(--orange); }
+.stayDates { color: var(--text3); font-size: 12px; }
 .planIcon { font-size: 24px; }
 .planLabel { font-family: var(--head); font-size: 13px; font-weight: 700; color: var(--text); text-transform: uppercase; letter-spacing: 0.5px; text-align: center; }
 .planSub { font-size: 11px; color: var(--text3); text-align: center; line-height: 1.35; }

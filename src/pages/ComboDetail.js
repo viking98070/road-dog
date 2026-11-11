@@ -100,6 +100,7 @@ export default function ComboDetail({ combo, onBack, preloadedEvents, publicView
   const [shareCode, setShareCode] = useState(publicView ? combo.code : null)
   // Viewer's home city (My Picks) for "Plan your trip" (#17). null = not loaded.
   const [homeCity, setHomeCity] = useState(null)
+  const [hotelsOpen, setHotelsOpen] = useState(false)
 
   useEffect(() => {
     if (publicView) return
@@ -511,11 +512,36 @@ export default function ComboDetail({ combo, onBack, preloadedEvents, publicView
             sub: roadMiles && roadMiles >= 30 ? `~${roadMiles} mi from ${cityOnly(homeName)}` : `From ${cityOnly(homeName)}`,
             url: dirUrl(homeName, stops),
           } : null
-          const hotels = {
+          const hotelUrl = (city, a, b) => 'https://www.google.com/travel/search?q=' + encodeURIComponent(
+            `hotels in ${city} from ${a} to ${b}`)
+          const nightsBetween = (a, b) => Math.round((new Date(b + 'T12:00:00') - new Date(a + 'T12:00:00')) / 86400000)
+
+          // Multi-city trips: one hotel search per city, each city's nights running
+          // from its first event until the next city's first event.
+          const segments = []
+          for (const g of groupEvents(events)) {
+            const loc = eventLocation(g.primary)
+            const city = SUBURB_TO_PRIMARY[loc] || loc
+            if (!city) continue
+            const last = segments[segments.length - 1]
+            if (last && last.city === city) continue
+            segments.push({ city, first: g.firstDate })
+          }
+          const stays = []
+          segments.forEach((seg, i) => {
+            const a = i === 0 ? checkIn : seg.first
+            const b = i === segments.length - 1 ? checkOut : segments[i + 1].first
+            if (nightsBetween(a, b) >= 1) stays.push({ city: seg.city, checkIn: a, checkOut: b, nights: nightsBetween(a, b) })
+          })
+          const multiStay = stays.length > 1
+          const hotels = multiStay ? {
+            icon: '🏨', label: 'Hotels',
+            sub: `${stays.length} cities · ${nights} nights`,
+            onClick: () => setHotelsOpen(o => !o),
+          } : {
             icon: '🏨', label: 'Hotels',
             sub: `${shortRange(checkIn, checkOut)} · ${nights} night${nights === 1 ? '' : 's'}`,
-            url: 'https://www.google.com/travel/search?q=' + encodeURIComponent(
-              `hotels in ${primaryCity} from ${checkIn} to ${checkOut}`),
+            url: hotelUrl(primaryCity, checkIn, checkOut),
           }
           const map = stops.length === 0 ? null : stops.length === 1 ? {
             icon: '📍', label: 'Map', sub: 'The venue',
@@ -529,12 +555,27 @@ export default function ComboDetail({ combo, onBack, preloadedEvents, publicView
           return (
             <>
               <div className={styles.planGrid} style={{ gridTemplateColumns: `repeat(${links.length}, 1fr)` }}>
-                {links.map(link => (<a key={link.label} href={link.url} target="_blank" rel="noreferrer" className={styles.planCard}>
+                {links.map(link => {
+                  const inner = (<>
                     <div className={styles.planIcon}>{link.icon}</div>
-                    <div className={styles.planLabel}>{link.label}</div>
+                    <div className={styles.planLabel}>{link.label}{link.onClick ? (hotelsOpen ? ' ▴' : ' ▾') : ''}</div>
                     <div className={styles.planSub}>{link.sub}</div>
-                  </a>))}
+                  </>)
+                  return link.onClick
+                    ? <button key={link.label} type="button" onClick={link.onClick} className={`${styles.planCard} ${hotelsOpen ? styles.planCardOpen : ''}`}>{inner}</button>
+                    : <a key={link.label} href={link.url} target="_blank" rel="noreferrer" className={styles.planCard}>{inner}</a>
+                })}
               </div>
+              {multiStay && hotelsOpen && (
+                <div className={styles.stayList}>
+                  {stays.map(st => (
+                    <a key={st.city + st.checkIn} href={hotelUrl(st.city, st.checkIn, st.checkOut)} target="_blank" rel="noreferrer" className={styles.stayRow}>
+                      <span>🏨 <strong>{cityOnly(st.city)}</strong></span>
+                      <span className={styles.stayDates}>{shortRange(st.checkIn, st.checkOut)} · {st.nights} night{st.nights === 1 ? '' : 's'} ↗</span>
+                    </a>
+                  ))}
+                </div>
+              )}
               {askHome && (
                 <button className={styles.planHint} onClick={() => navigate('/settings')}>
                   Add your home city in My Picks to see flights from home →
