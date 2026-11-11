@@ -93,9 +93,9 @@ export default function Home() {
           </div>
           <button
             onClick={() => navigate('/whats-on')}
-            style={{ display: 'block', marginTop: 10, background: 'none', border: 0, padding: 0, fontSize: 13, color: 'var(--text3)', cursor: 'pointer', fontFamily: 'var(--body)', textAlign: 'left' }}
+            style={{ display: 'block', margin: '14px auto 0', background: 'none', border: 0, padding: 0, fontSize: 14, color: 'var(--text2)', cursor: 'pointer', fontFamily: 'var(--body)', textAlign: 'center' }}
           >
-            Or see everything playing in a city this weekend →
+            Or see everything playing in a city this weekend <span style={{ color: 'var(--orange)' }}>→</span>
           </button>
         </div>
       </div>
