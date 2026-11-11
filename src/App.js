@@ -10,6 +10,7 @@ import Settings from './pages/Settings'
 import WhosPlaying from './pages/WhosPlaying'
 import Legal from './pages/Legal'
 import ResetPassword from './pages/ResetPassword'
+import WhatsOn from './pages/WhatsOn'
 import SharedTrip from './pages/SharedTrip'
 import { captureUtm } from './lib/track'
 
@@ -99,6 +100,8 @@ export default function App() {
         <Route path="/terms" element={<Legal type="terms" />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/trip/:code" element={<SharedTrip />} />
+        <Route path="/whats-on" element={<WhatsOn session={session} signedIn={!!session && hasOnboarded} />} />
+        <Route path="/whats-on/:city" element={<WhatsOn session={session} signedIn={!!session && hasOnboarded} />} />
       </Routes>
       <Analytics />
     </BrowserRouter>

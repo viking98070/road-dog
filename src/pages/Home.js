@@ -57,6 +57,12 @@ export default function Home() {
         <div style={{ marginTop: 10, fontSize: 13, color: 'var(--text3)' }}>
           Free · no sign-up needed to look
         </div>
+        <button
+          onClick={() => navigate('/whats-on')}
+          style={{ marginTop: 14, background: 'none', border: 0, padding: 0, color: 'var(--orange)', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: 'var(--body)' }}
+        >
+          Or see everything playing in a city this weekend →
+        </button>
 
         <div className={styles.sample} aria-label="Example trip">
           <div className={styles.sampleLabel}>Example trip</div>

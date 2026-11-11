@@ -160,14 +160,28 @@ function ticketsUrl(e) {
   return e.url || `https://www.ticketmaster.com/event/${encodeURIComponent(e.id)}`
 }
 
+// Public city links (#25): roaddogapp.com/whats-on/las-vegas
+export function citySlug(name) {
+  return (name || '').split(',')[0].trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
+}
+export function cityFromSlug(slug) {
+  if (!slug) return ''
+  const hit = CITIES.find(c => citySlug(c) === slug.toLowerCase())
+  if (hit) return hit.split(',')[0].trim()
+  // Unknown slug: turn "fort-myers" into "Fort Myers" and let the search try it.
+  return slug.split('-').filter(Boolean).map(w => w[0].toUpperCase() + w.slice(1)).join(' ')
+}
+
 function readLastCity() { try { return localStorage.getItem('rd_wp_city') || '' } catch { return '' } }
 function saveLastCity(c) { try { localStorage.setItem('rd_wp_city', c) } catch { /* ignore */ } }
 
-export default function WhosPlaying({ session }) {
+// publicView (#25): the signed-out version at /whats-on — Road Dog bar with
+// "Find my trips" instead of the app tabs, and nudges to start onboarding.
+export default function WhosPlaying({ session, publicView = false, initialCity = '' }) {
   const navigate = useNavigate()
 
-  const [city, setCity] = useState(readLastCity)
-  const [cityDraft, setCityDraft] = useState(readLastCity)
+  const [city, setCity] = useState(() => initialCity || readLastCity())
+  const [cityDraft, setCityDraft] = useState(() => initialCity || readLastCity())
   const [showSuggest, setShowSuggest] = useState(false)
 
   const [preset, setPreset] = useState('thisWeekend')
@@ -225,6 +239,13 @@ export default function WhosPlaying({ session }) {
     if (!name) return
     setCity(name); setCityDraft(name); setShowSuggest(false)
     setOpenCollege({}); saveLastCity(name)
+    // Keep the address shareable: /whats-on/<city>
+    if (window.location.pathname.startsWith('/whats-on')) navigate(`/whats-on/${citySlug(name)}`, { replace: true })
+  }
+
+  async function findMyTrips() {
+    const { data } = await supabase.auth.getSession()
+    navigate(data?.session ? '/trips' : '/start')
   }
 
   function choosePreset(k) {
@@ -272,7 +293,12 @@ export default function WhosPlaying({ session }) {
 
   return (
     <div className={styles.page}>
-      <AppNav />
+      {publicView ? (
+        <header className="wp-pubbar">
+          <a href="/" className="wp-publogo">Road<span>Dog</span></a>
+          <button type="button" className="wp-pubcta" onClick={findMyTrips}>Find my trips</button>
+        </header>
+      ) : <AppNav />}
 
       <main className={styles.main}>
         {/* ---------- Search as a sentence ---------- */}
@@ -412,7 +438,7 @@ export default function WhosPlaying({ session }) {
                   </div>
                 )}
 
-                {days.map(({ day, main, college }) => {
+                {days.map(({ day, main, college }, di) => {
                   // Only tuck college games away when there are enough to crowd the day.
                   const open = openCollege[day] || main.length === 0 || college.length <= 2
                   const shown = open ? [...main, ...college] : main
@@ -435,6 +461,15 @@ export default function WhosPlaying({ session }) {
                           Show {college.length} college games ▾
                         </button>
                       )}
+                      {publicView && di === 1 && days.length > 2 && (
+                        <div className="wp-nudge">
+                          <div>
+                            <b>Your teams + shows like these, in one trip</b>
+                            <span>Pick your teams and artists. Road Dog finds the weekends they land in the same city.</span>
+                          </div>
+                          <button type="button" className="wp-btn" onClick={findMyTrips}>Find my trips →</button>
+                        </div>
+                      )}
                     </div>
                   )
                 })}
@@ -443,17 +478,33 @@ export default function WhosPlaying({ session }) {
           </section>
 
           <aside className="wp-side">
-            <div className="wp-card">
-              <h3>Make it a road trip</h3>
-              <p>Follow your teams and Road Dog finds weekends where they're playing away, then emails you when one pops up.</p>
-              <button type="button" className="wp-btn" onClick={() => navigate(FOLLOW_TEAMS_PATH)}>Follow my teams</button>
-            </div>
+            {publicView ? (
+              <div className="wp-card">
+                <h3>Make it a road trip</h3>
+                <p>Pick your teams and artists. Road Dog finds the weekends they land in the same city — free, no sign-up needed to look.</p>
+                <button type="button" className="wp-btn" onClick={findMyTrips}>Find my trips →</button>
+              </div>
+            ) : (
+              <div className="wp-card">
+                <h3>Make it a road trip</h3>
+                <p>Follow your teams and Road Dog finds weekends where they're playing away, then emails you when one pops up.</p>
+                <button type="button" className="wp-btn" onClick={() => navigate(FOLLOW_TEAMS_PATH)}>Follow my teams</button>
+              </div>
+            )}
           </aside>
         </div>
       </main>
 
       <style>{`
         .wp-hero{padding:8px 0 18px;margin-bottom:8px}
+        .wp-pubbar{display:flex;justify-content:space-between;align-items:center;padding:16px 24px;border-bottom:1px solid var(--border)}
+        .wp-publogo{font-family:var(--head);font-size:22px;font-weight:700;color:var(--text);letter-spacing:2px;text-transform:uppercase;text-decoration:none}
+        .wp-publogo span{color:var(--orange)}
+        .wp-pubcta{background:var(--orange);color:#111;border:0;border-radius:8px;padding:9px 16px;font-family:var(--head);font-weight:700;font-size:14px;letter-spacing:.3px;cursor:pointer}
+        .wp-nudge{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-top:18px;padding:16px 18px;border:1px solid rgba(249,115,22,.55);border-radius:14px;background:rgba(249,115,22,.08)}
+        .wp-nudge b{display:block;font-family:var(--head);font-size:17px;text-transform:uppercase;color:var(--text)}
+        .wp-nudge span{display:block;color:var(--text2);font-size:14px;margin-top:4px;line-height:1.4}
+        .wp-nudge .wp-btn{margin-top:0}
         .wp-eyebrow{font-family:var(--head);font-weight:600;color:var(--orange);letter-spacing:2px;font-size:13px;text-transform:uppercase}
         .wp-q{font-family:var(--head);font-weight:700;font-size:clamp(32px,6vw,54px);line-height:1.2;margin:8px 0 18px;text-transform:uppercase;color:var(--text)}
         .wp-hl{color:var(--orange)}
