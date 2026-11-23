@@ -133,6 +133,11 @@ export default function Dashboard({ session }) {
   const [selected, setSelected] = useState(null)
   const [activeTab, setActiveTab] = useState('sports_plus_shows')
   const [sortMode, setSortMode] = useState(loadSortPref)
+  // "New" filter: only trips with the NEW badge, across every tab. Alert emails
+  // open the Trips page with ?new=1 so people land on what the email was about.
+  const [newOnly, setNewOnly] = useState(() => {
+    try { return new URLSearchParams(window.location.search).get('new') === '1' } catch (_) { return false }
+  })
   // Arriving straight from onboarding (?welcome=1): show a one-time "we found
   // N trips" banner. The flag is read once, then removed from the URL so a
   // refresh or a shared link never shows it again.
@@ -196,12 +201,19 @@ export default function Dashboard({ session }) {
 
     setCombos(combosWithEvents)
 
-    // Opened from the results screen (/trips?trip=<id>): go straight to that trip.
+    // Opened from the results screen or an alert email (/trips?trip=<id>): go
+    // straight to that trip. If it's gone (the trip was reshaped since the
+    // email went out), fall back to the New filter so the fresh trips are
+    // still the first thing on screen. ?new=1 is read when the page opens.
     try {
-      const want = new URLSearchParams(window.location.search).get('trip')
+      const params = new URLSearchParams(window.location.search)
+      const want = params.get('trip')
       if (want) {
         const hit = combosWithEvents.find(c => String(c.id) === want)
         if (hit) setSelected(hit)
+        else setNewOnly(true)
+      }
+      if (want || params.get('new')) {
         window.history.replaceState(null, '', window.location.pathname)
       }
     } catch (_) { /* ignore */ }
@@ -317,7 +329,13 @@ export default function Dashboard({ session }) {
     return <ComboDetail combo={selected} onBack={() => setSelected(null)} />
   }
 
-  const filteredCombos = sortCombos(combos.filter(c => c.combo_type === activeTab), sortMode)
+  const newCount = combos.filter(isNew).length
+  // With no new trips left, the filter switches itself off.
+  const showingNew = newOnly && newCount > 0
+  const filteredCombos = sortCombos(
+    combos.filter(c => showingNew ? isNew(c) : c.combo_type === activeTab),
+    sortMode,
+  )
   // Month headers only make sense when the list is in date order.
   const sections = sortMode === 'soonest'
     ? groupByMonth(filteredCombos)
@@ -424,12 +442,46 @@ export default function Dashboard({ session }) {
           overflowX: 'auto',
           WebkitOverflowScrolling: 'touch',
         }}>
+          {newCount > 0 && (
+            <button
+              onClick={() => setNewOnly(true)}
+              aria-pressed={showingNew}
+              style={{
+                background: 'transparent',
+                border: 'none',
+                color: showingNew ? 'var(--orange)' : 'var(--text2)',
+                fontWeight: showingNew ? 700 : 500,
+                fontSize: 13,
+                padding: '10px 14px',
+                cursor: 'pointer',
+                borderBottom: showingNew ? '2px solid var(--orange)' : '2px solid transparent',
+                marginBottom: -1,
+                fontFamily: 'var(--head)',
+                textTransform: 'uppercase',
+                letterSpacing: 0.5,
+                whiteSpace: 'nowrap',
+                flexShrink: 0,
+                display: 'inline-flex',
+                alignItems: 'center',
+              }}
+            >
+              New
+              <span style={{
+                marginLeft: 6,
+                background: '#F97316', color: '#0F0F0F',
+                fontSize: 10.5, fontWeight: 700, lineHeight: 1,
+                padding: '3px 7px', borderRadius: 999,
+              }}>
+                {newCount}
+              </span>
+            </button>
+          )}
           {TABS.map(tab => {
-            const isActive = activeTab === tab.key
+            const isActive = !showingNew && activeTab === tab.key
             return (
               <button
                 key={tab.key}
-                onClick={() => setActiveTab(tab.key)}
+                onClick={() => { setActiveTab(tab.key); setNewOnly(false) }}
                 style={{
                   background: 'transparent',
                   border: 'none',
